@@ -243,6 +243,15 @@
     .testimonial .who strong { color: var(--bone); }
 
     @media (max-width: 900px) { .comm-grid { grid-template-columns: 1fr; } }
+
+    /* === STRINGING === */
+    .stringing { display: grid; grid-template-columns: 1fr 1fr; align-items: stretch; background: var(--surface); border: 1px solid var(--elevated); }
+    .stringing-text { padding: clamp(28px, 5vw, 56px); display: flex; flex-direction: column; justify-content: center; }
+    .stringing-text h3 { margin: 16px 0 14px; }
+    .stringing-text p { color: var(--mute); font-size: 14px; line-height: 1.6; margin: 0 0 24px; }
+    .stringing-img { aspect-ratio: 4/3; background-size: cover; background-position: center; }
+    .stringing-text .stringing-cta { width: fit-content; }
+    @media (max-width: 768px) { .stringing { grid-template-columns: 1fr; } .stringing-img { aspect-ratio: 16/9; } }
   </style>
 </head>
 <body>
@@ -374,6 +383,19 @@
         </div>
       </div>
     </section>
+    <section id="stringing">
+      <div class="container">
+        <div class="stringing">
+          <div class="stringing-text">
+            <span class="eyebrow">▸ Professional stringing</span>
+            <h3 class="display-l">Strung in 24 hours.</h3>
+            <p>Drop your racquet at any location. Choose your tension, your string, your timing. We'll text you when it's ready.</p>
+            <button class="btn btn-primary stringing-cta" id="stringing-cta">Book stringing →</button>
+          </div>
+          <div class="stringing-img" style="background-image:url('https://images.unsplash.com/photo-1531315396756-905d68d21b56?w=1200&q=80&auto=format&fit=crop')"></div>
+        </div>
+      </div>
+    </section>
   </main>
   <script>
     // === MOCK DATA === (added in later tasks)
@@ -414,6 +436,13 @@
       { id: 'e3', day: '15', mo: 'May', name: 'Junior Badminton Camp',     meta: 'LIC · All week · Ages 8–14' },
       { id: 'e4', day: '23', mo: 'May', name: 'Late-Night Open Play',      meta: 'Summit Ave · 10:00 PM · Members only' },
     ];
+
+    const STRINGS = [
+      { id: 'yonex-bg65',  name: 'Yonex BG65',     desc: 'Durable all-round string', price: 22 },
+      { id: 'yonex-bg80',  name: 'Yonex BG80',     desc: 'Power and repulsion',     price: 28 },
+      { id: 'ashaway-zm',  name: 'Ashaway Zymax',  desc: 'Pro tour favorite',       price: 32 },
+    ];
+    const TENSIONS = ['22 lbs · Soft feel', '24 lbs · Balanced (recommended)', '26 lbs · Crisp control', '28 lbs · Pro level'];
 
     // === INTERACTIONS === (added in later tasks)
 
@@ -757,6 +786,57 @@
       `);
       document.getElementById('rsvp-done')?.addEventListener('click', closeModal);
       document.getElementById('rsvp-cal')?.addEventListener('click', closeModal);
+    }
+
+    // === STRINGING ===
+    document.getElementById('stringing-cta')?.addEventListener('click', openStringingModal);
+
+    function openStringingModal() {
+      let step = 1;
+      const chosen = { string: null, tension: null, location: null };
+
+      const render = () => {
+        if (step === 1) {
+          openModal(`
+            <div class="step-row"><div class="step-dot active"></div><div class="step-dot"></div><div class="step-dot"></div><div class="step-dot"></div></div>
+            <span class="eyebrow">▸ Step 1 of 4 · Pick a string</span>
+            <h3 class="display-m">Which string?</h3>
+            <div class="step-pick">${STRINGS.map(s => `<button data-string="${escapeHtml(s.id)}"><div style="font-weight:700">${escapeHtml(s.name)}</div><div style="font-size:11px;color:var(--mute);margin-top:2px">${escapeHtml(s.desc)} · $${s.price}</div></button>`).join('')}</div>
+          `);
+          document.querySelectorAll('[data-string]').forEach(b => b.addEventListener('click', () => { chosen.string = b.dataset.string; step = 2; render(); }));
+        } else if (step === 2) {
+          openModal(`
+            <div class="step-row"><div class="step-dot active"></div><div class="step-dot active"></div><div class="step-dot"></div><div class="step-dot"></div></div>
+            <span class="eyebrow">▸ Step 2 of 4 · Tension</span>
+            <h3 class="display-m">String tension</h3>
+            <div class="step-pick">${TENSIONS.map(t => `<button data-tension="${escapeHtml(t)}">${escapeHtml(t)}</button>`).join('')}</div>
+          `);
+          document.querySelectorAll('[data-tension]').forEach(b => b.addEventListener('click', () => { chosen.tension = b.dataset.tension; step = 3; render(); }));
+        } else if (step === 3) {
+          openModal(`
+            <div class="step-row"><div class="step-dot active"></div><div class="step-dot active"></div><div class="step-dot active"></div><div class="step-dot"></div></div>
+            <span class="eyebrow">▸ Step 3 of 4 · Drop-off location</span>
+            <h3 class="display-m">Where will you drop it off?</h3>
+            <div class="step-pick">${LOCATIONS.filter(l => l.status === 'open').map(l => `<button data-loc="${escapeHtml(l.id)}">${escapeHtml(l.name)} · ${escapeHtml(l.city)}</button>`).join('')}</div>
+          `);
+          document.querySelectorAll('[data-loc]').forEach(b => b.addEventListener('click', () => { chosen.location = b.dataset.loc; step = 4; render(); }));
+        } else {
+          const num = 'KF-STR-' + Math.floor(1000 + Math.random() * 9000);
+          const stringObj = STRINGS.find(s => s.id === chosen.string);
+          const locObj = LOCATIONS.find(l => l.id === chosen.location);
+          openModal(`
+            <div class="step-row"><div class="step-dot active"></div><div class="step-dot active"></div><div class="step-dot active"></div><div class="step-dot active"></div></div>
+            <span class="eyebrow">▸ Order placed</span>
+            <div class="confirm-num">${num}</div>
+            <h3 class="display-m">${escapeHtml(stringObj.name)} · ${escapeHtml(chosen.tension.split(' · ')[0])}</h3>
+            <p class="modal-meta">Drop off at ${escapeHtml(locObj.name)} · We'll text you in 24 hours.</p>
+            <p class="body" style="font-size:13px;margin-bottom:24px">Bring your racquet to the front desk. Show this number.</p>
+            <button class="btn btn-primary" id="stringing-done">Done</button>
+          `);
+          document.getElementById('stringing-done')?.addEventListener('click', closeModal);
+        }
+      };
+      render();
     }
   </script>
 </body>
