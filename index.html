@@ -86,6 +86,22 @@
       .nav-burger { display: flex; }
     }
     body { padding-top: 64px; }
+
+    /* === HERO === */
+    .hero { position: relative; min-height: calc(100vh - 64px); padding: 0; border-top: 0; overflow: hidden; display: flex; flex-direction: column; }
+    .hero-bg { position: absolute; inset: 0; background-image: linear-gradient(180deg, rgba(10,10,10,0.35) 0%, rgba(10,10,10,0.85) 100%), url('https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=2000&q=80&auto=format&fit=crop'); background-size: cover; background-position: center; z-index: 0; transform: scale(1); transition: transform 8s ease-out; }
+    .hero.loaded .hero-bg { transform: scale(1.06); }
+    .hero-inner { position: relative; z-index: 1; flex: 1; display: flex; flex-direction: column; justify-content: space-between; padding-top: clamp(64px, 12vw, 128px); padding-bottom: clamp(40px, 6vw, 64px); }
+    .hero-top .eyebrow { display: inline-block; }
+    .hero-top h1 { margin-top: 18px; max-width: 920px; }
+    .hero-top h1 em { font-style: normal; color: var(--cobalt); }
+    .hero-bottom { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; flex-wrap: wrap; }
+    .where-chip { display: inline-flex; align-items: center; gap: 14px; background: rgba(255,255,255,0.08); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); padding: 12px 18px; border: 1px solid rgba(255,255,255,0.18); cursor: pointer; transition: all 150ms; }
+    .where-chip:hover { background: rgba(255,255,255,0.14); }
+    .where-chip .lbl { font-size: 9px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--mute); font-weight: 700; }
+    .where-chip .city { font-size: 14px; font-weight: 700; }
+    .where-chip .caret { color: var(--mute); }
+    .hero-cta { font-size: 13px; padding: 16px 26px; }
   </style>
 </head>
 <body>
@@ -103,11 +119,35 @@
       <button class="nav-burger" aria-label="Open menu"><span></span></button>
     </div>
   </nav>
-  <main></main>
+  <main>
+    <section class="hero" id="top">
+      <div class="hero-bg" aria-hidden="true"></div>
+      <div class="container hero-inner">
+        <div class="hero-top">
+          <span class="eyebrow">▸ America's home for indoor sports</span>
+          <h1 class="display-xl">Built for<br/>game <em>day.</em></h1>
+        </div>
+        <div class="hero-bottom">
+          <button class="where-chip" data-action="open-locations">
+            <div>
+              <div class="lbl">Playing in</div>
+              <div class="city">Jersey City <span class="caret">▾</span></div>
+            </div>
+          </button>
+          <a href="#booking" class="btn btn-primary hero-cta">Reserve a court →</a>
+        </div>
+      </div>
+    </section>
+  </main>
   <script>
     // === MOCK DATA === (added in later tasks)
 
     // === INTERACTIONS === (added in later tasks)
+
+    // === HERO ===
+    requestAnimationFrame(() => {
+      document.querySelector('.hero')?.classList.add('loaded');
+    });
   </script>
 </body>
 </html>
