@@ -97,6 +97,12 @@
     .hero-top .eyebrow { display: inline-block; }
     .hero-top h1 { margin-top: 18px; max-width: 920px; }
     .hero-top h1 em { font-style: normal; color: var(--cobalt); }
+    .hero-lede { font-size: clamp(15px, 1.4vw, 18px); color: var(--bone); opacity: 0.85; max-width: 540px; margin: 24px 0 0; line-height: 1.55; font-weight: 400; }
+    .hero-stats { display: flex; gap: clamp(20px, 4vw, 48px); margin-top: clamp(28px, 4vw, 40px); flex-wrap: wrap; }
+    .hero-stat { display: flex; flex-direction: column; gap: 4px; }
+    .hero-stat .num { font-size: clamp(28px, 3.5vw, 40px); font-weight: 900; letter-spacing: -0.03em; line-height: 1; }
+    .hero-stat .num em { font-style: normal; color: var(--cobalt); }
+    .hero-stat .lbl { font-size: 10px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--mute); }
     .hero-bottom { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; flex-wrap: wrap; }
     .where-chip { display: inline-flex; align-items: center; gap: 14px; background: rgba(255,255,255,0.08); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); padding: 12px 18px; border: 1px solid rgba(255,255,255,0.18); cursor: pointer; transition: all 150ms; }
     .where-chip:hover { background: rgba(255,255,255,0.14); }
@@ -167,7 +173,7 @@
     .play-tile:hover { transform: translateY(-4px); }
     .play-tile-bg { position: absolute; inset: 0; background-size: cover; background-position: center; transition: transform 600ms var(--ease-out); z-index: 0; }
     .play-tile:hover .play-tile-bg { transform: scale(1.05); }
-    .play-tile::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(10,10,10,0.2) 0%, rgba(10,10,10,0.85) 100%); z-index: 1; }
+    .play-tile::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(10,10,10,0.05) 0%, rgba(10,10,10,0.55) 60%, rgba(10,10,10,0.9) 100%); z-index: 1; }
     .play-tile > * { position: relative; z-index: 2; }
     .play-tile .num { font-size: 11px; color: var(--cobalt); font-weight: 700; letter-spacing: 0.15em; }
     .play-tile h3 { font-size: clamp(28px, 4vw, 40px); font-weight: 900; letter-spacing: -0.03em; margin: 0 0 8px; text-transform: uppercase; }
@@ -324,6 +330,13 @@
         <div class="hero-top">
           <span class="eyebrow">▸ America's home for indoor sports</span>
           <h1 class="display-xl">Built for<br/>game <em>day.</em></h1>
+          <p class="hero-lede">Four locations across NJ and NY. Three games — badminton, pickleball, ping pong. One community that shows up. Reserve a court in seconds.</p>
+          <div class="hero-stats">
+            <div class="hero-stat"><div class="num">4<em>.</em></div><div class="lbl">Locations open</div></div>
+            <div class="hero-stat"><div class="num">36<em>.</em></div><div class="lbl">Courts ready</div></div>
+            <div class="hero-stat"><div class="num">2<em>.</em></div><div class="lbl">More coming</div></div>
+            <div class="hero-stat"><div class="num">2.4k<em>.</em></div><div class="lbl">Members strong</div></div>
+          </div>
         </div>
         <div class="hero-bottom">
           <button class="where-chip" data-action="open-locations">
