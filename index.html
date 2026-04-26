@@ -252,6 +252,18 @@
     .stringing-img { aspect-ratio: 4/3; background-size: cover; background-position: center; }
     .stringing-text .stringing-cta { width: fit-content; }
     @media (max-width: 768px) { .stringing { grid-template-columns: 1fr; } .stringing-img { aspect-ratio: 16/9; } }
+
+    /* === FOOTER === */
+    .footer { padding: 64px 0 28px; border-top: 1px solid var(--elevated); }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; padding-bottom: 40px; border-bottom: 1px solid var(--elevated); }
+    .footer h4 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--mute); font-weight: 700; margin: 0 0 16px; }
+    .footer ul li { font-size: 13px; padding: 6px 0; }
+    .footer ul li a:hover { color: var(--cobalt); }
+    .footer .brand .logo { font-size: 28px; font-weight: 900; letter-spacing: -0.03em; }
+    .footer .brand p { color: var(--mute); font-size: 13px; line-height: 1.6; max-width: 360px; margin: 12px 0 0; }
+    .footer-bottom { display: flex; justify-content: space-between; padding-top: 24px; font-size: 11px; color: var(--mute); flex-wrap: wrap; gap: 12px; }
+    @media (max-width: 768px) { .footer-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 540px) { .footer-grid { grid-template-columns: 1fr; gap: 28px; } }
   </style>
 </head>
 <body>
@@ -397,6 +409,49 @@
       </div>
     </section>
   </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="brand">
+          <div class="logo">KOTOFIT</div>
+          <p>America's home for badminton, pickleball, and indoor sports. Four locations across NJ and NY, growing.</p>
+        </div>
+        <div>
+          <h4>Play</h4>
+          <ul>
+            <li><a href="#locations">Locations</a></li>
+            <li><a href="#booking">Reserve</a></li>
+            <li><a href="#memberships">Memberships</a></li>
+            <li><a href="#stringing">Stringing</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Learn</h4>
+          <ul>
+            <li><a href="#coaching">Coaching</a></li>
+            <li><a href="#coaching">Clinics</a></li>
+            <li><a href="#coaching">Youth</a></li>
+            <li><a href="#events">Events</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Connect</h4>
+          <ul>
+            <li><a href="#">WhatsApp</a></li>
+            <li><a href="#">Instagram</a></li>
+            <li><a href="#">WeChat</a></li>
+            <li><a href="#">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div>© 2026 Kotofit</div>
+        <div>NJ · NY · Brooklyn (soon) · Queens (soon)</div>
+      </div>
+    </div>
+  </footer>
+
   <script>
     // === MOCK DATA === (added in later tasks)
 
