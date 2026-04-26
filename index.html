@@ -173,6 +173,37 @@
     .play-tile h3 { font-size: clamp(28px, 4vw, 40px); font-weight: 900; letter-spacing: -0.03em; margin: 0 0 8px; text-transform: uppercase; }
     .play-tile .read { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--mute); }
     @media (max-width: 768px) { .play-grid { grid-template-columns: 1fr; } .play-tile { aspect-ratio: 16/9; } }
+
+    /* === MEMBERSHIPS === */
+    .mem-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .mem-card { background: var(--surface); border: 1px solid var(--elevated); padding: 32px; display: flex; flex-direction: column; }
+    .mem-card.featured { background: var(--cobalt); border-color: var(--cobalt); }
+    .mem-card .tier { font-size: 11px; font-weight: 800; letter-spacing: 0.15em; text-transform: uppercase; color: var(--mute); }
+    .mem-card.featured .tier { color: var(--bone); opacity: 0.9; }
+    .mem-card .price { font-size: 56px; font-weight: 900; letter-spacing: -0.04em; line-height: 1; margin: 12px 0 4px; }
+    .mem-card .price small { font-size: 14px; font-weight: 600; color: var(--mute); }
+    .mem-card.featured .price small { color: var(--bone); opacity: 0.85; }
+    .mem-card ul { margin: 24px 0; font-size: 13px; line-height: 1.9; color: var(--mute); }
+    .mem-card.featured ul { color: var(--bone); }
+    .mem-card li::before { content: '— '; color: var(--cobalt); margin-right: 4px; }
+    .mem-card.featured li::before { color: var(--bone); }
+    .mem-cta { margin-top: auto; padding: 14px 18px; background: transparent; border: 1px solid var(--bone); width: 100%; font-size: 11px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--bone); cursor: pointer; transition: all 150ms; }
+    .mem-cta:hover { background: var(--bone); color: var(--ink); }
+    .mem-card.featured .mem-cta { background: var(--bone); color: var(--ink); border-color: var(--bone); }
+    .mem-card.featured .mem-cta:hover { background: rgba(255,255,255,0.85); }
+    @media (max-width: 900px) { .mem-grid { grid-template-columns: 1fr; } }
+
+    /* === JOIN STEPS === */
+    .step-row { display: flex; gap: 6px; margin-bottom: 20px; }
+    .step-dot { flex: 1; height: 3px; background: var(--elevated); }
+    .step-dot.active { background: var(--cobalt); }
+    .form-row { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+    .form-row label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--mute); font-weight: 700; }
+    .form-row input { background: var(--ink); border: 1px solid var(--elevated); padding: 12px 14px; color: var(--bone); font-size: 14px; font-family: inherit; }
+    .form-row input:focus { outline: none; border-color: var(--cobalt); }
+    .step-pick { display: grid; grid-template-columns: 1fr; gap: 8px; margin: 12px 0 24px; }
+    .step-pick button { padding: 14px; background: var(--ink); border: 1px solid var(--elevated); color: var(--bone); text-align: left; cursor: pointer; transition: all 150ms; font-family: inherit; }
+    .step-pick button:hover, .step-pick button.selected { border-color: var(--cobalt); background: rgba(37,99,235,0.08); }
   </style>
 </head>
 <body>
@@ -263,6 +294,18 @@
         <div class="play-grid" id="play-grid"></div>
       </div>
     </section>
+    <section id="memberships">
+      <div class="container">
+        <header class="section-head">
+          <div>
+            <span class="eyebrow">▸ Member perks</span>
+            <h2 class="display-l">Play more. Pay less.</h2>
+          </div>
+          <p class="desc">Early booking windows, free events, member-only clinics, and racquet stringing discounts.</p>
+        </header>
+        <div class="mem-grid" id="mem-grid"></div>
+      </div>
+    </section>
   </main>
   <script>
     // === MOCK DATA === (added in later tasks)
@@ -281,6 +324,12 @@
       { id: 'badminton',  num: '01', name: 'Badminton',  read: 'Open play, leagues, clinics →', img: 'https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=1200&q=80&auto=format&fit=crop', desc: 'The fastest racquet sport in the world. Open play sessions, member leagues, and clinics for every level — from first racquet to tournament prep.' },
       { id: 'pickleball', num: '02', name: 'Pickleball', read: 'All levels, mixers, tournaments →', img: 'https://images.unsplash.com/photo-1687204209659-3bded6aecd79?w=1200&q=80&auto=format&fit=crop', desc: "America's fastest-growing sport. Drop-in mixers every week, ladder leagues, and weekend tournaments. Easy to learn, hard to put down." },
       { id: 'pingpong',   num: '03', name: 'Ping Pong',  read: 'Drop in, tables ready →',          img: 'https://images.unsplash.com/photo-1611251135345-18c56206b863?w=1200&q=80&auto=format&fit=crop', desc: 'Tables ready at every location. No reservation needed — drop in, grab a paddle, and play.' },
+    ];
+
+    const TIERS = [
+      { id: 'dropin',     name: 'Drop-in',                price: 0,   featured: false, perks: ['Pay per court', 'Standard booking window', 'Public events'], cta: 'Book one-off' },
+      { id: 'go-koto',    name: 'Go Koto · Most popular', price: 49,  featured: true,  perks: ['72-hour early booking', 'Free monthly events', '10% off clinics + stringing', 'Guest passes'], cta: 'Become a member' },
+      { id: 'all-access', name: 'All-Access',             price: 129, featured: false, perks: ['14-day early booking', 'All clinics included', 'Free stringing (2/mo)', 'Unlimited guest passes'], cta: 'Go All-Access' },
     ];
 
     // === INTERACTIONS === (added in later tasks)
@@ -486,6 +535,72 @@
         document.getElementById('booking')?.scrollIntoView({ behavior: 'smooth' });
       });
       document.getElementById('sport-modal-close')?.addEventListener('click', closeModal);
+    }
+
+    // === MEMBERSHIPS ===
+    function renderMemberships() {
+      const grid = document.getElementById('mem-grid');
+      grid.innerHTML = TIERS.map(t => `
+        <div class="mem-card ${t.featured ? 'featured' : ''}">
+          <div class="tier">${escapeHtml(t.name)}</div>
+          <div class="price">$${t.price}<small>/mo</small></div>
+          <ul>${t.perks.map(p => `<li>${escapeHtml(p)}</li>`).join('')}</ul>
+          <button class="mem-cta" data-tier="${escapeHtml(t.id)}">${escapeHtml(t.cta)}</button>
+        </div>
+      `).join('');
+      grid.querySelectorAll('[data-tier]').forEach(btn => {
+        btn.addEventListener('click', () => openJoinModal(btn.dataset.tier));
+      });
+    }
+    renderMemberships();
+
+    function openJoinModal(tierId) {
+      const tier = TIERS.find(t => t.id === tierId);
+      if (!tier) return;
+      let step = 1;
+      let chosenLoc = null;
+
+      const render = () => {
+        if (step === 1) {
+          openModal(`
+            <div class="step-row"><div class="step-dot active"></div><div class="step-dot"></div><div class="step-dot"></div></div>
+            <span class="eyebrow">▸ Step 1 of 3 · Choose your home court</span>
+            <h3 class="display-m">Where will you play most?</h3>
+            <div class="step-pick">${LOCATIONS.filter(l => l.status === 'open').map(l => `<button data-loc="${escapeHtml(l.id)}">${escapeHtml(l.name)} · ${escapeHtml(l.city)}</button>`).join('')}</div>
+          `);
+          document.querySelectorAll('.step-pick [data-loc]').forEach(b => {
+            b.addEventListener('click', () => {
+              chosenLoc = b.dataset.loc;
+              step = 2; render();
+            });
+          });
+        } else if (step === 2) {
+          openModal(`
+            <div class="step-row"><div class="step-dot active"></div><div class="step-dot active"></div><div class="step-dot"></div></div>
+            <span class="eyebrow">▸ Step 2 of 3 · Your details</span>
+            <h3 class="display-m">Create your account</h3>
+            <p class="modal-meta">${escapeHtml(tier.name)} · $${tier.price}/mo</p>
+            <div class="form-row"><label>Full name</label><input type="text" id="join-name" placeholder="Alex Player" /></div>
+            <div class="form-row"><label>Email</label><input type="email" id="join-email" placeholder="alex@example.com" /></div>
+            <div class="form-row"><label>Password</label><input type="password" id="join-pw" placeholder="••••••••" /></div>
+            <button class="btn btn-primary" id="join-next" style="width:100%;justify-content:center;margin-top:8px">Continue →</button>
+          `);
+          document.getElementById('join-next')?.addEventListener('click', () => { step = 3; render(); });
+        } else {
+          const num = 'KF-MEM-' + Math.floor(1000 + Math.random() * 9000);
+          openModal(`
+            <div class="step-row"><div class="step-dot active"></div><div class="step-dot active"></div><div class="step-dot active"></div></div>
+            <span class="eyebrow">▸ You're in</span>
+            <div class="confirm-num">${num}</div>
+            <h3 class="display-m">Welcome to ${escapeHtml(tier.name.split(' · ')[0])}</h3>
+            <p class="modal-meta">Confirmation sent. Your member booking window is open.</p>
+            <p class="body" style="font-size:13px;margin-bottom:24px">Open the app or come by your home court to get your first session in.</p>
+            <button class="btn btn-primary" id="join-done">Done</button>
+          `);
+          document.getElementById('join-done')?.addEventListener('click', closeModal);
+        }
+      };
+      render();
     }
   </script>
 </body>
