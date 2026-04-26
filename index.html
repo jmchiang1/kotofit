@@ -127,6 +127,25 @@
     .modal h3 { margin: 0 0 8px; }
     .modal .modal-meta { color: var(--mute); font-size: 13px; margin-bottom: 24px; }
     .modal .modal-img { aspect-ratio: 16/9; background-size: cover; background-position: center; margin: -32px -32px 24px; }
+
+    /* === BOOKING === */
+    .booking { background: var(--surface); padding: 32px; border: 1px solid var(--elevated); }
+    .booking-row { display: grid; grid-template-columns: repeat(4, 1fr) auto; gap: 12px; align-items: end; }
+    .b-field label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--mute); font-weight: 700; display: block; margin-bottom: 8px; }
+    .b-field .input { background: var(--ink); border: 1px solid var(--elevated); padding: 14px; font-size: 14px; color: var(--bone); display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: border-color 150ms; width: 100%; text-align: left; }
+    .b-field .input:hover { border-color: var(--cobalt); }
+    .b-field .input .arrow { color: var(--mute); }
+    .booking-cta { padding: 14px 24px; background: var(--cobalt); color: var(--bone); font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; height: 50px; transition: background 150ms; }
+    .booking-cta:hover { background: var(--cobalt-hover); }
+    @media (max-width: 900px) { .booking-row { grid-template-columns: 1fr 1fr; } .booking-cta { grid-column: 1 / -1; } }
+    @media (max-width: 540px) { .booking-row { grid-template-columns: 1fr; } }
+
+    /* === DROPDOWN === */
+    .b-field { position: relative; }
+    .b-dropdown { position: absolute; top: 100%; left: 0; right: 0; background: var(--surface); border: 1px solid var(--elevated); margin-top: 4px; z-index: 50; max-height: 240px; overflow: auto; display: none; }
+    .b-dropdown.open { display: block; }
+    .b-dropdown button { width: 100%; padding: 12px 14px; text-align: left; font-size: 13px; color: var(--bone); transition: background 150ms; }
+    .b-dropdown button:hover { background: var(--elevated); }
   </style>
 </head>
 <body>
@@ -173,6 +192,37 @@
           <p class="desc">Five locations across NJ and NY today. Brooklyn and Queens land this season.</p>
         </header>
         <div class="loc-grid" id="loc-grid"></div>
+      </div>
+    </section>
+    <section id="booking">
+      <div class="container">
+        <header class="section-head">
+          <div>
+            <span class="eyebrow">▸ Book in 30 seconds</span>
+            <h2 class="display-l" style="margin-top:10px">Reserve a court.</h2>
+          </div>
+        </header>
+        <div class="booking">
+          <div class="booking-row">
+            <div class="b-field">
+              <label>Sport</label>
+              <button class="input" data-bf="sport"><span data-val>Badminton</span><span class="arrow">▾</span></button>
+            </div>
+            <div class="b-field">
+              <label>Location</label>
+              <button class="input" data-bf="location"><span data-val>Brunswick · JC</span><span class="arrow">▾</span></button>
+            </div>
+            <div class="b-field">
+              <label>Date</label>
+              <button class="input" data-bf="date"><span data-val>Sat, May 2</span><span class="arrow">▾</span></button>
+            </div>
+            <div class="b-field">
+              <label>Time</label>
+              <button class="input" data-bf="time"><span data-val>7:00 PM</span><span class="arrow">▾</span></button>
+            </div>
+            <button class="booking-cta" id="check-courts">Check courts →</button>
+          </div>
+        </div>
       </div>
     </section>
   </main>
@@ -240,6 +290,39 @@
       if (backdrop) backdrop.classList.remove('open');
       document.body.style.overflow = '';
     }
+
+    // === BOOKING ===
+    const BOOKING_OPTIONS = {
+      sport:    ['Badminton', 'Pickleball', 'Ping Pong'],
+      location: ['3rd Street · JC', 'Brunswick · JC', 'Summit Ave · JC', '10th Street · LIC'],
+      date:     ['Today', 'Tomorrow', 'Sat, May 2', 'Sun, May 3', 'Mon, May 4'],
+      time:     ['5:00 PM', '6:00 PM', '7:00 PM', '8:00 PM', '9:00 PM', '10:00 PM'],
+    };
+    document.querySelectorAll('[data-bf]').forEach(btn => {
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        document.querySelectorAll('.b-dropdown.open').forEach(d => d.classList.remove('open'));
+        const field = btn.dataset.bf;
+        let dd = btn.parentElement.querySelector('.b-dropdown');
+        if (!dd) {
+          dd = document.createElement('div');
+          dd.className = 'b-dropdown';
+          dd.innerHTML = BOOKING_OPTIONS[field].map(opt => `<button data-opt="${opt}">${opt}</button>`).join('');
+          btn.parentElement.appendChild(dd);
+          dd.querySelectorAll('button').forEach(opt => {
+            opt.addEventListener('click', e => {
+              btn.querySelector('[data-val]').textContent = opt.dataset.opt;
+              dd.classList.remove('open');
+              e.stopPropagation();
+            });
+          });
+        }
+        dd.classList.toggle('open');
+      });
+    });
+    document.addEventListener('click', () => {
+      document.querySelectorAll('.b-dropdown.open').forEach(d => d.classList.remove('open'));
+    });
 
     function openLocationModal(id) {
       const loc = LOCATIONS.find(l => l.id === id);
