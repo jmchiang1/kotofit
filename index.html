@@ -223,6 +223,26 @@
       .coach-mini { aspect-ratio: 1; flex: 1; }
     }
     @media (max-width: 540px) { .coach-side { flex-direction: column; } }
+
+    /* === COMMUNITY & EVENTS === */
+    .comm-grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: 32px; align-items: start; }
+    .events-list { display: flex; flex-direction: column; }
+    .event-row { display: grid; grid-template-columns: 80px 1fr auto; gap: 20px; padding: 22px 0; border-bottom: 1px solid var(--elevated); align-items: center; }
+    .event-row:first-child { border-top: 1px solid var(--elevated); }
+    .event-row .date { text-align: center; }
+    .event-row .date .day { font-size: 32px; font-weight: 900; line-height: 1; letter-spacing: -0.02em; }
+    .event-row .date .mo { font-size: 10px; color: var(--cobalt); letter-spacing: 0.15em; text-transform: uppercase; font-weight: 700; margin-top: 2px; }
+    .event-row .info .name { font-size: 16px; font-weight: 700; color: var(--bone); }
+    .event-row .info .meta { font-size: 11px; color: var(--mute); margin-top: 4px; }
+    .event-row .rsvp { padding: 8px 14px; border: 1px solid var(--bone); font-size: 10px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--bone); cursor: pointer; transition: all 150ms; }
+    .event-row .rsvp:hover { background: var(--bone); color: var(--ink); }
+
+    .testimonial { background: var(--surface); padding: 32px; border-left: 3px solid var(--cobalt); }
+    .testimonial .quote { font-size: 22px; font-weight: 600; line-height: 1.35; letter-spacing: -0.01em; color: var(--bone); }
+    .testimonial .who { margin-top: 24px; font-size: 12px; color: var(--mute); }
+    .testimonial .who strong { color: var(--bone); }
+
+    @media (max-width: 900px) { .comm-grid { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
@@ -337,6 +357,23 @@
         <div class="coach-grid" id="coach-grid"></div>
       </div>
     </section>
+    <section id="events">
+      <div class="container">
+        <header class="section-head">
+          <div>
+            <span class="eyebrow">▸ This season</span>
+            <h2 class="display-l">Show up. Belong.</h2>
+          </div>
+        </header>
+        <div class="comm-grid">
+          <div class="events-list" id="events-list"></div>
+          <blockquote class="testimonial">
+            <p class="quote">"A fun place where I have made great friends and meaningful relationships."</p>
+            <div class="who"><strong>Maya R.</strong> · Member since 2023</div>
+          </blockquote>
+        </div>
+      </div>
+    </section>
   </main>
   <script>
     // === MOCK DATA === (added in later tasks)
@@ -369,6 +406,13 @@
       { id: 'c3', role: 'Youth',       name: 'Jordan Park',  desc: '', img: 'https://images.unsplash.com/photo-1542293787938-c9e299b88052?w=600&q=80&auto=format&fit=crop' },
       { id: 'c4', role: 'Doubles',     name: 'Aisha Khan',   desc: '', img: 'https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=600&q=80&auto=format&fit=crop' },
       { id: 'c5', role: 'Private',     name: 'David Kim',    desc: '', img: 'https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=600&q=80&auto=format&fit=crop' },
+    ];
+
+    const EVENTS = [
+      { id: 'e1', day: '02', mo: 'May', name: 'Beginner Pickleball Mixer', meta: 'Brunswick · 6:00 PM · Free for members' },
+      { id: 'e2', day: '09', mo: 'May', name: 'Spring Doubles Tournament', meta: '3rd Street · 10:00 AM · $25 entry' },
+      { id: 'e3', day: '15', mo: 'May', name: 'Junior Badminton Camp',     meta: 'LIC · All week · Ages 8–14' },
+      { id: 'e4', day: '23', mo: 'May', name: 'Late-Night Open Play',      meta: 'Summit Ave · 10:00 PM · Members only' },
     ];
 
     // === INTERACTIONS === (added in later tasks)
@@ -681,6 +725,39 @@
       `;
     }
     renderCoaches();
+
+    // === EVENTS ===
+    function renderEvents() {
+      const list = document.getElementById('events-list');
+      list.innerHTML = EVENTS.map(e => `
+        <div class="event-row">
+          <div class="date"><div class="day">${escapeHtml(e.day)}</div><div class="mo">${escapeHtml(e.mo)}</div></div>
+          <div class="info"><div class="name">${escapeHtml(e.name)}</div><div class="meta">${escapeHtml(e.meta)}</div></div>
+          <button class="rsvp" data-event="${escapeHtml(e.id)}">RSVP</button>
+        </div>
+      `).join('');
+      list.querySelectorAll('[data-event]').forEach(btn => {
+        btn.addEventListener('click', () => openRsvpModal(btn.dataset.event));
+      });
+    }
+    renderEvents();
+
+    function openRsvpModal(id) {
+      const ev = EVENTS.find(e => e.id === id);
+      if (!ev) return;
+      openModal(`
+        <span class="eyebrow">▸ You're in</span>
+        <h3 class="display-m">${escapeHtml(ev.name)}</h3>
+        <p class="modal-meta">${escapeHtml(ev.day)} ${escapeHtml(ev.mo)} · ${escapeHtml(ev.meta)}</p>
+        <p class="body" style="font-size:13px;margin-bottom:24px">A confirmation has been sent to your inbox. Add it to your calendar so you don't forget.</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn btn-primary" id="rsvp-done">Got it</button>
+          <button class="btn btn-ghost" id="rsvp-cal">Add to calendar</button>
+        </div>
+      `);
+      document.getElementById('rsvp-done')?.addEventListener('click', closeModal);
+      document.getElementById('rsvp-cal')?.addEventListener('click', closeModal);
+    }
   </script>
 </body>
 </html>
