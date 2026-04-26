@@ -11,7 +11,7 @@
   <style>
     /* === DESIGN TOKENS === */
     :root {
-      --ink: #0a0a0a;
+      --ink: #161616;
       --surface: #18181b;
       --elevated: #27272a;
       --line: #3f3f46;
@@ -91,7 +91,7 @@
 
     /* === HERO === */
     .hero { position: relative; min-height: 50rem; padding: 0; border-top: 0; overflow: hidden; display: flex; flex-direction: column; }
-    .hero-bg { position: absolute; inset: 0; background-image: linear-gradient(180deg, rgba(10,10,10,0.15) 0%, rgba(10,10,10,0.55) 100%), url('https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=2000&q=80&auto=format&fit=crop'); background-size: cover; background-position: center; z-index: 0; transform: scale(1); transition: transform 8s ease-out; }
+    .hero-bg { position: absolute; inset: -16px; background-image: linear-gradient(180deg, rgba(10,10,10,0.15) 0%, rgba(10,10,10,0.55) 100%), url('https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=2000&q=80&auto=format&fit=crop'); background-size: cover; background-position: center; z-index: 0; transform: scale(1); transition: transform 8s ease-out; filter: blur(6px); }
     .hero.loaded .hero-bg { transform: scale(1.06); }
     .hero-inner { position: relative; z-index: 1; flex: 1; display: flex; flex-direction: column; justify-content: center; padding-top: clamp(56px, 8vw, 96px); padding-bottom: clamp(56px, 8vw, 96px); gap: clamp(28px, 4vw, 44px); text-align: center; align-items: center; }
     .hero-top .eyebrow { display: inline-block; }
@@ -471,12 +471,12 @@
 
     // === DATA ===
     const LOCATIONS = [
-      { id: 'jc-3rd',     city: 'Jersey City · NJ',       name: '3rd Street',    courts: 8,  hours: 'Open until 11PM', img: 'https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=800&q=80&auto=format&fit=crop', status: 'open' },
-      { id: 'jc-bruns',   city: 'Jersey City · NJ',       name: 'Brunswick',     courts: 10, hours: 'Open until 11PM', img: 'https://images.unsplash.com/photo-1554290712-e640351074bd?w=800&q=80&auto=format&fit=crop', status: 'open' },
-      { id: 'jc-summit',  city: 'Jersey City · NJ',       name: 'Summit Ave',    courts: 6,  hours: 'Open until 10PM', img: 'https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=800&q=80&auto=format&fit=crop', status: 'open' },
-      { id: 'lic-10th',   city: 'Long Island City · NY',  name: '10th Street',   courts: 12, hours: 'Open until 11PM', img: 'https://images.unsplash.com/photo-1599058917212-d750089bc07e?w=800&q=80&auto=format&fit=crop', status: 'open' },
-      { id: 'bk-soon',    city: 'Brooklyn · NY',          name: 'Coming Soon',   courts: 0,  hours: 'Opens this season', img: 'https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=800&q=80&auto=format&fit=crop', status: 'soon' },
-      { id: 'qns-soon',   city: 'Queens · NY',            name: 'Coming Soon',   courts: 0,  hours: 'Opens this season', img: 'https://images.unsplash.com/photo-1531315396756-905d68d21b56?w=800&q=80&auto=format&fit=crop', status: 'soon' },
+      { id: 'jc-3rd',     city: 'Jersey City · NJ',       name: '3rd Street',    courts: 8,  hours: 'Open until 11PM', img: 'https://images.unsplash.com/photo-1775993167393-f2add1f8eec2?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', status: 'open' },
+      { id: 'jc-bruns',   city: 'Jersey City · NJ',       name: 'Brunswick',     courts: 10, hours: 'Open until 11PM', img: 'https://images.unsplash.com/photo-1775993167393-f2add1f8eec2?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', status: 'open' },
+      { id: 'jc-summit',  city: 'Jersey City · NJ',       name: 'Summit Ave',    courts: 6,  hours: 'Open until 10PM', img: 'https://images.unsplash.com/photo-1775993167393-f2add1f8eec2?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', status: 'open' },
+      { id: 'lic-10th',   city: 'Long Island City · NY',  name: '10th Street',   courts: 12, hours: 'Open until 11PM', img: 'https://images.unsplash.com/photo-1775993167393-f2add1f8eec2?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', status: 'open' },
+      { id: 'bk-soon',    city: 'Brooklyn · NY',          name: 'Coming Soon',   courts: 0,  hours: 'Opens this season', img: 'https://images.unsplash.com/photo-1775993167393-f2add1f8eec2?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', status: 'soon' },
+      { id: 'qns-soon',   city: 'Queens · NY',            name: 'Coming Soon',   courts: 0,  hours: 'Opens this season', img: 'https://images.unsplash.com/photo-1775993167393-f2add1f8eec2?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', status: 'soon' },
     ];
 
     const SPORTS = [
