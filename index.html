@@ -279,6 +279,15 @@
       .booking { padding: 20px; }
       .mem-card { padding: 24px; }
     }
+
+    /* === MOTION === */
+    .fade-up { opacity: 0; transform: translateY(24px); transition: opacity 700ms var(--ease-out), transform 700ms var(--ease-out); }
+    .fade-up.in { opacity: 1; transform: translateY(0); }
+    @media (prefers-reduced-motion: reduce) {
+      .fade-up { opacity: 1; transform: none; transition: none; }
+      .hero.loaded .hero-bg { transform: none; transition: none; }
+      html { scroll-behavior: auto; }
+    }
   </style>
 </head>
 <body>
@@ -928,6 +937,13 @@
     burger?.addEventListener('click', () => { mm.classList.add('open'); document.body.style.overflow = 'hidden'; });
     mmClose?.addEventListener('click', () => { mm.classList.remove('open'); document.body.style.overflow = ''; });
     mm?.querySelectorAll('a').forEach(a => a.addEventListener('click', () => { mm.classList.remove('open'); document.body.style.overflow = ''; }));
+
+    // === SCROLL REVEAL ===
+    document.querySelectorAll('.section-head, .play-tile, .mem-card, .loc-card, .coach-feature, .coach-mini, .event-row, .stringing').forEach(el => el.classList.add('fade-up'));
+    const revealObserver = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); revealObserver.unobserve(e.target); } });
+    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+    document.querySelectorAll('.fade-up').forEach(el => revealObserver.observe(el));
   </script>
 </body>
 </html>
