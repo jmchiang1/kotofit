@@ -497,7 +497,7 @@
       { id: 'jc-bruns',   city: 'Jersey City · NJ',       name: 'Brunswick',     courts: 10, hours: 'Open until 11PM', img: 'https://images.unsplash.com/photo-1554290712-e640351074bd?w=800&q=80&auto=format&fit=crop', status: 'open' },
       { id: 'jc-summit',  city: 'Jersey City · NJ',       name: 'Summit Ave',    courts: 6,  hours: 'Open until 10PM', img: 'https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=800&q=80&auto=format&fit=crop', status: 'open' },
       { id: 'lic-10th',   city: 'Long Island City · NY',  name: '10th Street',   courts: 12, hours: 'Open until 11PM', img: 'https://images.unsplash.com/photo-1599058917212-d750089bc07e?w=800&q=80&auto=format&fit=crop', status: 'open' },
-      { id: 'bk-soon',    city: 'Brooklyn · NY',          name: 'Coming Soon',   courts: 0,  hours: 'Opens this season', img: 'https://images.unsplash.com/photo-1542293787938-c9e299b88052?w=800&q=80&auto=format&fit=crop', status: 'soon' },
+      { id: 'bk-soon',    city: 'Brooklyn · NY',          name: 'Coming Soon',   courts: 0,  hours: 'Opens this season', img: 'https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=800&q=80&auto=format&fit=crop', status: 'soon' },
       { id: 'qns-soon',   city: 'Queens · NY',            name: 'Coming Soon',   courts: 0,  hours: 'Opens this season', img: 'https://images.unsplash.com/photo-1531315396756-905d68d21b56?w=800&q=80&auto=format&fit=crop', status: 'soon' },
     ];
 
@@ -516,7 +516,7 @@
     const COACHES = [
       { id: 'c1', role: 'Head coach',  name: 'Wei Chen',     desc: 'Former national singles champion. Head of badminton clinics across all locations.', img: 'https://images.unsplash.com/photo-1599058917212-d750089bc07e?w=900&q=80&auto=format&fit=crop', feature: true },
       { id: 'c2', role: 'Pickleball',  name: 'Maria Lopez',  desc: '', img: 'https://images.unsplash.com/photo-1554290712-e640351074bd?w=600&q=80&auto=format&fit=crop' },
-      { id: 'c3', role: 'Youth',       name: 'Jordan Park',  desc: '', img: 'https://images.unsplash.com/photo-1542293787938-c9e299b88052?w=600&q=80&auto=format&fit=crop' },
+      { id: 'c3', role: 'Youth',       name: 'Jordan Park',  desc: '', img: 'https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=600&q=80&auto=format&fit=crop' },
       { id: 'c4', role: 'Doubles',     name: 'Aisha Khan',   desc: '', img: 'https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=600&q=80&auto=format&fit=crop' },
       { id: 'c5', role: 'Private',     name: 'David Kim',    desc: '', img: 'https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=600&q=80&auto=format&fit=crop' },
     ];
@@ -545,6 +545,30 @@
     // === HERO ===
     requestAnimationFrame(() => {
       document.querySelector('.hero')?.classList.add('loaded');
+    });
+
+    // === HERO LOCATION CHIP ===
+    document.querySelector('.where-chip')?.addEventListener('click', () => {
+      openModal(`
+        <span class="eyebrow">▸ Choose your court</span>
+        <h3 class="display-m">Where are you playing?</h3>
+        <div class="step-pick" style="margin-top:16px">
+          ${LOCATIONS.map(l => `
+            <button data-pick-loc="${escapeHtml(l.id)}" ${l.status === 'soon' ? 'disabled style="opacity:0.5"' : ''}>
+              ${escapeHtml(l.name)} · ${escapeHtml(l.city)}${l.status === 'soon' ? ' (Soon)' : ''}
+            </button>
+          `).join('')}
+        </div>
+      `);
+      document.querySelectorAll('[data-pick-loc]').forEach(b => {
+        b.addEventListener('click', () => {
+          const loc = LOCATIONS.find(l => l.id === b.dataset.pickLoc);
+          if (!loc) return;
+          const cityNode = document.querySelector('.where-chip .city');
+          if (cityNode) cityNode.firstChild.textContent = loc.name + ' ';
+          closeModal();
+        });
+      });
     });
 
     // === LOCATIONS ===
