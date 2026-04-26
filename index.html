@@ -102,6 +102,31 @@
     .where-chip .city { font-size: 14px; font-weight: 700; }
     .where-chip .caret { color: var(--mute); }
     .hero-cta { font-size: 13px; padding: 16px 26px; }
+
+    /* === LOCATIONS === */
+    .loc-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+    .loc-card { background: var(--surface); border: 1px solid var(--elevated); display: flex; flex-direction: column; cursor: pointer; transition: transform 200ms var(--ease-out), border-color 200ms; text-align: left; }
+    .loc-card:hover { transform: translateY(-4px); border-color: var(--cobalt); }
+    .loc-img { aspect-ratio: 4/3; background-size: cover; background-position: center; position: relative; display: flex; align-items: flex-end; padding: 12px; }
+    .loc-img::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(10,10,10,0.7) 100%); pointer-events: none; }
+    .loc-img .badge { position: relative; z-index: 1; background: var(--cobalt); padding: 4px 8px; font-size: 9px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--bone); }
+    .loc-img .badge.soon { background: var(--bone); color: var(--ink); }
+    .loc-body { padding: 16px; }
+    .loc-body .city { font-size: 9px; color: var(--mute); text-transform: uppercase; letter-spacing: 0.15em; font-weight: 700; }
+    .loc-body .name { font-size: 18px; font-weight: 800; margin: 4px 0; letter-spacing: -0.02em; color: var(--bone); }
+    .loc-body .meta { font-size: 11px; color: var(--mute); }
+    @media (max-width: 1024px) { .loc-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 540px)  { .loc-grid { grid-template-columns: 1fr; } }
+
+    /* === MODAL (shared) === */
+    .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.7); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); z-index: 200; display: none; align-items: center; justify-content: center; padding: 24px; }
+    .modal-backdrop.open { display: flex; }
+    .modal { background: var(--surface); border: 1px solid var(--elevated); max-width: 560px; width: 100%; max-height: 90vh; overflow: auto; padding: 32px; position: relative; }
+    .modal-close { position: absolute; top: 16px; right: 16px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; color: var(--mute); font-size: 20px; transition: color 150ms; }
+    .modal-close:hover { color: var(--bone); }
+    .modal h3 { margin: 0 0 8px; }
+    .modal .modal-meta { color: var(--mute); font-size: 13px; margin-bottom: 24px; }
+    .modal .modal-img { aspect-ratio: 16/9; background-size: cover; background-position: center; margin: -32px -32px 24px; }
   </style>
 </head>
 <body>
@@ -138,9 +163,30 @@
         </div>
       </div>
     </section>
+    <section id="locations">
+      <div class="container">
+        <header class="section-head">
+          <div>
+            <span class="eyebrow">▸ Five open. Three coming.</span>
+            <h2 class="display-l" style="margin-top:10px">Find your court.</h2>
+          </div>
+          <p class="desc">Five locations across NJ and NY today. Brooklyn and Queens land this season.</p>
+        </header>
+        <div class="loc-grid" id="loc-grid"></div>
+      </div>
+    </section>
   </main>
   <script>
     // === MOCK DATA === (added in later tasks)
+
+    // === DATA ===
+    const LOCATIONS = [
+      { id: 'jc-3rd',     city: 'Jersey City · NJ',       name: '3rd Street',    courts: 8,  hours: 'Open until 11PM', img: 'https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=800&q=80&auto=format&fit=crop', status: 'open' },
+      { id: 'jc-bruns',   city: 'Jersey City · NJ',       name: 'Brunswick',     courts: 10, hours: 'Open until 11PM', img: 'https://images.unsplash.com/photo-1554290712-e640351074bd?w=800&q=80&auto=format&fit=crop', status: 'open' },
+      { id: 'jc-summit',  city: 'Jersey City · NJ',       name: 'Summit Ave',    courts: 6,  hours: 'Open until 10PM', img: 'https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=800&q=80&auto=format&fit=crop', status: 'open' },
+      { id: 'lic-10th',   city: 'Long Island City · NY',  name: '10th Street',   courts: 12, hours: 'Open until 11PM', img: 'https://images.unsplash.com/photo-1599058917212-d750089bc07e?w=800&q=80&auto=format&fit=crop', status: 'open' },
+      { id: 'bk-soon',    city: 'Brooklyn · NY',          name: 'Coming Soon',   courts: 0,  hours: 'Opens this season', img: 'https://images.unsplash.com/photo-1542293787938-c9e299b88052?w=800&q=80&auto=format&fit=crop', status: 'soon' },
+    ];
 
     // === INTERACTIONS === (added in later tasks)
 
@@ -148,6 +194,68 @@
     requestAnimationFrame(() => {
       document.querySelector('.hero')?.classList.add('loaded');
     });
+
+    // === LOCATIONS ===
+    function renderLocations() {
+      const grid = document.getElementById('loc-grid');
+      grid.innerHTML = LOCATIONS.map(loc => `
+        <button class="loc-card" data-loc-id="${loc.id}">
+          <div class="loc-img" style="background-image:url('${loc.img}')">
+            <span class="badge ${loc.status === 'soon' ? 'soon' : ''}">${loc.status === 'soon' ? 'Soon' : 'Open'}</span>
+          </div>
+          <div class="loc-body">
+            <div class="city">${loc.city}</div>
+            <div class="name">${loc.name}</div>
+            <div class="meta">${loc.courts ? loc.courts + ' courts · ' : ''}${loc.hours}</div>
+          </div>
+        </button>
+      `).join('');
+      grid.querySelectorAll('.loc-card').forEach(card => {
+        card.addEventListener('click', () => openLocationModal(card.dataset.locId));
+      });
+    }
+    renderLocations();
+
+    // === MODAL ===
+    function openModal(html) {
+      let backdrop = document.getElementById('modal-backdrop');
+      if (!backdrop) {
+        backdrop = document.createElement('div');
+        backdrop.id = 'modal-backdrop';
+        backdrop.className = 'modal-backdrop';
+        document.body.appendChild(backdrop);
+        backdrop.addEventListener('click', e => { if (e.target === backdrop) closeModal(); });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+      }
+      backdrop.innerHTML = `<div class="modal" role="dialog" aria-modal="true">
+        <button class="modal-close" aria-label="Close">×</button>
+        ${html}
+      </div>`;
+      backdrop.querySelector('.modal-close').addEventListener('click', closeModal);
+      backdrop.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeModal() {
+      const backdrop = document.getElementById('modal-backdrop');
+      if (backdrop) backdrop.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    function openLocationModal(id) {
+      const loc = LOCATIONS.find(l => l.id === id);
+      if (!loc) return;
+      const isSoon = loc.status === 'soon';
+      openModal(`
+        <div class="modal-img" style="background-image:url('${loc.img}')"></div>
+        <span class="eyebrow">${loc.city}</span>
+        <h3 class="display-m" style="margin-top:6px">${loc.name}</h3>
+        <p class="modal-meta">${isSoon ? 'Coming this season — get notified when we open.' : `${loc.courts} courts · ${loc.hours}`}</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn btn-primary" onclick="closeModal();document.getElementById('booking').scrollIntoView({behavior:'smooth'})">${isSoon ? 'Notify me' : 'Reserve here →'}</button>
+          <button class="btn btn-ghost" onclick="closeModal()">Close</button>
+        </div>
+      `);
+    }
   </script>
 </body>
 </html>
