@@ -93,23 +93,11 @@
     .hero { position: relative; min-height: calc(100vh - 64px); padding: 0; border-top: 0; overflow: hidden; display: flex; flex-direction: column; }
     .hero-bg { position: absolute; inset: 0; background-image: linear-gradient(180deg, rgba(10,10,10,0.35) 0%, rgba(10,10,10,0.85) 100%), url('https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=2000&q=80&auto=format&fit=crop'); background-size: cover; background-position: center; z-index: 0; transform: scale(1); transition: transform 8s ease-out; }
     .hero.loaded .hero-bg { transform: scale(1.06); }
-    .hero-inner { position: relative; z-index: 1; flex: 1; display: flex; flex-direction: column; justify-content: space-between; padding-top: clamp(64px, 12vw, 128px); padding-bottom: clamp(40px, 6vw, 64px); }
+    .hero-inner { position: relative; z-index: 1; flex: 1; display: flex; flex-direction: column; justify-content: space-between; padding-top: clamp(64px, 12vw, 128px); padding-bottom: clamp(40px, 6vw, 64px); gap: clamp(40px, 6vw, 80px); }
     .hero-top .eyebrow { display: inline-block; }
     .hero-top h1 { margin-top: 18px; max-width: 920px; }
     .hero-top h1 em { font-style: normal; color: var(--cobalt); }
-    .hero-lede { font-size: clamp(15px, 1.4vw, 18px); color: var(--bone); opacity: 0.85; max-width: 540px; margin: 24px 0 0; line-height: 1.55; font-weight: 400; }
-    .hero-stats { display: flex; gap: clamp(20px, 4vw, 48px); margin-top: clamp(28px, 4vw, 40px); flex-wrap: wrap; }
-    .hero-stat { display: flex; flex-direction: column; gap: 4px; }
-    .hero-stat .num { font-size: clamp(28px, 3.5vw, 40px); font-weight: 900; letter-spacing: -0.03em; line-height: 1; }
-    .hero-stat .num em { font-style: normal; color: var(--cobalt); }
-    .hero-stat .lbl { font-size: 10px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--mute); }
-    .hero-bottom { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; flex-wrap: wrap; }
-    .where-chip { display: inline-flex; align-items: center; gap: 14px; background: rgba(255,255,255,0.08); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); padding: 12px 18px; border: 1px solid rgba(255,255,255,0.18); cursor: pointer; transition: all 150ms; }
-    .where-chip:hover { background: rgba(255,255,255,0.14); }
-    .where-chip .lbl { font-size: 9px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--mute); font-weight: 700; }
-    .where-chip .city { font-size: 14px; font-weight: 700; }
-    .where-chip .caret { color: var(--mute); }
-    .hero-cta { font-size: 13px; padding: 16px 26px; }
+    .hero-booking .booking { background: rgba(24, 24, 27, 0.88); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
 
     /* === LOCATIONS === */
     .loc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
@@ -307,7 +295,7 @@
         <li><a href="#events">Events</a></li>
         <li><a href="#stringing">Stringing</a></li>
       </ul>
-      <a href="#booking" class="nav-cta">Reserve Court →</a>
+      <a href="#top" class="nav-cta">Reserve Court →</a>
       <button class="nav-burger" aria-label="Open menu"><span></span></button>
     </div>
   </nav>
@@ -315,37 +303,44 @@
     <button class="close" id="mm-close" aria-label="Close menu">×</button>
     <nav>
       <a href="#locations">Locations</a>
-      <a href="#booking">Reserve</a>
+      <a href="#top">Reserve</a>
       <a href="#memberships">Memberships</a>
       <a href="#coaching">Coaching</a>
       <a href="#events">Events</a>
       <a href="#stringing">Stringing</a>
     </nav>
-    <a href="#booking" class="mm-cta">Reserve a court →</a>
+    <a href="#top" class="mm-cta">Reserve a court →</a>
   </div>
   <main>
     <section class="hero" id="top">
       <div class="hero-bg" aria-hidden="true"></div>
       <div class="container hero-inner">
         <div class="hero-top">
-          <span class="eyebrow">▸ America's home for indoor sports</span>
+          <span class="eyebrow">▸ Book in 30 seconds</span>
           <h1 class="display-xl">Built for<br/>game <em>day.</em></h1>
-          <p class="hero-lede">Four locations across NJ and NY. Three games — badminton, pickleball, ping pong. One community that shows up. Reserve a court in seconds.</p>
-          <div class="hero-stats">
-            <div class="hero-stat"><div class="num">4<em>.</em></div><div class="lbl">Locations open</div></div>
-            <div class="hero-stat"><div class="num">36<em>.</em></div><div class="lbl">Courts ready</div></div>
-            <div class="hero-stat"><div class="num">2<em>.</em></div><div class="lbl">More coming</div></div>
-            <div class="hero-stat"><div class="num">2.4k<em>.</em></div><div class="lbl">Members strong</div></div>
-          </div>
         </div>
-        <div class="hero-bottom">
-          <button class="where-chip" data-action="open-locations">
-            <div>
-              <div class="lbl">Playing in</div>
-              <div class="city">Jersey City <span class="caret">▾</span></div>
+        <div class="hero-booking">
+          <div class="booking">
+            <div class="booking-row">
+              <div class="b-field">
+                <label>Sport</label>
+                <button class="input" data-bf="sport"><span data-val>Badminton</span><span class="arrow">▾</span></button>
+              </div>
+              <div class="b-field">
+                <label>Location</label>
+                <button class="input" data-bf="location"><span data-val>Brunswick · JC</span><span class="arrow">▾</span></button>
+              </div>
+              <div class="b-field">
+                <label>Date</label>
+                <button class="input" data-bf="date"><span data-val>Tonight</span><span class="arrow">▾</span></button>
+              </div>
+              <div class="b-field">
+                <label>Time</label>
+                <button class="input" data-bf="time"><span data-val>7:00 PM</span><span class="arrow">▾</span></button>
+              </div>
+              <button class="booking-cta" id="check-courts">Check courts →</button>
             </div>
-          </button>
-          <a href="#booking" class="btn btn-primary hero-cta">Reserve a court →</a>
+          </div>
         </div>
       </div>
     </section>
@@ -359,37 +354,6 @@
           <p class="desc">Four locations across NJ and NY today. Brooklyn and Queens land this season.</p>
         </header>
         <div class="loc-grid" id="loc-grid"></div>
-      </div>
-    </section>
-    <section id="booking">
-      <div class="container">
-        <header class="section-head">
-          <div>
-            <span class="eyebrow">▸ Book in 30 seconds</span>
-            <h2 class="display-l">Reserve a court.</h2>
-          </div>
-        </header>
-        <div class="booking">
-          <div class="booking-row">
-            <div class="b-field">
-              <label>Sport</label>
-              <button class="input" data-bf="sport"><span data-val>Badminton</span><span class="arrow">▾</span></button>
-            </div>
-            <div class="b-field">
-              <label>Location</label>
-              <button class="input" data-bf="location"><span data-val>Brunswick · JC</span><span class="arrow">▾</span></button>
-            </div>
-            <div class="b-field">
-              <label>Date</label>
-              <button class="input" data-bf="date"><span data-val>Sat, May 2</span><span class="arrow">▾</span></button>
-            </div>
-            <div class="b-field">
-              <label>Time</label>
-              <button class="input" data-bf="time"><span data-val>7:00 PM</span><span class="arrow">▾</span></button>
-            </div>
-            <button class="booking-cta" id="check-courts">Check courts →</button>
-          </div>
-        </div>
       </div>
     </section>
     <section id="play">
@@ -470,7 +434,7 @@
           <h4>Play</h4>
           <ul>
             <li><a href="#locations">Locations</a></li>
-            <li><a href="#booking">Reserve</a></li>
+            <li><a href="#top">Reserve</a></li>
             <li><a href="#memberships">Memberships</a></li>
             <li><a href="#stringing">Stringing</a></li>
           </ul>
@@ -558,30 +522,6 @@
     // === HERO ===
     requestAnimationFrame(() => {
       document.querySelector('.hero')?.classList.add('loaded');
-    });
-
-    // === HERO LOCATION CHIP ===
-    document.querySelector('.where-chip')?.addEventListener('click', () => {
-      openModal(`
-        <span class="eyebrow">▸ Choose your court</span>
-        <h3 class="display-m">Where are you playing?</h3>
-        <div class="step-pick" style="margin-top:16px">
-          ${LOCATIONS.map(l => `
-            <button data-pick-loc="${escapeHtml(l.id)}" ${l.status === 'soon' ? 'disabled style="opacity:0.5"' : ''}>
-              ${escapeHtml(l.name)} · ${escapeHtml(l.city)}${l.status === 'soon' ? ' (Soon)' : ''}
-            </button>
-          `).join('')}
-        </div>
-      `);
-      document.querySelectorAll('[data-pick-loc]').forEach(b => {
-        b.addEventListener('click', () => {
-          const loc = LOCATIONS.find(l => l.id === b.dataset.pickLoc);
-          if (!loc) return;
-          const cityNode = document.querySelector('.where-chip .city');
-          if (cityNode) cityNode.firstChild.textContent = loc.name + ' ';
-          closeModal();
-        });
-      });
     });
 
     // === LOCATIONS ===
@@ -679,7 +619,7 @@
       `);
       document.getElementById('loc-modal-primary')?.addEventListener('click', () => {
         closeModal();
-        document.getElementById('booking')?.scrollIntoView({ behavior: 'smooth' });
+        document.getElementById('top')?.scrollIntoView({ behavior: 'smooth' });
       });
       document.getElementById('loc-modal-close')?.addEventListener('click', closeModal);
     }
@@ -772,7 +712,7 @@
       `);
       document.getElementById('sport-modal-primary')?.addEventListener('click', () => {
         closeModal();
-        document.getElementById('booking')?.scrollIntoView({ behavior: 'smooth' });
+        document.getElementById('top')?.scrollIntoView({ behavior: 'smooth' });
       });
       document.getElementById('sport-modal-close')?.addEventListener('click', closeModal);
     }
