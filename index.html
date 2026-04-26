@@ -29,6 +29,7 @@
 
     /* === RESET === */
     *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
     html, body { margin: 0; padding: 0; }
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
@@ -63,9 +64,10 @@
     .btn-ghost:hover { background: var(--bone); color: var(--ink); }
 
     /* === SECTION === */
-    section { padding: var(--section-py) 0; border-top: 1px solid var(--elevated); }
+    section { padding: var(--section-py) 0; border-top: 1px solid var(--elevated); scroll-margin-top: 64px; }
     .section-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 32px; flex-wrap: wrap; margin-bottom: 40px; }
     .section-head .desc { color: var(--mute); font-size: 14px; max-width: 360px; line-height: 1.6; }
+    .section-head .eyebrow + h1, .section-head .eyebrow + h2, .section-head .eyebrow + h3 { margin-top: 10px; }
 
     /* === NAV === */
     .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(10, 10, 10, 0.7); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--elevated); }
@@ -104,7 +106,10 @@
     .hero-cta { font-size: 13px; padding: 16px 26px; }
 
     /* === LOCATIONS === */
-    .loc-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+    .loc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    @media (min-width: 1100px) { .loc-grid { grid-template-columns: repeat(6, 1fr); } }
+    @media (max-width: 720px)  { .loc-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 460px)  { .loc-grid { grid-template-columns: 1fr; } }
     .loc-card { background: var(--surface); border: 1px solid var(--elevated); display: flex; flex-direction: column; cursor: pointer; transition: transform 200ms var(--ease-out), border-color 200ms; text-align: left; }
     .loc-card:hover { transform: translateY(-4px); border-color: var(--cobalt); }
     .loc-img { aspect-ratio: 4/3; background-size: cover; background-position: center; position: relative; display: flex; align-items: flex-end; padding: 12px; }
@@ -115,8 +120,6 @@
     .loc-body .city { font-size: 9px; color: var(--mute); text-transform: uppercase; letter-spacing: 0.15em; font-weight: 700; }
     .loc-body .name { font-size: 18px; font-weight: 800; margin: 4px 0; letter-spacing: -0.02em; color: var(--bone); }
     .loc-body .meta { font-size: 11px; color: var(--mute); }
-    @media (max-width: 1024px) { .loc-grid { grid-template-columns: repeat(2, 1fr); } }
-    @media (max-width: 540px)  { .loc-grid { grid-template-columns: 1fr; } }
 
     /* === MODAL (shared) === */
     .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.7); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); z-index: 200; display: none; align-items: center; justify-content: center; padding: 24px; }
@@ -186,10 +189,10 @@
       <div class="container">
         <header class="section-head">
           <div>
-            <span class="eyebrow">▸ Five open. Three coming.</span>
-            <h2 class="display-l" style="margin-top:10px">Find your court.</h2>
+            <span class="eyebrow">▸ Four open. Two coming.</span>
+            <h2 class="display-l">Find your court.</h2>
           </div>
-          <p class="desc">Five locations across NJ and NY today. Brooklyn and Queens land this season.</p>
+          <p class="desc">Four locations across NJ and NY today. Brooklyn and Queens land this season.</p>
         </header>
         <div class="loc-grid" id="loc-grid"></div>
       </div>
@@ -199,7 +202,7 @@
         <header class="section-head">
           <div>
             <span class="eyebrow">▸ Book in 30 seconds</span>
-            <h2 class="display-l" style="margin-top:10px">Reserve a court.</h2>
+            <h2 class="display-l">Reserve a court.</h2>
           </div>
         </header>
         <div class="booking">
@@ -236,9 +239,15 @@
       { id: 'jc-summit',  city: 'Jersey City · NJ',       name: 'Summit Ave',    courts: 6,  hours: 'Open until 10PM', img: 'https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=800&q=80&auto=format&fit=crop', status: 'open' },
       { id: 'lic-10th',   city: 'Long Island City · NY',  name: '10th Street',   courts: 12, hours: 'Open until 11PM', img: 'https://images.unsplash.com/photo-1599058917212-d750089bc07e?w=800&q=80&auto=format&fit=crop', status: 'open' },
       { id: 'bk-soon',    city: 'Brooklyn · NY',          name: 'Coming Soon',   courts: 0,  hours: 'Opens this season', img: 'https://images.unsplash.com/photo-1542293787938-c9e299b88052?w=800&q=80&auto=format&fit=crop', status: 'soon' },
+      { id: 'qns-soon',   city: 'Queens · NY',            name: 'Coming Soon',   courts: 0,  hours: 'Opens this season', img: 'https://images.unsplash.com/photo-1531315396756-905d68d21b56?w=800&q=80&auto=format&fit=crop', status: 'soon' },
     ];
 
     // === INTERACTIONS === (added in later tasks)
+
+    // === HELPERS ===
+    function escapeHtml(s) {
+      return String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
 
     // === HERO ===
     requestAnimationFrame(() => {
@@ -250,13 +259,13 @@
       const grid = document.getElementById('loc-grid');
       grid.innerHTML = LOCATIONS.map(loc => `
         <button class="loc-card" data-loc-id="${loc.id}">
-          <div class="loc-img" style="background-image:url('${loc.img}')">
+          <div class="loc-img" style="background-image:url('${escapeHtml(loc.img)}')">
             <span class="badge ${loc.status === 'soon' ? 'soon' : ''}">${loc.status === 'soon' ? 'Soon' : 'Open'}</span>
           </div>
           <div class="loc-body">
-            <div class="city">${loc.city}</div>
-            <div class="name">${loc.name}</div>
-            <div class="meta">${loc.courts ? loc.courts + ' courts · ' : ''}${loc.hours}</div>
+            <div class="city">${escapeHtml(loc.city)}</div>
+            <div class="name">${escapeHtml(loc.name)}</div>
+            <div class="meta">${loc.courts ? escapeHtml(loc.courts) + ' courts · ' : ''}${escapeHtml(loc.hours)}</div>
           </div>
         </button>
       `).join('');
@@ -329,15 +338,20 @@
       if (!loc) return;
       const isSoon = loc.status === 'soon';
       openModal(`
-        <div class="modal-img" style="background-image:url('${loc.img}')"></div>
-        <span class="eyebrow">${loc.city}</span>
-        <h3 class="display-m" style="margin-top:6px">${loc.name}</h3>
-        <p class="modal-meta">${isSoon ? 'Coming this season — get notified when we open.' : `${loc.courts} courts · ${loc.hours}`}</p>
+        <div class="modal-img" style="background-image:url('${escapeHtml(loc.img)}')"></div>
+        <span class="eyebrow">${escapeHtml(loc.city)}</span>
+        <h3 class="display-m">${escapeHtml(loc.name)}</h3>
+        <p class="modal-meta">${isSoon ? 'Coming this season — get notified when we open.' : `${escapeHtml(loc.courts)} courts · ${escapeHtml(loc.hours)}`}</p>
         <div style="display:flex;gap:10px;flex-wrap:wrap">
-          <button class="btn btn-primary" onclick="closeModal();document.getElementById('booking').scrollIntoView({behavior:'smooth'})">${isSoon ? 'Notify me' : 'Reserve here →'}</button>
-          <button class="btn btn-ghost" onclick="closeModal()">Close</button>
+          <button class="btn btn-primary" id="loc-modal-primary">${isSoon ? 'Notify me' : 'Reserve here →'}</button>
+          <button class="btn btn-ghost" id="loc-modal-close">Close</button>
         </div>
       `);
+      document.getElementById('loc-modal-primary')?.addEventListener('click', () => {
+        closeModal();
+        document.getElementById('booking')?.scrollIntoView({ behavior: 'smooth' });
+      });
+      document.getElementById('loc-modal-close')?.addEventListener('click', closeModal);
     }
   </script>
 </body>
