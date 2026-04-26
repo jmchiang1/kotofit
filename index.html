@@ -149,6 +149,17 @@
     .b-dropdown.open { display: block; }
     .b-dropdown button { width: 100%; padding: 12px 14px; text-align: left; font-size: 13px; color: var(--bone); transition: background 150ms; }
     .b-dropdown button:hover { background: var(--elevated); }
+
+    /* === COURT GRID (in modal) === */
+    .court-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 16px 0 24px; }
+    .court-slot { padding: 14px 8px; text-align: center; font-size: 12px; font-weight: 700; border: 1px solid var(--elevated); cursor: pointer; transition: all 150ms; }
+    .court-slot.avail { border-color: var(--cobalt); color: var(--cobalt); }
+    .court-slot.avail:hover { background: var(--cobalt); color: var(--bone); }
+    .court-slot.booked { color: var(--mute); cursor: not-allowed; opacity: 0.5; }
+    .court-slot .slot-time { display: block; font-size: 14px; }
+    .court-slot .slot-court { display: block; font-size: 9px; font-weight: 600; opacity: 0.7; margin-top: 2px; letter-spacing: 0.1em; text-transform: uppercase; }
+
+    .confirm-num { font-size: 28px; font-weight: 900; letter-spacing: -0.02em; color: var(--cobalt); margin: 8px 0 4px; }
   </style>
 </head>
 <body>
@@ -352,6 +363,60 @@
         document.getElementById('booking')?.scrollIntoView({ behavior: 'smooth' });
       });
       document.getElementById('loc-modal-close')?.addEventListener('click', closeModal);
+    }
+
+    document.getElementById('check-courts').addEventListener('click', () => {
+      const sport    = document.querySelector('[data-bf="sport"] [data-val]').textContent;
+      const location = document.querySelector('[data-bf="location"] [data-val]').textContent;
+      const date     = document.querySelector('[data-bf="date"] [data-val]').textContent;
+      const time     = document.querySelector('[data-bf="time"] [data-val]').textContent;
+      openCourtModal({ sport, location, date, time });
+    });
+
+    function openCourtModal({ sport, location, date, time }) {
+      const slots = [
+        { time, court: 'Court 1', avail: true },
+        { time, court: 'Court 2', avail: false },
+        { time, court: 'Court 3', avail: true },
+        { time, court: 'Court 4', avail: true },
+        { time, court: 'Court 5', avail: false },
+        { time, court: 'Court 6', avail: true },
+        { time, court: 'Court 7', avail: false },
+        { time, court: 'Court 8', avail: true },
+        { time, court: 'Court 9', avail: true },
+      ];
+      openModal(`
+        <span class="eyebrow">▸ Available courts</span>
+        <h3 class="display-m">${escapeHtml(sport)} · ${escapeHtml(location)}</h3>
+        <p class="modal-meta">${escapeHtml(date)} at ${escapeHtml(time)}</p>
+        <div class="court-grid">
+          ${slots.map(s => `
+            <button class="court-slot ${s.avail ? 'avail' : 'booked'}" ${s.avail ? `data-court="${escapeHtml(s.court)}"` : 'disabled'}>
+              <span class="slot-time">${escapeHtml(s.time)}</span>
+              <span class="slot-court">${escapeHtml(s.court)}</span>
+            </button>
+          `).join('')}
+        </div>
+        <p class="body" style="font-size:12px">${slots.filter(s=>s.avail).length} of ${slots.length} courts available.</p>
+      `);
+      document.querySelectorAll('.court-slot.avail').forEach(slot => {
+        slot.addEventListener('click', () => {
+          openConfirmModal({ sport, location, date, time, court: slot.dataset.court });
+        });
+      });
+    }
+
+    function openConfirmModal({ sport, location, date, time, court }) {
+      const num = 'KF-' + Math.floor(1000 + Math.random() * 9000);
+      openModal(`
+        <span class="eyebrow">▸ You're booked</span>
+        <div class="confirm-num">${num}</div>
+        <h3 class="display-m">${escapeHtml(sport)} · ${escapeHtml(court)}</h3>
+        <p class="modal-meta">${escapeHtml(location)} · ${escapeHtml(date)} at ${escapeHtml(time)}</p>
+        <p class="body" style="font-size:13px;margin-bottom:24px">Confirmation sent to your email. See you on the court.</p>
+        <button class="btn btn-primary" id="confirm-done">Done</button>
+      `);
+      document.getElementById('confirm-done')?.addEventListener('click', closeModal);
     }
   </script>
 </body>
