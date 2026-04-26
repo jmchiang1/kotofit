@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kotofit — America's Home for Badminton & Indoor Sports</title>
+  <meta name="description" content="Five locations across NJ and NY. Reserve a court for badminton, pickleball, or ping pong in seconds." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" />
+  <style>
+    /* === DESIGN TOKENS === */
+    :root {
+      --ink: #0a0a0a;
+      --surface: #18181b;
+      --elevated: #27272a;
+      --line: #3f3f46;
+      --bone: #ffffff;
+      --mute: #a1a1aa;
+      --cobalt: #2563eb;
+      --cobalt-hover: #1d4ed8;
+
+      --max-w: 1280px;
+      --pad-x: clamp(20px, 4vw, 48px);
+      --section-py: clamp(56px, 9vw, 96px);
+
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* === RESET === */
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+      background: var(--ink);
+      color: var(--bone);
+      font-size: 15px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+    img { display: block; max-width: 100%; height: auto; }
+    button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+    a { color: inherit; text-decoration: none; }
+    ul { list-style: none; padding: 0; margin: 0; }
+
+    /* === LAYOUT === */
+    .container { max-width: var(--max-w); margin: 0 auto; padding-left: var(--pad-x); padding-right: var(--pad-x); }
+
+    /* === TYPOGRAPHY === */
+    .display-xl { font-size: clamp(48px, 9vw, 96px); line-height: 0.92; font-weight: 900; letter-spacing: -0.04em; text-transform: uppercase; margin: 0; }
+    .display-l  { font-size: clamp(32px, 5vw, 48px); line-height: 1; font-weight: 800; letter-spacing: -0.03em; margin: 0; }
+    .display-m  { font-size: clamp(20px, 2.5vw, 24px); line-height: 1.1; font-weight: 700; letter-spacing: -0.02em; margin: 0; }
+    .body { font-size: 15px; line-height: 1.6; color: var(--mute); }
+    .eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--cobalt); }
+    .label { font-size: 10px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--mute); }
+
+    /* === BUTTONS === */
+    .btn { display: inline-flex; align-items: center; gap: 8px; padding: 14px 22px; font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; transition: all 150ms var(--ease-out); cursor: pointer; }
+    .btn-primary { background: var(--cobalt); color: var(--bone); }
+    .btn-primary:hover { background: var(--cobalt-hover); }
+    .btn-ghost { background: transparent; color: var(--bone); border: 1px solid var(--bone); }
+    .btn-ghost:hover { background: var(--bone); color: var(--ink); }
+
+    /* === SECTION === */
+    section { padding: var(--section-py) 0; border-top: 1px solid var(--elevated); }
+    .section-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 32px; flex-wrap: wrap; margin-bottom: 40px; }
+    .section-head .desc { color: var(--mute); font-size: 14px; max-width: 360px; line-height: 1.6; }
+  </style>
+</head>
+<body>
+  <main></main>
+  <script>
+    // === MOCK DATA === (added in later tasks)
+
+    // === INTERACTIONS === (added in later tasks)
+  </script>
+</body>
+</html>
