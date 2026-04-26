@@ -90,8 +90,8 @@
     body { padding-top: 64px; }
 
     /* === HERO === */
-    .hero { position: relative; min-height: 560px; padding: 0; border-top: 0; overflow: hidden; display: flex; flex-direction: column; }
-    .hero-bg { position: absolute; inset: 0; background-image: linear-gradient(180deg, rgba(10,10,10,0.35) 0%, rgba(10,10,10,0.85) 100%), url('https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=2000&q=80&auto=format&fit=crop'); background-size: cover; background-position: center; z-index: 0; transform: scale(1); transition: transform 8s ease-out; }
+    .hero { position: relative; min-height: 50rem; padding: 0; border-top: 0; overflow: hidden; display: flex; flex-direction: column; }
+    .hero-bg { position: absolute; inset: 0; background-image: linear-gradient(180deg, rgba(10,10,10,0.15) 0%, rgba(10,10,10,0.55) 100%), url('https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=2000&q=80&auto=format&fit=crop'); background-size: cover; background-position: center; z-index: 0; transform: scale(1); transition: transform 8s ease-out; }
     .hero.loaded .hero-bg { transform: scale(1.06); }
     .hero-inner { position: relative; z-index: 1; flex: 1; display: flex; flex-direction: column; justify-content: center; padding-top: clamp(56px, 8vw, 96px); padding-bottom: clamp(56px, 8vw, 96px); gap: clamp(28px, 4vw, 44px); text-align: center; align-items: center; }
     .hero-top .eyebrow { display: inline-block; }
@@ -317,7 +317,7 @@
       <div class="hero-bg" aria-hidden="true"></div>
       <div class="container hero-inner">
         <div class="hero-top">
-          <span class="eyebrow">▸ Book in 30 seconds</span>
+          <!-- <span class="eyebrow">▸ Book in 30 seconds</span> -->
           <h1 class="display-xl">Built for<br/>game <em>day.</em></h1>
         </div>
         <div class="hero-booking">
@@ -418,7 +418,7 @@
             <p>Drop your racquet at any location. Choose your tension, your string, your timing. We'll text you when it's ready.</p>
             <button class="btn btn-primary stringing-cta" id="stringing-cta">Book stringing →</button>
           </div>
-          <div class="stringing-img" style="background-image:url('https://images.unsplash.com/photo-1531315396756-905d68d21b56?w=1200&q=80&auto=format&fit=crop')"></div>
+          <div class="stringing-img" style="background-image:url('https://images.unsplash.com/photo-1570953233426-4e235751c6f3?q=80&w=1548&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')"></div>
         </div>
       </div>
     </section>
@@ -480,7 +480,7 @@
     ];
 
     const SPORTS = [
-      { id: 'badminton',  num: '01', name: 'Badminton',  read: 'Open play, leagues, clinics →', img: 'https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=1200&q=80&auto=format&fit=crop', desc: 'The fastest racquet sport in the world. Open play sessions, member leagues, and clinics for every level — from first racquet to tournament prep.' },
+      { id: 'badminton',  num: '01', name: 'Badminton',  read: 'Open play, leagues, clinics →', img: 'https://images.unsplash.com/photo-1721760886982-3c643f05813d?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', desc: 'The fastest racquet sport in the world. Open play sessions, member leagues, and clinics for every level — from first racquet to tournament prep.' },
       { id: 'pickleball', num: '02', name: 'Pickleball', read: 'All levels, mixers, tournaments →', img: 'https://images.unsplash.com/photo-1659318006095-4d44845f3a1b?w=1200&q=80&auto=format&fit=crop', desc: "America's fastest-growing sport. Drop-in mixers every week, ladder leagues, and weekend tournaments. Easy to learn, hard to put down." },
       { id: 'pingpong',   num: '03', name: 'Ping Pong',  read: 'Drop in, tables ready →',          img: 'https://images.unsplash.com/photo-1611251135345-18c56206b863?w=1200&q=80&auto=format&fit=crop', desc: 'Tables ready at every location. No reservation needed — drop in, grab a paddle, and play.' },
     ];
@@ -492,11 +492,11 @@
     ];
 
     const COACHES = [
-      { id: 'c1', role: 'Head coach',  name: 'Wei Chen',     desc: 'Former national singles champion. Head of badminton clinics across all locations.', img: 'https://images.unsplash.com/photo-1599058917212-d750089bc07e?w=900&q=80&auto=format&fit=crop', feature: true },
-      { id: 'c2', role: 'Pickleball',  name: 'Maria Lopez',  desc: '', img: 'https://images.unsplash.com/photo-1554290712-e640351074bd?w=600&q=80&auto=format&fit=crop' },
-      { id: 'c3', role: 'Youth',       name: 'Jordan Park',  desc: '', img: 'https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=600&q=80&auto=format&fit=crop' },
-      { id: 'c4', role: 'Doubles',     name: 'Aisha Khan',   desc: '', img: 'https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=600&q=80&auto=format&fit=crop' },
-      { id: 'c5', role: 'Private',     name: 'David Kim',    desc: '', img: 'https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=600&q=80&auto=format&fit=crop' },
+      { id: 'c1', role: 'Head coach',  name: 'Wei Chen',     desc: 'Former national singles champion. Head of badminton clinics across all locations.', img: 'https://images.unsplash.com/photo-1617962529235-262e8e777e48?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', feature: true },
+      { id: 'c2', role: 'Pickleball',  name: 'Maria Lopez',  desc: '', img: 'https://images.unsplash.com/photo-1617962529235-262e8e777e48?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' },
+      { id: 'c3', role: 'Youth',       name: 'Jordan Park',  desc: '', img: 'https://images.unsplash.com/photo-1617962529235-262e8e777e48?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' },
+      { id: 'c4', role: 'Doubles',     name: 'Aisha Khan',   desc: '', img: 'https://images.unsplash.com/photo-1617962529235-262e8e777e48?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' },
+      { id: 'c5', role: 'Private',     name: 'David Kim',    desc: '', img: 'https://images.unsplash.com/photo-1617962529235-262e8e777e48?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' },
     ];
 
     const EVENTS = [
