@@ -204,6 +204,25 @@
     .step-pick { display: grid; grid-template-columns: 1fr; gap: 8px; margin: 12px 0 24px; }
     .step-pick button { padding: 14px; background: var(--ink); border: 1px solid var(--elevated); color: var(--bone); text-align: left; cursor: pointer; transition: all 150ms; font-family: inherit; }
     .step-pick button:hover, .step-pick button.selected { border-color: var(--cobalt); background: rgba(37,99,235,0.08); }
+
+    /* === COACHING === */
+    .coach-grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 12px; }
+    .coach-feature { aspect-ratio: 5/6; padding: 28px; display: flex; flex-direction: column; justify-content: flex-end; position: relative; overflow: hidden; color: var(--bone); }
+    .coach-feature .coach-bg, .coach-mini .coach-bg { position: absolute; inset: 0; background-size: cover; background-position: center; z-index: 0; }
+    .coach-feature::after, .coach-mini::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 30%, rgba(10,10,10,0.85) 100%); z-index: 1; }
+    .coach-feature > *, .coach-mini > * { position: relative; z-index: 2; }
+    .coach-feature .role, .coach-mini .role { font-size: 10px; color: var(--cobalt); letter-spacing: 0.15em; text-transform: uppercase; font-weight: 700; }
+    .coach-feature .name { font-size: 32px; font-weight: 900; letter-spacing: -0.02em; margin-top: 6px; }
+    .coach-feature .desc { font-size: 13px; color: var(--mute); margin-top: 8px; line-height: 1.5; max-width: 320px; }
+    .coach-side { display: flex; flex-direction: column; gap: 12px; }
+    .coach-mini { flex: 1; padding: 18px; display: flex; flex-direction: column; justify-content: flex-end; position: relative; overflow: hidden; }
+    .coach-mini .name { font-size: 18px; font-weight: 800; margin-top: 4px; }
+    @media (max-width: 900px) {
+      .coach-grid { grid-template-columns: 1fr; }
+      .coach-side { flex-direction: row; }
+      .coach-mini { aspect-ratio: 1; flex: 1; }
+    }
+    @media (max-width: 540px) { .coach-side { flex-direction: column; } }
   </style>
 </head>
 <body>
@@ -306,6 +325,18 @@
         <div class="mem-grid" id="mem-grid"></div>
       </div>
     </section>
+    <section id="coaching">
+      <div class="container">
+        <header class="section-head">
+          <div>
+            <span class="eyebrow">▸ Learn from champions</span>
+            <h2 class="display-l">Coaching.</h2>
+          </div>
+          <p class="desc">Group clinics, private lessons, and youth programs led by national-level coaches.</p>
+        </header>
+        <div class="coach-grid" id="coach-grid"></div>
+      </div>
+    </section>
   </main>
   <script>
     // === MOCK DATA === (added in later tasks)
@@ -330,6 +361,14 @@
       { id: 'dropin',     name: 'Drop-in',                price: 0,   featured: false, perks: ['Pay per court', 'Standard booking window', 'Public events'], cta: 'Book one-off' },
       { id: 'go-koto',    name: 'Go Koto · Most popular', price: 49,  featured: true,  perks: ['72-hour early booking', 'Free monthly events', '10% off clinics + stringing', 'Guest passes'], cta: 'Become a member' },
       { id: 'all-access', name: 'All-Access',             price: 129, featured: false, perks: ['14-day early booking', 'All clinics included', 'Free stringing (2/mo)', 'Unlimited guest passes'], cta: 'Go All-Access' },
+    ];
+
+    const COACHES = [
+      { id: 'c1', role: 'Head coach',  name: 'Wei Chen',     desc: 'Former national singles champion. Head of badminton clinics across all locations.', img: 'https://images.unsplash.com/photo-1599058917212-d750089bc07e?w=900&q=80&auto=format&fit=crop', feature: true },
+      { id: 'c2', role: 'Pickleball',  name: 'Maria Lopez',  desc: '', img: 'https://images.unsplash.com/photo-1554290712-e640351074bd?w=600&q=80&auto=format&fit=crop' },
+      { id: 'c3', role: 'Youth',       name: 'Jordan Park',  desc: '', img: 'https://images.unsplash.com/photo-1542293787938-c9e299b88052?w=600&q=80&auto=format&fit=crop' },
+      { id: 'c4', role: 'Doubles',     name: 'Aisha Khan',   desc: '', img: 'https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=600&q=80&auto=format&fit=crop' },
+      { id: 'c5', role: 'Private',     name: 'David Kim',    desc: '', img: 'https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=600&q=80&auto=format&fit=crop' },
     ];
 
     // === INTERACTIONS === (added in later tasks)
@@ -602,6 +641,46 @@
       };
       render();
     }
+
+    // === COACHING ===
+    function renderCoaches() {
+      const grid = document.getElementById('coach-grid');
+      const feature = COACHES.find(c => c.feature);
+      const others = COACHES.filter(c => !c.feature);
+      grid.innerHTML = `
+        <div class="coach-feature">
+          <div class="coach-bg" style="background-image:url('${escapeHtml(feature.img)}')"></div>
+          <div>
+            <div class="role">${escapeHtml(feature.role)}</div>
+            <div class="name">${escapeHtml(feature.name)}</div>
+            <p class="desc">${escapeHtml(feature.desc)}</p>
+          </div>
+        </div>
+        <div class="coach-side">
+          ${others.slice(0, 2).map(c => `
+            <div class="coach-mini">
+              <div class="coach-bg" style="background-image:url('${escapeHtml(c.img)}')"></div>
+              <div>
+                <div class="role">${escapeHtml(c.role)}</div>
+                <div class="name">${escapeHtml(c.name)}</div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+        <div class="coach-side">
+          ${others.slice(2, 4).map(c => `
+            <div class="coach-mini">
+              <div class="coach-bg" style="background-image:url('${escapeHtml(c.img)}')"></div>
+              <div>
+                <div class="role">${escapeHtml(c.role)}</div>
+                <div class="name">${escapeHtml(c.name)}</div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+    renderCoaches();
   </script>
 </body>
 </html>
