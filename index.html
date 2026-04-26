@@ -66,9 +66,43 @@
     section { padding: var(--section-py) 0; border-top: 1px solid var(--elevated); }
     .section-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 32px; flex-wrap: wrap; margin-bottom: 40px; }
     .section-head .desc { color: var(--mute); font-size: 14px; max-width: 360px; line-height: 1.6; }
+
+    /* === NAV === */
+    .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(10, 10, 10, 0.7); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--elevated); }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+    .nav-logo { font-size: 18px; font-weight: 900; letter-spacing: -0.03em; }
+    .nav-links { display: flex; gap: 28px; }
+    .nav-links a { font-size: 12px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--mute); transition: color 150ms; }
+    .nav-links a:hover { color: var(--bone); }
+    .nav-cta { padding: 10px 16px; background: var(--cobalt); color: var(--bone); font-size: 11px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; transition: background 150ms; }
+    .nav-cta:hover { background: var(--cobalt-hover); }
+    .nav-burger { display: none; width: 40px; height: 40px; align-items: center; justify-content: center; }
+    .nav-burger span { width: 22px; height: 2px; background: var(--bone); position: relative; }
+    .nav-burger span::before, .nav-burger span::after { content: ''; position: absolute; left: 0; right: 0; height: 2px; background: var(--bone); }
+    .nav-burger span::before { top: -7px; }
+    .nav-burger span::after { top: 7px; }
+    @media (max-width: 768px) {
+      .nav-links, .nav-cta { display: none; }
+      .nav-burger { display: flex; }
+    }
+    body { padding-top: 64px; }
   </style>
 </head>
 <body>
+  <nav class="nav">
+    <div class="container nav-inner">
+      <a href="#top" class="nav-logo">KOTOFIT</a>
+      <ul class="nav-links">
+        <li><a href="#locations">Locations</a></li>
+        <li><a href="#memberships">Memberships</a></li>
+        <li><a href="#coaching">Coaching</a></li>
+        <li><a href="#events">Events</a></li>
+        <li><a href="#stringing">Stringing</a></li>
+      </ul>
+      <a href="#booking" class="nav-cta">Reserve Court →</a>
+      <button class="nav-burger" aria-label="Open menu"><span></span></button>
+    </div>
+  </nav>
   <main></main>
   <script>
     // === MOCK DATA === (added in later tasks)
