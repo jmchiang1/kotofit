@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Kotofit — America's Home for Badminton & Indoor Sports</title>
-  <meta name="description" content="Five locations across NJ and NY. Reserve a court for badminton, pickleball, or ping pong in seconds." />
+  <meta name="description" content="Four locations across NJ and NY, expanding to Brooklyn and Queens. Reserve a court for badminton, pickleball, or ping pong in seconds." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" />
@@ -812,7 +812,11 @@
             <div class="form-row"><label>Password</label><input type="password" id="join-pw" placeholder="••••••••" /></div>
             <button class="btn btn-primary" id="join-next" style="width:100%;justify-content:center;margin-top:8px">Continue →</button>
           `);
-          document.getElementById('join-next')?.addEventListener('click', () => { step = 3; render(); });
+          document.getElementById('join-next')?.addEventListener('click', () => {
+            const name = document.getElementById('join-name')?.value.trim();
+            if (!name) { document.getElementById('join-name')?.focus(); return; }
+            step = 3; render();
+          });
         } else {
           const num = 'KF-MEM-' + Math.floor(1000 + Math.random() * 9000);
           openModal(`
@@ -934,7 +938,7 @@
             <h3 class="display-m">Where will you drop it off?</h3>
             <div class="step-pick">${LOCATIONS.filter(l => l.status === 'open').map(l => `<button data-loc="${escapeHtml(l.id)}">${escapeHtml(l.name)} · ${escapeHtml(l.city)}</button>`).join('')}</div>
           `);
-          document.querySelectorAll('[data-loc]').forEach(b => b.addEventListener('click', () => { chosen.location = b.dataset.loc; step = 4; render(); }));
+          document.querySelectorAll('.step-pick [data-loc]').forEach(b => b.addEventListener('click', () => { chosen.location = b.dataset.loc; step = 4; render(); }));
         } else {
           const num = 'KF-STR-' + Math.floor(1000 + Math.random() * 9000);
           const stringObj = STRINGS.find(s => s.id === chosen.string);
@@ -958,9 +962,11 @@
     const burger = document.querySelector('.nav-burger');
     const mm = document.getElementById('mobile-menu');
     const mmClose = document.getElementById('mm-close');
-    burger?.addEventListener('click', () => { mm.classList.add('open'); document.body.style.overflow = 'hidden'; });
-    mmClose?.addEventListener('click', () => { mm.classList.remove('open'); document.body.style.overflow = ''; });
-    mm?.querySelectorAll('a').forEach(a => a.addEventListener('click', () => { mm.classList.remove('open'); document.body.style.overflow = ''; }));
+    const openMm = () => { mm.classList.add('open'); mm.setAttribute('aria-hidden', 'false'); document.body.style.overflow = 'hidden'; };
+    const closeMm = () => { mm.classList.remove('open'); mm.setAttribute('aria-hidden', 'true'); document.body.style.overflow = ''; };
+    burger?.addEventListener('click', openMm);
+    mmClose?.addEventListener('click', closeMm);
+    mm?.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMm));
 
     // === SCROLL REVEAL ===
     document.querySelectorAll('.section-head, .play-tile, .mem-card, .loc-card, .coach-feature, .coach-mini, .event-row, .stringing').forEach(el => el.classList.add('fade-up'));
