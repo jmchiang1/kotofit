@@ -272,3 +272,150 @@
       .hero.loaded .hero-bg { transform: none; transition: none; }
       html { scroll-behavior: auto; }
     }
+
+    /* === ACTIVE NAV HIGHLIGHT === */
+    .nav-links a[aria-current="page"], .mobile-menu nav a[aria-current="page"] { color: var(--bone); position: relative; }
+    .nav-links a[aria-current="page"]::after { content: ''; position: absolute; left: 0; right: 0; bottom: -22px; height: 2px; background: var(--cobalt); }
+
+    /* === PAGE HERO (used by sub-pages, smaller than the homepage hero) === */
+    .page-hero { position: relative; overflow: hidden; padding: clamp(64px, 9vw, 120px) 0 clamp(48px, 6vw, 80px); border-top: 0; min-height: 280px; display: flex; align-items: center; }
+    .page-hero::before { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(10,10,10,0) 0%, var(--ink) 100%), radial-gradient(ellipse at 50% 30%, rgba(37,99,235,0.18), transparent 70%); z-index: 0; }
+    .page-hero .container { position: relative; z-index: 1; text-align: center; }
+    .page-hero h1 { margin: 14px auto 16px; max-width: 18ch; }
+    .page-hero p.lede { font-size: clamp(15px, 1.4vw, 18px); color: var(--mute); max-width: 640px; margin: 0 auto; line-height: 1.55; }
+
+    /* === READY TO PLAY STRIP (above footer on every sub-page) === */
+    .ready-strip { background: var(--surface); border-top: 1px solid var(--elevated); border-bottom: 1px solid var(--elevated); padding: 36px 0; }
+    .ready-strip .inner { display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; }
+    .ready-strip h3 { font-size: clamp(20px, 2.4vw, 28px); font-weight: 800; letter-spacing: -0.02em; margin: 0; }
+    .ready-strip h3 em { font-style: normal; color: var(--cobalt); }
+    .ready-strip .ready-meta { color: var(--mute); font-size: 13px; }
+
+    /* === FILTER CHIPS (used by locations + events) === */
+    .filter-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 32px; align-items: center; }
+    .filter-chips .chip-group { display: inline-flex; gap: 4px; padding: 4px; background: var(--surface); border: 1px solid var(--elevated); border-radius: 999px; }
+    .filter-chips .chip { padding: 8px 14px; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--mute); cursor: pointer; border-radius: 999px; transition: all 150ms; }
+    .filter-chips .chip:hover { color: var(--bone); }
+    .filter-chips .chip.active { background: var(--cobalt); color: var(--bone); }
+    .filter-chips .chip-label { font-size: 10px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--mute); margin-right: 6px; }
+
+    /* === FAQ ACCORDION === */
+    .faq { display: flex; flex-direction: column; }
+    .faq-row { border-bottom: 1px solid var(--elevated); }
+    .faq-row:first-child { border-top: 1px solid var(--elevated); }
+    .faq-q { width: 100%; padding: 22px 0; display: flex; justify-content: space-between; align-items: center; gap: 16px; font-size: 16px; font-weight: 700; color: var(--bone); cursor: pointer; text-align: left; transition: color 150ms; }
+    .faq-q:hover { color: var(--cobalt); }
+    .faq-q .icon { font-size: 18px; color: var(--cobalt); transition: transform 200ms; flex: 0 0 auto; }
+    .faq-row.open .faq-q .icon { transform: rotate(45deg); }
+    .faq-a { display: none; padding: 0 0 22px; color: var(--mute); font-size: 14px; line-height: 1.6; max-width: 720px; }
+    .faq-row.open .faq-a { display: block; }
+
+    /* === LOCATIONS PAGE — expanded card === */
+    .loc-grid-page { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    @media (min-width: 1100px) { .loc-grid-page { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 640px)  { .loc-grid-page { grid-template-columns: 1fr; } }
+    .loc-card-page { background: var(--surface); border: 1px solid var(--elevated); display: flex; flex-direction: column; transition: transform 200ms var(--ease-out), border-color 200ms; }
+    .loc-card-page:hover { transform: translateY(-4px); border-color: var(--cobalt); }
+    .loc-card-page .img { aspect-ratio: 16/10; background-size: cover; background-position: center; position: relative; }
+    .loc-card-page .img::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0) 60%, rgba(10,10,10,0.7) 100%); pointer-events: none; }
+    .loc-card-page .img .badge { position: absolute; top: 14px; left: 14px; z-index: 1; background: var(--cobalt); padding: 5px 10px; font-size: 9px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--bone); }
+    .loc-card-page .img .badge.soon { background: var(--bone); color: var(--ink); }
+    .loc-card-page .body { padding: 22px; display: flex; flex-direction: column; gap: 12px; flex: 1; }
+    .loc-card-page .city { font-size: 10px; color: var(--mute); text-transform: uppercase; letter-spacing: 0.15em; font-weight: 700; }
+    .loc-card-page .name { font-size: 22px; font-weight: 800; letter-spacing: -0.02em; margin: 0; }
+    .loc-card-page .addr { font-size: 13px; color: var(--mute); line-height: 1.5; }
+    .loc-card-page .meta { font-size: 12px; color: var(--mute); display: flex; gap: 14px; flex-wrap: wrap; }
+    .loc-card-page .meta strong { color: var(--bone); }
+    .loc-card-page .tags { display: flex; flex-wrap: wrap; gap: 4px; }
+    .loc-card-page .tag-chip { font-size: 9px; padding: 3px 8px; background: var(--elevated); color: var(--bone); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700; }
+    .loc-card-page .actions { margin-top: auto; display: flex; gap: 8px; padding-top: 6px; }
+    .loc-card-page .actions .btn { padding: 11px 16px; font-size: 11px; }
+
+    /* === MEMBERSHIPS PAGE — comparison table === */
+    .mem-table { width: 100%; border-collapse: collapse; margin-top: 24px; }
+    .mem-table th, .mem-table td { padding: 16px; text-align: left; border-bottom: 1px solid var(--elevated); font-size: 13px; }
+    .mem-table th { font-size: 10px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--mute); font-weight: 700; }
+    .mem-table th.col-tier { text-align: center; color: var(--bone); font-size: 12px; }
+    .mem-table th.col-tier.featured { color: var(--cobalt); }
+    .mem-table td.cell-yes { text-align: center; color: var(--cobalt); font-weight: 800; }
+    .mem-table td.cell-no { text-align: center; color: var(--mute); }
+    .mem-table td.cell-val { text-align: center; font-weight: 700; color: var(--bone); }
+    .mem-table tr:hover td { background: var(--surface); }
+
+    /* === COACHING PAGE === */
+    .programs-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    @media (max-width: 900px) { .programs-grid { grid-template-columns: 1fr; } }
+    .program-card { background: var(--surface); border: 1px solid var(--elevated); overflow: hidden; display: flex; flex-direction: column; transition: transform 200ms, border-color 200ms; }
+    .program-card:hover { transform: translateY(-4px); border-color: var(--cobalt); }
+    .program-card .img { aspect-ratio: 16/10; background-size: cover; background-position: center; }
+    .program-card .body { padding: 24px; flex: 1; display: flex; flex-direction: column; gap: 10px; }
+    .program-card .name { font-size: 22px; font-weight: 800; letter-spacing: -0.02em; margin: 0; }
+    .program-card .desc { color: var(--mute); font-size: 14px; line-height: 1.55; }
+    .program-card .price { font-size: 11px; color: var(--cobalt); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700; }
+    .program-card .cta { margin-top: auto; padding-top: 12px; }
+
+    .coaches-roster { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    @media (max-width: 720px) { .coaches-roster { grid-template-columns: 1fr; } }
+    .coach-row { display: grid; grid-template-columns: 140px 1fr; gap: 18px; padding: 18px; background: var(--surface); border: 1px solid var(--elevated); align-items: center; }
+    .coach-row .img { width: 140px; height: 140px; background-size: cover; background-position: center; flex: 0 0 140px; }
+    .coach-row .info .role { font-size: 10px; color: var(--cobalt); letter-spacing: 0.15em; text-transform: uppercase; font-weight: 700; }
+    .coach-row .info .name { font-size: 20px; font-weight: 800; letter-spacing: -0.02em; margin: 4px 0 8px; }
+    .coach-row .info .desc { font-size: 13px; color: var(--mute); line-height: 1.5; margin: 0 0 10px; }
+    .coach-row .info .specialty { font-size: 12px; color: var(--bone); margin-bottom: 4px; }
+    .coach-row .info .rate { font-size: 12px; color: var(--mute); margin-bottom: 12px; }
+    .coach-row .info .rate strong { color: var(--cobalt); font-weight: 800; }
+    .coach-row .info .book { font-size: 10px; padding: 8px 12px; }
+
+    .clinics-list { display: flex; flex-direction: column; }
+    .clinic-row { display: grid; grid-template-columns: 80px 1fr auto auto; gap: 20px; padding: 20px 0; border-bottom: 1px solid var(--elevated); align-items: center; }
+    .clinic-row:first-child { border-top: 1px solid var(--elevated); }
+    .clinic-row .date { text-align: center; }
+    .clinic-row .date .day { font-size: 28px; font-weight: 900; line-height: 1; letter-spacing: -0.02em; }
+    .clinic-row .date .mo { font-size: 10px; color: var(--cobalt); letter-spacing: 0.15em; text-transform: uppercase; font-weight: 700; margin-top: 2px; }
+    .clinic-row .info .name { font-size: 16px; font-weight: 700; color: var(--bone); }
+    .clinic-row .info .meta { font-size: 11px; color: var(--mute); margin-top: 4px; }
+    .clinic-row .spots { font-size: 11px; color: var(--mute); font-weight: 700; }
+    .clinic-row .spots strong { color: var(--cobalt); }
+    .clinic-row .rsvp { padding: 8px 14px; border: 1px solid var(--bone); font-size: 10px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--bone); cursor: pointer; transition: all 150ms; background: transparent; }
+    .clinic-row .rsvp:hover { background: var(--bone); color: var(--ink); }
+    @media (max-width: 640px) { .clinic-row { grid-template-columns: 60px 1fr; gap: 16px; } .clinic-row .spots, .clinic-row .rsvp { grid-column: 2; } }
+
+    /* === EVENTS PAGE === */
+    .events-results-meta { font-size: 12px; color: var(--mute); margin: 12px 0 24px; letter-spacing: 0.05em; }
+
+    /* === STRINGING PAGE === */
+    .process-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    @media (max-width: 768px) { .process-grid { grid-template-columns: 1fr; } }
+    .process-card { background: var(--surface); border: 1px solid var(--elevated); padding: 28px; }
+    .process-card .num { font-size: 56px; font-weight: 900; letter-spacing: -0.04em; line-height: 1; color: var(--cobalt); margin-bottom: 16px; }
+    .process-card h3 { font-size: 20px; font-weight: 800; letter-spacing: -0.02em; margin: 0 0 8px; }
+    .process-card p { color: var(--mute); font-size: 14px; line-height: 1.55; margin: 0; }
+
+    .strings-catalog { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    @media (max-width: 900px) { .strings-catalog { grid-template-columns: 1fr; } }
+    .string-card { background: var(--surface); border: 1px solid var(--elevated); padding: 28px; cursor: pointer; transition: transform 200ms, border-color 200ms; text-align: left; display: flex; flex-direction: column; gap: 14px; }
+    .string-card:hover { transform: translateY(-4px); border-color: var(--cobalt); }
+    .string-card .name { font-size: 22px; font-weight: 800; letter-spacing: -0.02em; margin: 0; }
+    .string-card .gauge { font-size: 11px; color: var(--cobalt); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700; }
+    .string-card .desc { color: var(--mute); font-size: 13px; line-height: 1.55; margin: 0; }
+    .string-card .ratings { display: flex; flex-direction: column; gap: 6px; }
+    .string-card .rating-row { display: grid; grid-template-columns: 80px 1fr; gap: 12px; align-items: center; font-size: 11px; }
+    .string-card .rating-row .rlabel { color: var(--mute); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700; }
+    .string-card .rating-row .dots { display: flex; gap: 3px; }
+    .string-card .rating-row .dots .dot { width: 8px; height: 8px; background: var(--elevated); border-radius: 50%; }
+    .string-card .rating-row .dots .dot.on { background: var(--cobalt); }
+    .string-card .price { font-size: 24px; font-weight: 900; letter-spacing: -0.02em; margin-top: auto; }
+    .string-card .price small { font-size: 13px; color: var(--mute); font-weight: 600; }
+
+    .tension-guide { padding: 32px; background: var(--surface); border: 1px solid var(--elevated); }
+    .tension-bar { position: relative; height: 6px; background: linear-gradient(90deg, #1e3a8a 0%, var(--cobalt) 100%); margin: 28px 0 16px; border-radius: 999px; }
+    .tension-marks { display: grid; grid-template-columns: repeat(4, 1fr); }
+    .tension-mark { text-align: center; }
+    .tension-mark .lbs { font-size: 18px; font-weight: 900; letter-spacing: -0.02em; color: var(--bone); }
+    .tension-mark.recommended .lbs { color: var(--cobalt); }
+    .tension-mark .feel { font-size: 10px; color: var(--mute); letter-spacing: 0.15em; text-transform: uppercase; font-weight: 700; margin-top: 4px; }
+
+    /* === SECTION TITLE-ONLY (sub-pages reuse this without the right-side desc) === */
+    .section-title { margin-bottom: 28px; }
+    .section-title .e { font-size: 11px; color: var(--cobalt); font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; }
+    .section-title h2 { font-size: clamp(28px, 4vw, 40px); font-weight: 800; letter-spacing: -0.03em; line-height: 1; margin: 8px 0 0; }
