@@ -191,52 +191,9 @@
     </div>
   </footer>
 
+  <script src="assets/data.js"></script>
   <script>
     // === MOCK DATA === (added in later tasks)
-
-    // === DATA ===
-    const LOCATIONS = [
-      { id: 'jc-3rd',     city: 'Jersey City · NJ',       name: '3rd Street',    courts: 8,  hours: 'Open until 11PM', img: 'https://images.unsplash.com/photo-1775993167393-f2add1f8eec2?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', status: 'open' },
-      { id: 'jc-bruns',   city: 'Jersey City · NJ',       name: 'Brunswick',     courts: 10, hours: 'Open until 11PM', img: 'https://images.unsplash.com/photo-1775993167393-f2add1f8eec2?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', status: 'open' },
-      { id: 'jc-summit',  city: 'Jersey City · NJ',       name: 'Summit Ave',    courts: 6,  hours: 'Open until 10PM', img: 'https://images.unsplash.com/photo-1775993167393-f2add1f8eec2?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', status: 'open' },
-      { id: 'lic-10th',   city: 'Long Island City · NY',  name: '10th Street',   courts: 12, hours: 'Open until 11PM', img: 'https://images.unsplash.com/photo-1775993167393-f2add1f8eec2?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', status: 'open' },
-      { id: 'bk-soon',    city: 'Brooklyn · NY',          name: 'Coming Soon',   courts: 0,  hours: 'Opens this season', img: 'https://images.unsplash.com/photo-1775993167393-f2add1f8eec2?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', status: 'soon' },
-      { id: 'qns-soon',   city: 'Queens · NY',            name: 'Coming Soon',   courts: 0,  hours: 'Opens this season', img: 'https://images.unsplash.com/photo-1775993167393-f2add1f8eec2?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', status: 'soon' },
-    ];
-
-    const SPORTS = [
-      { id: 'badminton',  num: '01', name: 'Badminton',  read: 'Open play, leagues, clinics →', img: 'https://images.unsplash.com/photo-1721760886982-3c643f05813d?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', desc: 'The fastest racquet sport in the world. Open play sessions, member leagues, and clinics for every level — from first racquet to tournament prep.' },
-      { id: 'pickleball', num: '02', name: 'Pickleball', read: 'All levels, mixers, tournaments →', img: 'https://images.unsplash.com/photo-1659318006095-4d44845f3a1b?w=1200&q=80&auto=format&fit=crop', desc: "America's fastest-growing sport. Drop-in mixers every week, ladder leagues, and weekend tournaments. Easy to learn, hard to put down." },
-      { id: 'pingpong',   num: '03', name: 'Ping Pong',  read: 'Drop in, tables ready →',          img: 'https://images.unsplash.com/photo-1611251135345-18c56206b863?w=1200&q=80&auto=format&fit=crop', desc: 'Tables ready at every location. No reservation needed — drop in, grab a paddle, and play.' },
-    ];
-
-    const TIERS = [
-      { id: 'dropin',     name: 'Drop-in',                price: 0,   featured: false, perks: ['Pay per court', 'Standard booking window', 'Public events'], cta: 'Book one-off' },
-      { id: 'go-koto',    name: 'Go Koto · Most popular', price: 49,  featured: true,  perks: ['72-hour early booking', 'Free monthly events', '10% off clinics + stringing', 'Guest passes'], cta: 'Become a member' },
-      { id: 'all-access', name: 'All-Access',             price: 129, featured: false, perks: ['14-day early booking', 'All clinics included', 'Free stringing (2/mo)', 'Unlimited guest passes'], cta: 'Go All-Access' },
-    ];
-
-    const COACHES = [
-      { id: 'c1', role: 'Head coach',  name: 'Wei Chen',     desc: 'Former national singles champion. Head of badminton clinics across all locations.', img: 'https://images.unsplash.com/photo-1617962529235-262e8e777e48?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', feature: true },
-      { id: 'c2', role: 'Pickleball',  name: 'Maria Lopez',  desc: '', img: 'https://images.unsplash.com/photo-1617962529235-262e8e777e48?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' },
-      { id: 'c3', role: 'Youth',       name: 'Jordan Park',  desc: '', img: 'https://images.unsplash.com/photo-1617962529235-262e8e777e48?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' },
-      { id: 'c4', role: 'Doubles',     name: 'Aisha Khan',   desc: '', img: 'https://images.unsplash.com/photo-1617962529235-262e8e777e48?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' },
-      { id: 'c5', role: 'Private',     name: 'David Kim',    desc: '', img: 'https://images.unsplash.com/photo-1617962529235-262e8e777e48?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' },
-    ];
-
-    const EVENTS = [
-      { id: 'e1', day: '02', mo: 'May', name: 'Beginner Pickleball Mixer', meta: 'Brunswick · 6:00 PM · Free for members' },
-      { id: 'e2', day: '09', mo: 'May', name: 'Spring Doubles Tournament', meta: '3rd Street · 10:00 AM · $25 entry' },
-      { id: 'e3', day: '15', mo: 'May', name: 'Junior Badminton Camp',     meta: 'LIC · All week · Ages 8–14' },
-      { id: 'e4', day: '23', mo: 'May', name: 'Late-Night Open Play',      meta: 'Summit Ave · 10:00 PM · Members only' },
-    ];
-
-    const STRINGS = [
-      { id: 'yonex-bg65',  name: 'Yonex BG65',     desc: 'Durable all-round string', price: 22 },
-      { id: 'yonex-bg80',  name: 'Yonex BG80',     desc: 'Power and repulsion',     price: 28 },
-      { id: 'ashaway-zm',  name: 'Ashaway Zymax',  desc: 'Pro tour favorite',       price: 32 },
-    ];
-    const TENSIONS = ['22 lbs · Soft feel', '24 lbs · Balanced (recommended)', '26 lbs · Crisp control', '28 lbs · Pro level'];
 
     // === INTERACTIONS === (added in later tasks)
 
