@@ -560,6 +560,137 @@ function renderMembershipsPage() {
   document.getElementById('join-cta')?.addEventListener('click', () => openJoinModal('go-koto'));
 }
 
+// === COACHING PAGE ===
+const CLINICS_SAMPLE = [
+  { id: 'cl1', day: '03', mo: 'May', name: 'Beginner Badminton Fundamentals', coach: 'Wei Chen',    location: 'Brunswick',    sport: 'badminton',  level: 'Beginner',     spots: 4 },
+  { id: 'cl2', day: '07', mo: 'May', name: 'Intermediate Pickleball Drills',  coach: 'Maria Lopez', location: '3rd Street',   sport: 'pickleball', level: 'Intermediate', spots: 2 },
+  { id: 'cl3', day: '10', mo: 'May', name: 'Doubles Strategy Workshop',       coach: 'Aisha Khan',  location: 'LIC',          sport: 'badminton',  level: 'Advanced',     spots: 6 },
+  { id: 'cl4', day: '14', mo: 'May', name: 'Junior Foundations',              coach: 'Jordan Park', location: 'Brunswick',    sport: 'badminton',  level: 'Beginner',     spots: 8 },
+  { id: 'cl5', day: '17', mo: 'May', name: 'Pickleball Skills Lab',           coach: 'Maria Lopez', location: 'LIC',          sport: 'pickleball', level: 'Intermediate', spots: 3 },
+  { id: 'cl6', day: '21', mo: 'May', name: 'Match-Prep Singles',              coach: 'David Kim',   location: 'Summit Ave',   sport: 'badminton',  level: 'Advanced',     spots: 1 },
+];
+
+function renderCoachingPage() {
+  const programsEl = document.getElementById('programs-grid');
+  const coachesEl  = document.getElementById('coaches-roster');
+  const clinicsEl  = document.getElementById('clinics-list');
+  if (!programsEl && !coachesEl && !clinicsEl) return;
+
+  if (programsEl && typeof PROGRAMS !== 'undefined') {
+    programsEl.innerHTML = PROGRAMS.map(p => `
+      <article class="program-card" data-program-id="${escapeHtml(p.id)}">
+        <div class="img" style="background-image:url('${escapeHtml(p.img)}')"></div>
+        <div class="body">
+          <div class="price">${escapeHtml(p.priceRange)}</div>
+          <h3 class="name">${escapeHtml(p.name)}</h3>
+          <p class="desc">${escapeHtml(p.desc)}</p>
+          <div class="cta">
+            <button class="btn btn-primary" data-action="book-program">${escapeHtml(p.cta)} →</button>
+          </div>
+        </div>
+      </article>
+    `).join('');
+    programsEl.querySelectorAll('[data-action="book-program"]').forEach(btn => {
+      const card = btn.closest('[data-program-id]');
+      btn.addEventListener('click', () => openProgramModal(card.dataset.programId));
+    });
+  }
+
+  if (coachesEl) {
+    coachesEl.innerHTML = COACHES.map(c => `
+      <article class="coach-row" data-coach-id="${escapeHtml(c.id)}">
+        <div class="img" style="background-image:url('${escapeHtml(c.img)}')"></div>
+        <div class="info">
+          <div class="role">${escapeHtml(c.role)}</div>
+          <h3 class="name">${escapeHtml(c.name)}</h3>
+          <p class="desc">${escapeHtml(c.desc)}</p>
+          <div class="specialty">${escapeHtml(c.specialty || '')}</div>
+          ${c.rate ? `<div class="rate"><strong>$${c.rate}</strong>/hr (privates)</div>` : ''}
+          <button class="btn btn-ghost book" data-action="book-coach">Book with ${escapeHtml(c.name.split(' ')[0])} →</button>
+        </div>
+      </article>
+    `).join('');
+    coachesEl.querySelectorAll('[data-action="book-coach"]').forEach(btn => {
+      const card = btn.closest('[data-coach-id]');
+      btn.addEventListener('click', () => openProgramModal('private', { coachId: card.dataset.coachId }));
+    });
+  }
+
+  if (clinicsEl) {
+    clinicsEl.innerHTML = CLINICS_SAMPLE.map(c => `
+      <div class="clinic-row" data-clinic-id="${escapeHtml(c.id)}">
+        <div class="date"><div class="day">${escapeHtml(c.day)}</div><div class="mo">${escapeHtml(c.mo)}</div></div>
+        <div class="info">
+          <div class="name">${escapeHtml(c.name)}</div>
+          <div class="meta">${escapeHtml(c.location)} · ${escapeHtml(c.coach)} · ${escapeHtml(c.level)}</div>
+        </div>
+        <div class="spots"><strong>${c.spots}</strong> spots</div>
+        <button class="rsvp" data-action="rsvp-clinic">RSVP</button>
+      </div>
+    `).join('');
+    clinicsEl.querySelectorAll('[data-action="rsvp-clinic"]').forEach(btn => {
+      const row = btn.closest('[data-clinic-id]');
+      const clinic = CLINICS_SAMPLE.find(c => c.id === row.dataset.clinicId);
+      btn.addEventListener('click', () => openClinicRsvpModal(clinic));
+    });
+  }
+
+  renderFaq('faq-coaching', typeof FAQS !== 'undefined' ? FAQS.coaching : []);
+}
+
+function openProgramModal(programId, opts = {}) {
+  const program = (typeof PROGRAMS !== 'undefined') ? PROGRAMS.find(p => p.id === programId) : null;
+  if (!program) return;
+  let step = opts.coachId ? 2 : 1;
+  const chosen = { coachId: opts.coachId || null, location: null };
+  const render = () => {
+    if (step === 1) {
+      openModal(`
+        <div class="step-row"><div class="step-dot active"></div><div class="step-dot"></div><div class="step-dot"></div></div>
+        <span class="eyebrow">▸ Step 1 of 3 · Pick a coach</span>
+        <h3 class="display-m">Who would you like to work with?</h3>
+        <div class="step-pick">${COACHES.map(c => `<button data-coach="${escapeHtml(c.id)}"><div style="font-weight:700">${escapeHtml(c.name)}</div><div style="font-size:11px;color:var(--mute);margin-top:2px">${escapeHtml(c.specialty || c.role)}</div></button>`).join('')}</div>
+      `);
+      document.querySelectorAll('[data-coach]').forEach(b => b.addEventListener('click', () => { chosen.coachId = b.dataset.coach; step = 2; render(); }));
+    } else if (step === 2) {
+      openModal(`
+        <div class="step-row"><div class="step-dot active"></div><div class="step-dot active"></div><div class="step-dot"></div></div>
+        <span class="eyebrow">▸ Step 2 of 3 · Pick a location</span>
+        <h3 class="display-m">Where should the session happen?</h3>
+        <div class="step-pick">${LOCATIONS.filter(l => l.status === 'open').map(l => `<button data-loc="${escapeHtml(l.id)}">${escapeHtml(l.name)} · ${escapeHtml(l.city)}</button>`).join('')}</div>
+      `);
+      document.querySelectorAll('.step-pick [data-loc]').forEach(b => b.addEventListener('click', () => { chosen.location = b.dataset.loc; step = 3; render(); }));
+    } else {
+      const num = 'KF-COACH-' + Math.floor(1000 + Math.random() * 9000);
+      const coach = COACHES.find(c => c.id === chosen.coachId);
+      const loc = LOCATIONS.find(l => l.id === chosen.location);
+      openModal(`
+        <div class="step-row"><div class="step-dot active"></div><div class="step-dot active"></div><div class="step-dot active"></div></div>
+        <span class="eyebrow">▸ Booked</span>
+        <div class="confirm-num">${num}</div>
+        <h3 class="display-m">${escapeHtml(program.name)} · ${escapeHtml(coach.name)}</h3>
+        <p class="modal-meta">${escapeHtml(loc.name)} · ${escapeHtml(loc.city)}</p>
+        <p class="body" style="font-size:13px;margin-bottom:24px">${escapeHtml(coach.name)} will be in touch within 24 hours to confirm a time slot.</p>
+        <button class="btn btn-primary" id="program-done">Done</button>
+      `);
+      document.getElementById('program-done')?.addEventListener('click', closeModal);
+    }
+  };
+  render();
+}
+
+function openClinicRsvpModal(clinic) {
+  if (!clinic) return;
+  openModal(`
+    <span class="eyebrow">▸ You're in</span>
+    <h3 class="display-m">${escapeHtml(clinic.name)}</h3>
+    <p class="modal-meta">${escapeHtml(clinic.day)} ${escapeHtml(clinic.mo)} · ${escapeHtml(clinic.location)} · Coach ${escapeHtml(clinic.coach)}</p>
+    <p class="body" style="font-size:13px;margin-bottom:24px">Confirmation sent to your inbox. ${clinic.spots} spots remained when you booked — see you on the court.</p>
+    <button class="btn btn-primary" id="clinic-rsvp-done">Got it</button>
+  `);
+  document.getElementById('clinic-rsvp-done')?.addEventListener('click', closeModal);
+}
+
 // === PAGE INIT ===
 document.addEventListener('DOMContentLoaded', () => {
   initHero();
