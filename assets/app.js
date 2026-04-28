@@ -465,7 +465,7 @@ function renderLocationsPage() {
   const filters = { sport: 'all', service: 'all' };
 
   const matchesFilters = (loc) => {
-    if (loc.status === 'soon') return filters.sport === 'all' && filters.service === 'all';
+    if (loc.status === 'soon') return true;
     if (filters.sport !== 'all' && !loc.sports.includes(filters.sport)) return false;
     if (filters.service !== 'all' && !loc.services.includes(filters.service)) return false;
     return true;
@@ -696,10 +696,11 @@ function renderEventsPage() {
   const list = document.getElementById('events-list-page');
   if (!list) return;
 
-  const filters = { sport: 'all', month: 'all', price: 'all' };
+  const filters = { sport: 'all', location: 'all', month: 'all', price: 'all' };
 
   const matches = (e) => {
     if (filters.sport !== 'all' && e.sport !== filters.sport) return false;
+    if (filters.location !== 'all' && e.location !== filters.location && e.location !== 'all') return false;
     if (filters.month !== 'all' && e.month !== filters.month) return false;
     if (filters.price !== 'all' && e.price !== filters.price) return false;
     return true;
