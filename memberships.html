@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Memberships — Kotofit</title>
-  <meta name="description" content="Three Kotofit membership tiers — Drop-in, Go Koto, and All-Access. Play more, pay less." />
+  <meta name="description" content="Kotofit memberships in Jersey City and Long Island City. From pay-per-play to dedicated weekly courts — pick the tier that fits how often you play." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" />
@@ -47,12 +47,13 @@
       <div class="container">
         <span class="eyebrow">▸ Member perks</span>
         <h1 class="display-l">Play more. Pay less.</h1>
-        <p class="lede">Early booking windows, free events, member-only clinics, racquet stringing discounts, and a community that shows up. Pick the tier that fits how often you play.</p>
+        <p class="lede">Two locations, two membership families. Discounts on bookings, advance reservations, free UBR/DUPR sessions in LIC, and coaching credits. Pick your home court below.</p>
       </div>
     </section>
 
     <section>
       <div class="container">
+        <div class="mem-toggle reveal" id="mem-toggle-page" role="tablist" aria-label="Choose location"></div>
         <div class="mem-grid reveal-stagger" id="mem-grid"></div>
       </div>
     </section>
@@ -63,28 +64,7 @@
           <div class="e">▸ Compare side by side</div>
           <h2>What's included.</h2>
         </div>
-        <table class="mem-table reveal">
-          <thead>
-            <tr>
-              <th>Perk</th>
-              <th class="col-tier">Drop-in</th>
-              <th class="col-tier featured">Go Koto</th>
-              <th class="col-tier">All-Access</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr><td>Booking window</td><td class="cell-val">48 hr</td><td class="cell-val">72 hr</td><td class="cell-val">14 days</td></tr>
-            <tr><td>Court rate per hour</td><td class="cell-val">$20–30</td><td class="cell-val">$15</td><td class="cell-val">$10</td></tr>
-            <tr><td>Free monthly events</td><td class="cell-no">—</td><td class="cell-yes">✓</td><td class="cell-yes">✓</td></tr>
-            <tr><td>Clinics included</td><td class="cell-no">—</td><td class="cell-no">10% off</td><td class="cell-yes">All included</td></tr>
-            <tr><td>Free stringing</td><td class="cell-no">—</td><td class="cell-no">10% off</td><td class="cell-val">2/mo</td></tr>
-            <tr><td>Guest passes</td><td class="cell-no">—</td><td class="cell-val">2/mo</td><td class="cell-yes">Unlimited</td></tr>
-            <tr><td>Membership freeze</td><td class="cell-no">—</td><td class="cell-yes">3 mo/yr</td><td class="cell-yes">3 mo/yr</td></tr>
-            <tr><td>Family add-on</td><td class="cell-no">—</td><td class="cell-no">—</td><td class="cell-val">50% off</td></tr>
-            <tr><td>Personal locker</td><td class="cell-no">—</td><td class="cell-no">—</td><td class="cell-yes">✓</td></tr>
-            <tr><td>Priority on tournaments</td><td class="cell-no">—</td><td class="cell-no">—</td><td class="cell-yes">✓</td></tr>
-          </tbody>
-        </table>
+        <div class="mem-table-wrap reveal" id="mem-table-wrap"></div>
       </div>
     </section>
 
@@ -102,7 +82,7 @@
       <div class="container" style="text-align:center">
         <span class="eyebrow">▸ Ready to belong?</span>
         <h2 class="display-l" style="max-width:18ch;margin:14px auto">Join the home court.</h2>
-        <p class="lede" style="margin:0 auto 28px">Most popular tier: Go Koto. $49/mo, 72-hour early booking, free monthly events.</p>
+        <p class="lede" style="margin:0 auto 28px" id="join-cta-blurb">Most NJ players go with Open Play Elite — $35/mo, 30% off open play, 21-day advance booking.</p>
         <button class="btn btn-primary" id="join-cta">Become a member →</button>
       </div>
     </section>

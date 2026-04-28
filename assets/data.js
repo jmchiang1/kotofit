@@ -34,14 +34,64 @@ const SPORTS = [
   { id: 'pingpong',   num: '03', name: 'Ping Pong',  read: 'Drop in, tables ready →',          img: 'https://images.unsplash.com/photo-1611251135345-18c56206b863?w=1200&q=80&auto=format&fit=crop', desc: 'Tables ready at every location. No reservation needed — drop in, grab a paddle, and play.' },
 ];
 
-const TIERS = [
-  { id: 'dropin',     name: 'Drop-in',                price: 0,   featured: false, perks: ['Pay per court', 'Standard booking window', 'Public events'], cta: 'Book one-off',
-    fullPerks: ['Pay $20–$30 per court hour', 'Book 48 hours in advance', 'Public events open to all', 'No commitment, no monthly fee', 'Walk-in pricing for ping pong'] },
-  { id: 'go-koto',    name: 'Go Koto · Most popular', price: 49,  featured: true,  perks: ['72-hour early booking', 'Free monthly events', '10% off clinics + stringing', 'Guest passes'], cta: 'Become a member',
-    fullPerks: ['72-hour early booking window', '$15/hr member court rate', 'Free monthly member events', '10% off clinics and stringing', '2 guest passes per month', 'Freeze for up to 3 months/year', 'Member-only mixers'] },
-  { id: 'all-access', name: 'All-Access',             price: 129, featured: false, perks: ['14-day early booking', 'All clinics included', 'Free stringing (2/mo)', 'Unlimited guest passes'], cta: 'Go All-Access',
-    fullPerks: ['14-day early booking window', '$10/hr member court rate', 'All group clinics included', '2 free stringings per month', 'Unlimited guest passes', 'Family add-on at 50% off', 'Priority on tournament entries', 'Personal locker at home court'] },
-];
+// Memberships are location-specific. NJ and LIC each have their own tiers
+// and their own comparison-table feature rows since the offerings differ.
+const MEMBERSHIPS = {
+  nj: {
+    label: 'New Jersey',
+    locationIds: ['jc-3rd', 'jc-bruns', 'jc-summit'],
+    rows: [
+      { key: 'fullCourt', label: 'Full court (per hr)',    sub: 'peak / off-peak' },
+      { key: 'openPlay',  label: 'Open play (per 90 min)', sub: 'peak / off-peak' },
+      { key: 'advance',   label: 'Advance booking' },
+      { key: 'coaching',  label: 'Coaching / clinic discount' },
+    ],
+    tiers: [
+      { id: 'nj-free', name: 'Free', tagline: 'No commitment until you book and play',
+        priceMo: 0, priceQ: null, featured: false, limitedOffer: false, cta: 'Try free',
+        cells: { fullCourt: '$60 / $44', openPlay: '$20 / $15', advance: '14 days', coaching: '—' },
+        perks: ['Pay per court — $60 peak / $44 off-peak', '$20 / $15 open play (90 min)', '14-day advance booking', 'No coaching discount', 'Free cancellation any time'] },
+      { id: 'nj-open', name: 'Open Play Elite', tagline: "Best for regular open-play bookings",
+        priceMo: 35, priceQ: 95, featured: true, limitedOffer: false, cta: 'Join Open Play Elite',
+        cells: { fullCourt: '$54 / $39.60 (10% off)', openPlay: '$14 / $10.50 (30% off)', advance: '21 days', coaching: '$20 off' },
+        perks: ['30% off all open-play bookings', '10% off full-court bookings', '21-day advance booking', '$20 off coaching / clinics', 'Free cancellation any time'] },
+      { id: 'nj-court', name: 'Full Court Elite', tagline: 'Best for regular full-court bookings',
+        priceMo: 59, priceQ: 159, featured: false, limitedOffer: false, cta: 'Join Full Court Elite',
+        cells: { fullCourt: '$45 / $33 (25% off)', openPlay: '$18 / $13.50 (10% off)', advance: '21 days', coaching: '$25 off' },
+        perks: ['25% off all full-court bookings', '10% off open-play bookings', '21-day advance booking', '$25 off coaching / clinics', 'Free cancellation any time'] },
+    ],
+  },
+  lic: {
+    label: 'Long Island City',
+    locationIds: ['lic-10th'],
+    rows: [
+      { key: 'fullCourt', label: 'Full court (per hr)',         sub: 'peak / off-peak' },
+      { key: 'openPlay',  label: 'Open play (per 90 min)',      sub: 'peak / off-peak' },
+      { key: 'ubr',       label: 'UBR / DUPR open play (120 min)' },
+      { key: 'coaching',  label: 'Coaching package perks' },
+      { key: 'pingpong',  label: 'Ping pong / multi-ball wall' },
+      { key: 'advance',   label: 'Advance booking' },
+    ],
+    tiers: [
+      { id: 'lic-free', name: 'Free', tagline: 'Pay per play',
+        priceMo: 0, priceQ: null, featured: false, limitedOffer: false, cta: 'Try free',
+        cells: { fullCourt: '$80 / $50', openPlay: '$24 / $15', ubr: '—', coaching: '—', pingpong: '—', advance: '14 days' },
+        perks: ['Pay per court — $80 peak / $50 off-peak', '$24 / $15 open play (90 min)', '14-day advance booking', 'No discounts on UBR, coaching, or ping pong'] },
+      { id: 'lic-silver', name: 'Silver', tagline: 'Best for regular open-play bookings',
+        priceMo: 49, priceQ: 129, featured: true, limitedOffer: true, cta: 'Join Silver',
+        cells: { fullCourt: '$76 / $47 (5% off)', openPlay: '$19.60 / $13 (20% off)', ubr: '1 free session (worth ~$30)', coaching: '—', pingpong: '20% off', advance: '21 days' },
+        perks: ['20% off all open-play bookings', '5% off full-court bookings', '1 free UBR/DUPR session per month (~$30 value)', '20% off ping pong / multi-ball wall', '21-day advance booking', 'Cancel auto-renewal anytime'] },
+      { id: 'lic-gold', name: 'Gold', tagline: 'Best for regular private-court bookings',
+        priceMo: 139, priceQ: 389, featured: false, limitedOffer: true, cta: 'Join Gold',
+        cells: { fullCourt: '$64 / $40 (20% off)', openPlay: '$19.60 / $13 (20% off)', ubr: '—', coaching: '$50 off coaching package', pingpong: '30% off', advance: '21 days' },
+        perks: ['20% off all private-court bookings', '20% off open-play bookings', '$50 off any coaching package', '30% off ping pong / multi-ball wall', '21-day advance booking', 'Cancel auto-renewal anytime'] },
+      { id: 'lic-plat', name: 'Platinum', tagline: 'Dedicated weekly pre-reserved courts at 30% off',
+        priceMo: null, priceQ: 699, featured: false, limitedOffer: true, cta: 'Join Platinum',
+        cells: { fullCourt: '$56 / $35 (30% off)', openPlay: '$16.80 / $10.50 (30% off)', ubr: '3 free sessions (worth ~$90)', coaching: '$150 off coaching package', pingpong: '40% off', advance: 'Dedicated weekly courts (max 3 hr/wk)' },
+        perks: ['Dedicated pre-reserved weekly courts (up to 3 hr/wk)', '30% off all private-court & open-play bookings', '3 free UBR/DUPR sessions per month (~$90 value)', '$150 off any coaching package', '40% off ping pong / multi-ball wall', 'Cancel auto-renewal anytime'] },
+    ],
+  },
+};
 
 const COACHES = [
   { id: 'c1', role: 'Head coach',  name: 'Wei Chen',     desc: 'Former national singles champion. Head of badminton clinics across all locations.',                       img: 'https://images.unsplash.com/photo-1599058917212-d750089bc07e?w=900&q=80&auto=format&fit=crop', feature: true,
@@ -93,12 +143,13 @@ const PROGRAMS = [
 
 const FAQS = {
   memberships: [
-    { q: 'Can I freeze my membership?', a: 'Go Koto and All-Access members can freeze for up to 3 months per calendar year. Drop-in does not require freezing — pay only when you play.' },
-    { q: 'Can I share my membership with family?', a: 'All-Access includes a 50%-off family add-on for one additional adult at the same address. Children play at junior rates regardless of plan.' },
-    { q: 'What if I cancel?', a: 'Memberships are month-to-month with no commitment. Cancel anytime from your account; access continues through the end of the current billing cycle.' },
-    { q: 'When does my booking window open?', a: 'Drop-in: 48 hours before tee time. Go Koto: 72 hours. All-Access: 14 days. Booking opens at midnight Eastern.' },
-    { q: 'Are guest passes capped?', a: 'Go Koto: 2 guest passes per month, unused passes do not roll over. All-Access: unlimited guest passes (subject to court availability).' },
-    { q: 'Do members get discounts on clinics and stringing?', a: 'Go Koto: 10% off both. All-Access: clinics included in membership; 2 free stringings per month, additional at member rate.' },
+    { q: 'Why do New Jersey and Long Island City have different plans?', a: 'The two locations operate independently with their own pricing and demand. NJ has three tiers (Free, Open Play Elite, Full Court Elite). LIC has four (Free, Silver, Gold, Platinum) plus extras like UBR/DUPR sessions and a multi-ball wall. Use the toggle above the cards to switch.' },
+    { q: 'What is "peak" vs "off-peak"?', a: 'NJ peak hours run weekdays 5:30PM–11PM and weekends 7AM–11PM. LIC peak runs weekdays 5PM–10PM and weekends 7AM–11PM. Off-peak covers everything else. Member discounts apply to both, but court rates differ.' },
+    { q: 'What is the difference between "open play" and "full court"?', a: 'Open play is a 90-minute drop-in session — you join other players at your level; per-person pricing. Full court is a 60-minute court reservation you book end-to-end for your group; per-court pricing. Most members lean toward one or the other, which is why NJ has separate Open Play Elite and Full Court Elite tiers.' },
+    { q: 'Should I pay monthly or quarterly?', a: 'Quarterly is cheaper per month on every paid tier — roughly one month free over the quarter. Pick monthly if you want flexibility to cancel sooner; pick quarterly if you know you will be playing consistently.' },
+    { q: 'What is the cancellation policy?', a: 'All paid tiers can cancel auto-renewal at any time at no charge — your access continues through the end of the period you already paid for. The free tier has nothing to cancel; you just stop booking.' },
+    { q: 'How does the LIC Platinum tier work?', a: 'Platinum is quarterly only ($699/qtr) and includes dedicated, pre-reserved weekly courts up to 3 hours per week. It is built for groups or regular players who want a guaranteed time slot every week instead of hunting for availability.' },
+    { q: 'What are UBR / DUPR open plays?', a: 'Skill-rated 120-minute open play sessions at LIC, grouped by player rating so the level stays competitive. Silver members get 1 free session per month; Platinum members get 3.' },
   ],
   coaching: [
     { q: 'What level are clinics for?', a: 'Most clinics are split into Beginner, Intermediate, and Advanced cohorts. The schedule lists the level for each session.' },

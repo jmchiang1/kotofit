@@ -263,6 +263,9 @@ function renderMembershipCards(containerId, locationKey) {
   grid.querySelectorAll('[data-tier]').forEach(btn => {
     btn.addEventListener('click', () => openJoinModal(btn.dataset.tier));
   });
+  // Children inserted after initReveal() observed the parent never get the reveal
+  // animation — motion.dev's inView fires once per element. Force them visible.
+  if (typeof forceRevealChildren === 'function') forceRevealChildren(grid);
 }
 
 function renderComparisonTable(containerId, locationKey) {
@@ -543,30 +546,48 @@ function initReveal() {
     return;
   }
 
+  // Per-element fallback: motion.dev's IntersectionObserver callbacks can throw synchronously
+  // during option construction (e.g. unsupported spring configs in M.spring). Without a per-call
+  // try/catch the element stays at opacity:0 forever. Build options inside the try; on failure
+  // force the element visible so content never sticks invisible.
+  const showOne = (el) => { el.style.opacity = '1'; el.style.transform = 'none'; };
+  const showMany = (els) => els.forEach(showOne);
+
   try {
     // Singleton reveal — single elements spring up.
     // Note: Motion.inView passes an IntersectionObserverEntry, NOT the element. Use entry.target.
     M.inView('.reveal', (entry) => {
-      M.animate(entry.target, { opacity: [0, 1], y: [24, 0] }, {
-        duration: 0.7,
-        ease: M.spring ? M.spring({ stiffness: 100, damping: 20 }) : 'ease-out',
-      });
+      const el = entry.target;
+      try { M.animate(el, { opacity: [0, 1], y: [24, 0] }, { duration: 0.7, ease: 'ease-out' }); }
+      catch (e) { showOne(el); }
     }, { amount: 0.2 });
 
     // Stagger reveal — direct children of a container animate in sequence.
     M.inView('.reveal-stagger', (entry) => {
-      const children = entry.target.querySelectorAll(':scope > *');
+      const children = Array.from(entry.target.querySelectorAll(':scope > *'));
       if (!children.length) return;
-      M.animate(children, { opacity: [0, 1], y: [24, 0] }, {
-        delay: M.stagger ? M.stagger(0.05) : 0,
-        duration: 0.6,
-        ease: M.spring ? M.spring({ stiffness: 100, damping: 22 }) : 'ease-out',
-      });
+      try {
+        M.animate(children, { opacity: [0, 1], y: [24, 0] }, {
+          delay: M.stagger ? M.stagger(0.05) : 0,
+          duration: 0.6,
+          ease: 'ease-out',
+        });
+      } catch (e) { showMany(children); }
     }, { amount: 0.2 });
   } catch (err) {
     console.warn('motion.dev integration error, falling back to immediate-show:', err);
     showAll();
   }
+}
+
+// Force-show direct children of a .reveal-stagger container that was re-rendered dynamically
+// after initReveal() already observed it (motion.dev's inView fires once per element).
+function forceRevealChildren(container) {
+  if (!container) return;
+  Array.from(container.children).forEach(c => {
+    c.style.opacity = '1';
+    c.style.transform = 'none';
+  });
 }
 
 // === HERO LOAD ===
