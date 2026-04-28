@@ -737,6 +737,59 @@ function renderEventsPage() {
   render();
 }
 
+// === STRINGING PAGE ===
+function renderStringingPage() {
+  const catalog = document.getElementById('strings-catalog');
+  if (!catalog) return;
+
+  const dot = (n, max = 5) => Array.from({ length: max }, (_, i) => `<span class="dot ${i < n ? 'on' : ''}"></span>`).join('');
+
+  catalog.innerHTML = STRINGS.map(s => `
+    <button class="string-card" data-string-id="${escapeHtml(s.id)}">
+      <div class="gauge">${escapeHtml(s.gauge || '')}</div>
+      <h3 class="name">${escapeHtml(s.name)}</h3>
+      <p class="desc">${escapeHtml(s.desc)}</p>
+      <div class="ratings">
+        <div class="rating-row"><span class="rlabel">Durability</span><div class="dots">${dot(s.durability)}</div></div>
+        <div class="rating-row"><span class="rlabel">Control</span><div class="dots">${dot(s.control)}</div></div>
+        <div class="rating-row"><span class="rlabel">Power</span><div class="dots">${dot(s.power)}</div></div>
+      </div>
+      <div class="price">$${s.price}<small>/restring</small></div>
+    </button>
+  `).join('');
+  catalog.querySelectorAll('.string-card').forEach(card => {
+    card.addEventListener('click', () => openStringDetailModal(card.dataset.stringId));
+  });
+
+  // Hero CTA + ready-strip CTA both open the same flow.
+  // Note: initStringing() already wires #stringing-cta on the homepage.
+  // On this page #stringing-cta also exists in the hero, so initStringing() handles it.
+  // We only need to wire the ready-strip CTA here.
+  document.getElementById('stringing-strip-cta')?.addEventListener('click', openStringingModal);
+
+  renderFaq('faq-stringing', typeof FAQS !== 'undefined' ? FAQS.stringing : []);
+}
+
+function openStringDetailModal(id) {
+  const s = STRINGS.find(x => x.id === id);
+  if (!s) return;
+  openModal(`
+    <span class="eyebrow">▸ ${escapeHtml(s.gauge || 'String')}</span>
+    <h3 class="display-m">${escapeHtml(s.name)}</h3>
+    <p class="modal-meta">$${s.price} per restring · Durability ${s.durability}/5 · Control ${s.control}/5 · Power ${s.power}/5</p>
+    <p class="body" style="font-size:14px;line-height:1.6;margin-bottom:24px">${escapeHtml(s.desc)}</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn btn-primary" id="string-book-this">Book this string →</button>
+      <button class="btn btn-ghost" id="string-detail-close">Close</button>
+    </div>
+  `);
+  document.getElementById('string-book-this')?.addEventListener('click', () => {
+    closeModal();
+    openStringingModal();
+  });
+  document.getElementById('string-detail-close')?.addEventListener('click', closeModal);
+}
+
 // === PAGE INIT ===
 document.addEventListener('DOMContentLoaded', () => {
   initHero();
