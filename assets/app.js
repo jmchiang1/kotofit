@@ -457,6 +457,79 @@ function initNavHighlight() {
   });
 }
 
+// === LOCATIONS PAGE ===
+function renderLocationsPage() {
+  const grid = document.getElementById('loc-grid-page');
+  if (!grid) return;
+
+  const filters = { sport: 'all', service: 'all' };
+
+  const matchesFilters = (loc) => {
+    if (loc.status === 'soon') return filters.sport === 'all' && filters.service === 'all';
+    if (filters.sport !== 'all' && !loc.sports.includes(filters.sport)) return false;
+    if (filters.service !== 'all' && !loc.services.includes(filters.service)) return false;
+    return true;
+  };
+
+  const render = () => {
+    const visible = LOCATIONS.filter(matchesFilters);
+    grid.innerHTML = visible.map(loc => {
+      const isSoon = loc.status === 'soon';
+      const sportTags = loc.sports.map(s => {
+        const sport = SPORTS.find(x => x.id === s);
+        return sport ? `<span class="tag-chip">${escapeHtml(sport.name)}</span>` : '';
+      }).join('');
+      const serviceTags = loc.services.map(s => `<span class="tag-chip">${escapeHtml(s.charAt(0).toUpperCase() + s.slice(1))}</span>`).join('');
+      return `
+        <article class="loc-card-page" data-loc-id="${escapeHtml(loc.id)}">
+          <div class="img" style="background-image:url('${escapeHtml(loc.img)}')">
+            <span class="badge ${isSoon ? 'soon' : ''}">${isSoon ? 'Coming this season' : 'Open'}</span>
+          </div>
+          <div class="body">
+            <div class="city">${escapeHtml(loc.city)}</div>
+            <h3 class="name">${escapeHtml(loc.name)}</h3>
+            <div class="addr">${escapeHtml(loc.address)}</div>
+            ${isSoon ? '' : `<div class="meta"><span><strong>${escapeHtml(loc.courts)}</strong> courts</span><span>${escapeHtml(loc.hours)}</span></div>`}
+            ${isSoon ? '' : `<div class="tags">${sportTags}${serviceTags}</div>`}
+            <div class="actions">
+              ${isSoon
+                ? `<button class="btn btn-primary" data-action="notify" data-loc-id="${escapeHtml(loc.id)}">Get notified →</button>`
+                : `<a class="btn btn-primary" href="index.html#top">Reserve here →</a>
+                   <button class="btn btn-ghost" data-action="details" data-loc-id="${escapeHtml(loc.id)}">Details</button>`
+              }
+            </div>
+          </div>
+        </article>
+      `;
+    }).join('');
+
+    grid.querySelectorAll('[data-action="notify"]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const loc = LOCATIONS.find(l => l.id === btn.dataset.locId);
+        if (loc) openWaitlistModal(loc);
+      });
+    });
+    grid.querySelectorAll('[data-action="details"]').forEach(btn => {
+      btn.addEventListener('click', () => openLocationModal(btn.dataset.locId));
+    });
+  };
+
+  const chipsEl = document.getElementById('loc-filter-chips');
+  if (chipsEl) {
+    chipsEl.querySelectorAll('.chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        const dim = chip.dataset.filter;
+        chipsEl.querySelectorAll(`.chip[data-filter="${dim}"]`).forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        filters[dim] = chip.dataset.value;
+        render();
+      });
+    });
+  }
+
+  render();
+}
+
 // === PAGE INIT ===
 document.addEventListener('DOMContentLoaded', () => {
   initHero();

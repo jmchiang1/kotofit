@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Locations — Kotofit</title>
+  <meta name="description" content="Four Kotofit locations across NJ and NY today, with Brooklyn and Queens opening this season." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" />
+  <link rel="stylesheet" href="assets/styles.css" />
+</head>
+<body data-page="locations">
+
+  <nav class="nav">
+    <div class="container nav-inner">
+      <a href="index.html" class="nav-logo">KOTOFIT</a>
+      <ul class="nav-links">
+        <li><a href="locations.html">Locations</a></li>
+        <li><a href="memberships.html">Memberships</a></li>
+        <li><a href="coaching.html">Coaching</a></li>
+        <li><a href="events.html">Events</a></li>
+        <li><a href="stringing.html">Stringing</a></li>
+      </ul>
+      <a href="index.html#top" class="nav-cta">Reserve Court →</a>
+      <button class="nav-burger" aria-label="Open menu"><span></span></button>
+    </div>
+  </nav>
+
+  <div class="mobile-menu" id="mobile-menu" aria-hidden="true">
+    <button class="close" id="mm-close" aria-label="Close menu">×</button>
+    <nav>
+      <a href="locations.html">Locations</a>
+      <a href="memberships.html">Memberships</a>
+      <a href="coaching.html">Coaching</a>
+      <a href="events.html">Events</a>
+      <a href="stringing.html">Stringing</a>
+    </nav>
+    <a href="index.html#top" class="mm-cta">Reserve a court →</a>
+  </div>
+
+  <main>
+    <section class="page-hero">
+      <div class="container">
+        <span class="eyebrow">▸ Four open. Two coming.</span>
+        <h1 class="display-l">Find your court.</h1>
+        <p class="lede">Four Kotofit locations across NJ and NY today. Brooklyn and Queens land this season.</p>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="filter-chips" id="loc-filter-chips">
+          <span class="chip-label">Sport</span>
+          <div class="chip-group">
+            <button class="chip active" data-filter="sport" data-value="all">All</button>
+            <button class="chip" data-filter="sport" data-value="badminton">Badminton</button>
+            <button class="chip" data-filter="sport" data-value="pickleball">Pickleball</button>
+            <button class="chip" data-filter="sport" data-value="pingpong">Ping Pong</button>
+          </div>
+          <span class="chip-label" style="margin-left:14px">Service</span>
+          <div class="chip-group">
+            <button class="chip active" data-filter="service" data-value="all">All</button>
+            <button class="chip" data-filter="service" data-value="coaching">Coaching</button>
+            <button class="chip" data-filter="service" data-value="stringing">Stringing</button>
+            <button class="chip" data-filter="service" data-value="events">Events</button>
+          </div>
+        </div>
+        <div class="loc-grid-page" id="loc-grid-page"></div>
+      </div>
+    </section>
+  </main>
+
+  <section class="ready-strip">
+    <div class="container inner">
+      <div>
+        <h3>Ready to <em>play?</em></h3>
+        <div class="ready-meta">Court reservations take 30 seconds. We'll have a court waiting.</div>
+      </div>
+      <a href="index.html#top" class="btn btn-primary">Reserve a court →</a>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="brand">
+          <div class="logo">KOTOFIT</div>
+          <p>America's home for badminton, pickleball, and indoor sports. Four locations across NJ and NY, growing.</p>
+        </div>
+        <div>
+          <h4>Play</h4>
+          <ul>
+            <li><a href="locations.html">Locations</a></li>
+            <li><a href="index.html#top">Reserve</a></li>
+            <li><a href="memberships.html">Memberships</a></li>
+            <li><a href="stringing.html">Stringing</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Learn</h4>
+          <ul>
+            <li><a href="coaching.html">Coaching</a></li>
+            <li><a href="coaching.html">Clinics</a></li>
+            <li><a href="coaching.html">Youth</a></li>
+            <li><a href="events.html">Events</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Connect</h4>
+          <ul>
+            <li><a href="#">WhatsApp</a></li>
+            <li><a href="#">Instagram</a></li>
+            <li><a href="#">WeChat</a></li>
+            <li><a href="#">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div>© 2026 Kotofit</div>
+        <div>NJ · NY · Brooklyn (soon) · Queens (soon)</div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/data.js"></script>
+  <script src="assets/app.js"></script>
+</body>
+</html>
