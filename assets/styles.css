@@ -265,10 +265,10 @@ body { padding-top: 64px; }
 }
 
 /* === MOTION === */
-.fade-up { opacity: 0; transform: translateY(24px); transition: opacity 700ms var(--ease-out), transform 700ms var(--ease-out); }
-.fade-up.in { opacity: 1; transform: translateY(0); }
+.reveal { opacity: 0; transform: translateY(24px); }
+.reveal-stagger > * { opacity: 0; transform: translateY(24px); }
 @media (prefers-reduced-motion: reduce) {
-  .fade-up { opacity: 1; transform: none; transition: none; }
+  .reveal, .reveal-stagger > * { opacity: 1; transform: none; }
   .hero.loaded .hero-bg { transform: none; transition: none; }
   html { scroll-behavior: auto; }
 }
