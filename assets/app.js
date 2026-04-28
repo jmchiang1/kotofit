@@ -427,15 +427,38 @@ function initMobileMenu() {
   mm.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMm));
 }
 
-// === SCROLL REVEAL ===
-function initScrollReveal() {
-  const targets = document.querySelectorAll('.section-head, .play-tile, .mem-card, .loc-card, .coach-feature, .coach-mini, .event-row, .stringing, .program-card, .coach-row, .clinic-row, .string-card');
-  if (!targets.length) return;
-  targets.forEach(el => el.classList.add('fade-up'));
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); observer.unobserve(e.target); } });
-  }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
-  targets.forEach(el => observer.observe(el));
+// === REVEAL (motion.dev) ===
+function initReveal() {
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const M = window.Motion;
+
+  // Fallback: no Motion library, or reduced-motion preference → show everything immediately.
+  if (reduceMotion || !M) {
+    document.querySelectorAll('.reveal, .reveal-stagger > *').forEach(el => {
+      el.style.opacity = '1';
+      el.style.transform = 'none';
+    });
+    return;
+  }
+
+  // Singleton reveal — single elements fade-up with a spring.
+  M.inView('.reveal', (el) => {
+    M.animate(el, { opacity: [0, 1], y: [24, 0] }, {
+      duration: 0.7,
+      easing: M.spring({ stiffness: 100, damping: 20 }),
+    });
+  }, { amount: 0.2 });
+
+  // Stagger reveal — direct children of a container fade-up in sequence.
+  M.inView('.reveal-stagger', (el) => {
+    const children = el.querySelectorAll(':scope > *');
+    if (!children.length) return;
+    M.animate(children, { opacity: [0, 1], y: [24, 0] }, {
+      delay: M.stagger(0.05),
+      duration: 0.6,
+      easing: M.spring({ stiffness: 100, damping: 22 }),
+    });
+  }, { amount: 0.2 });
 }
 
 // === HERO LOAD ===
@@ -832,7 +855,6 @@ document.addEventListener('DOMContentLoaded', () => {
   renderCoachesHomepage();
   renderEventsHomepage();
   initStringing();
-  initScrollReveal();
   // Page-specific renderers (no-ops if their target elements don't exist):
   if (typeof renderLocationsPage === 'function') renderLocationsPage();
   if (typeof renderMembershipsPage === 'function') renderMembershipsPage();
@@ -840,4 +862,5 @@ document.addEventListener('DOMContentLoaded', () => {
   if (typeof renderEventsPage === 'function') renderEventsPage();
   if (typeof renderStringingPage === 'function') renderStringingPage();
   if (typeof renderFaqPage === 'function') renderFaqPage();
+  initReveal();
 });
