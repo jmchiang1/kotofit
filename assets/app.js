@@ -530,6 +530,36 @@ function renderLocationsPage() {
   render();
 }
 
+// === FAQ ACCORDION (shared by memberships, coaching, stringing) ===
+function renderFaq(elementId, items) {
+  const el = document.getElementById(elementId);
+  if (!el || !Array.isArray(items)) return;
+  el.innerHTML = items.map((it, i) => `
+    <div class="faq-row" data-faq-i="${i}">
+      <button class="faq-q"><span>${escapeHtml(it.q)}</span><span class="icon">+</span></button>
+      <div class="faq-a">${escapeHtml(it.a)}</div>
+    </div>
+  `).join('');
+  el.querySelectorAll('.faq-row').forEach(row => {
+    row.querySelector('.faq-q').addEventListener('click', () => {
+      const wasOpen = row.classList.contains('open');
+      el.querySelectorAll('.faq-row.open').forEach(r => r.classList.remove('open'));
+      if (!wasOpen) row.classList.add('open');
+    });
+  });
+}
+
+// === MEMBERSHIPS PAGE ===
+function renderMembershipsPage() {
+  const grid = document.getElementById('mem-grid');
+  if (grid && document.body.dataset.page === 'memberships') {
+    // Re-run renderMemberships with full perk list (overrides the homepage default)
+    renderMemberships({ full: true });
+  }
+  renderFaq('faq-memberships', typeof FAQS !== 'undefined' ? FAQS.memberships : []);
+  document.getElementById('join-cta')?.addEventListener('click', () => openJoinModal('go-koto'));
+}
+
 // === PAGE INIT ===
 document.addEventListener('DOMContentLoaded', () => {
   initHero();
