@@ -220,29 +220,126 @@ function openSportModal(id) {
 }
 
 // === MEMBERSHIPS ===
-function renderMemberships(opts = {}) {
-  const grid = document.getElementById('mem-grid');
+// Find a tier across both locations: returns { tier, locationKey } or null.
+function findTier(tierId) {
+  for (const key of Object.keys(MEMBERSHIPS)) {
+    const tier = MEMBERSHIPS[key].tiers.find(t => t.id === tierId);
+    if (tier) return { tier, locationKey: key };
+  }
+  return null;
+}
+
+function renderTierPriceBlock(tier) {
+  if (tier.priceMo === 0) {
+    return `<div class="price">$0<small>free tier</small></div>`;
+  }
+  const monthly = tier.priceMo != null
+    ? `<div class="price">$${tier.priceMo}<small>/mo</small></div>`
+    : '';
+  const quarterly = tier.priceQ != null
+    ? (tier.priceMo != null
+        ? `<div class="price-alt">or <strong>$${tier.priceQ}</strong> / quarter</div>`
+        : `<div class="price">$${tier.priceQ}<small>/quarter</small></div>`)
+    : '';
+  return monthly + quarterly;
+}
+
+function renderMembershipCards(containerId, locationKey) {
+  const grid = document.getElementById(containerId);
   if (!grid) return;
-  const useFullPerks = opts.full === true;
-  grid.innerHTML = TIERS.map(t => {
-    const perksList = useFullPerks ? t.fullPerks : t.perks;
-    return `
-      <div class="mem-card ${t.featured ? 'featured' : ''}">
-        <div class="tier">${escapeHtml(t.name)}</div>
-        <div class="price">$${t.price}<small>/mo</small></div>
-        <ul>${perksList.map(p => `<li>${escapeHtml(p)}</li>`).join('')}</ul>
-        <button class="mem-cta" data-tier="${escapeHtml(t.id)}">${escapeHtml(t.cta)}</button>
-      </div>
-    `;
-  }).join('');
+  const loc = MEMBERSHIPS[locationKey];
+  if (!loc) return;
+  grid.dataset.tierCount = loc.tiers.length;
+  grid.innerHTML = loc.tiers.map(t => `
+    <div class="mem-card ${t.featured ? 'featured' : ''}">
+      ${t.limitedOffer ? `<div class="limited-pill">Limited time offer</div>` : ''}
+      <div class="tier">${escapeHtml(t.name)}</div>
+      <div class="tier-tag">${escapeHtml(t.tagline)}</div>
+      <div class="price-block">${renderTierPriceBlock(t)}</div>
+      <ul>${t.perks.map(p => `<li>${escapeHtml(p)}</li>`).join('')}</ul>
+      <button class="mem-cta" data-tier="${escapeHtml(t.id)}">${escapeHtml(t.cta)}</button>
+    </div>
+  `).join('');
   grid.querySelectorAll('[data-tier]').forEach(btn => {
     btn.addEventListener('click', () => openJoinModal(btn.dataset.tier));
   });
 }
 
+function renderComparisonTable(containerId, locationKey) {
+  const wrap = document.getElementById(containerId);
+  if (!wrap) return;
+  const loc = MEMBERSHIPS[locationKey];
+  if (!loc) return;
+  const headers = loc.tiers.map(t => `
+    <th class="col-tier ${t.featured ? 'featured' : ''}">${escapeHtml(t.name)}</th>
+  `).join('');
+  const body = loc.rows.map(row => {
+    const cells = loc.tiers.map(t => {
+      const v = t.cells[row.key];
+      const isDash = v === '—' || v == null;
+      return `<td class="cell-val ${isDash ? 'cell-no' : ''}">${escapeHtml(v ?? '—')}</td>`;
+    }).join('');
+    const sub = row.sub ? `<div class="row-sub">${escapeHtml(row.sub)}</div>` : '';
+    return `<tr><td class="row-label">${escapeHtml(row.label)}${sub}</td>${cells}</tr>`;
+  }).join('');
+  wrap.innerHTML = `
+    <table class="mem-table">
+      <thead><tr><th>Feature</th>${headers}</tr></thead>
+      <tbody>${body}</tbody>
+    </table>
+  `;
+}
+
+// Build segmented NJ/LIC toggle, wire it to re-render cards (+ optional table).
+// Returns a controller with getActive() so callers can read the current selection.
+function renderMembershipsLocationToggle(toggleId, cardsId, tableId, initialKey, onChange) {
+  const toggle = document.getElementById(toggleId);
+  if (!toggle) return null;
+  const keys = Object.keys(MEMBERSHIPS);
+  toggle.innerHTML = keys.map(k => `
+    <button class="mem-toggle-btn ${k === initialKey ? 'active' : ''}" data-loc="${k}">
+      ${escapeHtml(MEMBERSHIPS[k].label)}
+    </button>
+  `).join('');
+  let active = initialKey;
+  const apply = (key) => {
+    active = key;
+    toggle.querySelectorAll('.mem-toggle-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.loc === key);
+    });
+    renderMembershipCards(cardsId, key);
+    if (tableId) renderComparisonTable(tableId, key);
+    if (typeof onChange === 'function') onChange(key);
+  };
+  toggle.querySelectorAll('.mem-toggle-btn').forEach(b => {
+    b.addEventListener('click', () => apply(b.dataset.loc));
+  });
+  apply(active);
+  return { getActive: () => active };
+}
+
+// Homepage entry point: toggle (if present) + cards. No table on homepage.
+// Memberships page handles its own render via renderMembershipsPage().
+function renderMemberships() {
+  if (document.body.dataset.page === 'memberships') return;
+  const grid = document.getElementById('mem-grid');
+  if (!grid) return;
+  if (document.getElementById('mem-toggle-home')) {
+    renderMembershipsLocationToggle('mem-toggle-home', 'mem-grid', null, 'nj');
+  } else {
+    renderMembershipCards('mem-grid', 'nj');
+  }
+}
+
 function openJoinModal(tierId) {
-  const tier = TIERS.find(t => t.id === tierId);
-  if (!tier) return;
+  const found = findTier(tierId);
+  if (!found) return;
+  const { tier, locationKey } = found;
+  const locDef = MEMBERSHIPS[locationKey];
+  const eligibleLocations = LOCATIONS.filter(l => l.status === 'open' && locDef.locationIds.includes(l.id));
+  const priceLine = tier.priceMo != null
+    ? `${tier.name} · $${tier.priceMo}/mo${tier.priceQ != null ? ` (or $${tier.priceQ}/quarter)` : ''}`
+    : `${tier.name} · $${tier.priceQ}/quarter`;
   let step = 1;
   let chosenLoc = null;
   const render = () => {
@@ -250,8 +347,9 @@ function openJoinModal(tierId) {
       openModal(`
         <div class="step-row"><div class="step-dot active"></div><div class="step-dot"></div><div class="step-dot"></div></div>
         <span class="eyebrow">▸ Step 1 of 3 · Choose your home court</span>
-        <h3 class="display-m">Where will you play most?</h3>
-        <div class="step-pick">${LOCATIONS.filter(l => l.status === 'open').map(l => `<button data-loc="${escapeHtml(l.id)}">${escapeHtml(l.name)} · ${escapeHtml(l.city)}</button>`).join('')}</div>
+        <h3 class="display-m">Where will you play?</h3>
+        <p class="modal-meta">${escapeHtml(tier.name)} is a ${escapeHtml(locDef.label)} membership.</p>
+        <div class="step-pick">${eligibleLocations.map(l => `<button data-loc="${escapeHtml(l.id)}">${escapeHtml(l.name)} · ${escapeHtml(l.city)}</button>`).join('')}</div>
       `);
       document.querySelectorAll('.step-pick [data-loc]').forEach(b => {
         b.addEventListener('click', () => { chosenLoc = b.dataset.loc; step = 2; render(); });
@@ -261,7 +359,7 @@ function openJoinModal(tierId) {
         <div class="step-row"><div class="step-dot active"></div><div class="step-dot active"></div><div class="step-dot"></div></div>
         <span class="eyebrow">▸ Step 2 of 3 · Your details</span>
         <h3 class="display-m">Create your account</h3>
-        <p class="modal-meta">${escapeHtml(tier.name)} · $${tier.price}/mo</p>
+        <p class="modal-meta">${escapeHtml(priceLine)}</p>
         <div class="form-row"><label>Full name</label><input type="text" id="join-name" placeholder="Alex Player" /></div>
         <div class="form-row"><label>Email</label><input type="email" id="join-email" placeholder="alex@example.com" /></div>
         <div class="form-row"><label>Password</label><input type="password" id="join-pw" placeholder="••••••••" /></div>
@@ -274,13 +372,14 @@ function openJoinModal(tierId) {
       });
     } else {
       const num = 'KF-MEM-' + Math.floor(1000 + Math.random() * 9000);
+      const locName = (LOCATIONS.find(l => l.id === chosenLoc) || {}).name || locDef.label;
       openModal(`
         <div class="step-row"><div class="step-dot active"></div><div class="step-dot active"></div><div class="step-dot active"></div></div>
         <span class="eyebrow">▸ You're in</span>
         <div class="confirm-num">${num}</div>
-        <h3 class="display-m">Welcome to ${escapeHtml(tier.name.split(' · ')[0])}</h3>
-        <p class="modal-meta">Confirmation sent. Your member booking window is open.</p>
-        <p class="body" style="font-size:13px;margin-bottom:24px">Open the app or come by your home court to get your first session in.</p>
+        <h3 class="display-m">Welcome to ${escapeHtml(tier.name)}</h3>
+        <p class="modal-meta">Home court: ${escapeHtml(locName)}. Confirmation sent.</p>
+        <p class="body" style="font-size:13px;margin-bottom:24px">Your member booking window opens immediately. Open the app or stop by the front desk to lock in your first session.</p>
         <button class="btn btn-primary" id="join-done">Done</button>
       `);
       document.getElementById('join-done')?.addEventListener('click', closeModal);
@@ -431,34 +530,43 @@ function initMobileMenu() {
 function initReveal() {
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const M = window.Motion;
-
-  // Fallback: no Motion library, or reduced-motion preference → show everything immediately.
-  if (reduceMotion || !M) {
+  const showAll = () => {
     document.querySelectorAll('.reveal, .reveal-stagger > *').forEach(el => {
       el.style.opacity = '1';
       el.style.transform = 'none';
     });
+  };
+
+  // Fallback: no Motion library, missing API, or reduced-motion preference → show everything immediately.
+  if (reduceMotion || !M || !M.inView || !M.animate) {
+    showAll();
     return;
   }
 
-  // Singleton reveal — single elements fade-up with a spring.
-  M.inView('.reveal', (el) => {
-    M.animate(el, { opacity: [0, 1], y: [24, 0] }, {
-      duration: 0.7,
-      easing: M.spring({ stiffness: 100, damping: 20 }),
-    });
-  }, { amount: 0.2 });
+  try {
+    // Singleton reveal — single elements spring up.
+    // Note: Motion.inView passes an IntersectionObserverEntry, NOT the element. Use entry.target.
+    M.inView('.reveal', (entry) => {
+      M.animate(entry.target, { opacity: [0, 1], y: [24, 0] }, {
+        duration: 0.7,
+        ease: M.spring ? M.spring({ stiffness: 100, damping: 20 }) : 'ease-out',
+      });
+    }, { amount: 0.2 });
 
-  // Stagger reveal — direct children of a container fade-up in sequence.
-  M.inView('.reveal-stagger', (el) => {
-    const children = el.querySelectorAll(':scope > *');
-    if (!children.length) return;
-    M.animate(children, { opacity: [0, 1], y: [24, 0] }, {
-      delay: M.stagger(0.05),
-      duration: 0.6,
-      easing: M.spring({ stiffness: 100, damping: 22 }),
-    });
-  }, { amount: 0.2 });
+    // Stagger reveal — direct children of a container animate in sequence.
+    M.inView('.reveal-stagger', (entry) => {
+      const children = entry.target.querySelectorAll(':scope > *');
+      if (!children.length) return;
+      M.animate(children, { opacity: [0, 1], y: [24, 0] }, {
+        delay: M.stagger ? M.stagger(0.05) : 0,
+        duration: 0.6,
+        ease: M.spring ? M.spring({ stiffness: 100, damping: 22 }) : 'ease-out',
+      });
+    }, { amount: 0.2 });
+  } catch (err) {
+    console.warn('motion.dev integration error, falling back to immediate-show:', err);
+    showAll();
+  }
 }
 
 // === HERO LOAD ===
@@ -574,13 +682,31 @@ function renderFaq(elementId, items) {
 
 // === MEMBERSHIPS PAGE ===
 function renderMembershipsPage() {
-  const grid = document.getElementById('mem-grid');
-  if (grid && document.body.dataset.page === 'memberships') {
-    // Re-run renderMemberships with full perk list (overrides the homepage default)
-    renderMemberships({ full: true });
-  }
+  if (document.body.dataset.page !== 'memberships') return;
+
+  const ctaBlurb = document.getElementById('join-cta-blurb');
+  const updateCtaBlurb = (key) => {
+    if (!ctaBlurb) return;
+    ctaBlurb.textContent = key === 'nj'
+      ? 'Most NJ players go with Open Play Elite — $35/mo, 30% off open play, 21-day advance booking.'
+      : 'Most LIC players start with Silver — $49/mo, 20% off open play, plus 1 free UBR/DUPR session each month.';
+  };
+
+  const controller = renderMembershipsLocationToggle(
+    'mem-toggle-page',
+    'mem-grid',
+    'mem-table-wrap',
+    'nj',
+    updateCtaBlurb
+  );
+
   renderFaq('faq-memberships', typeof FAQS !== 'undefined' ? FAQS.memberships : []);
-  document.getElementById('join-cta')?.addEventListener('click', () => openJoinModal('go-koto'));
+
+  document.getElementById('join-cta')?.addEventListener('click', () => {
+    const activeKey = controller ? controller.getActive() : 'nj';
+    const featured = MEMBERSHIPS[activeKey].tiers.find(t => t.featured) || MEMBERSHIPS[activeKey].tiers[0];
+    openJoinModal(featured.id);
+  });
 }
 
 // === COACHING PAGE ===
