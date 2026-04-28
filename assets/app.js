@@ -791,6 +791,35 @@ function openStringDetailModal(id) {
   document.getElementById('string-detail-close')?.addEventListener('click', closeModal);
 }
 
+// === FAQ PAGE ===
+function renderFaqPage() {
+  // Each category gets its own accordion via the existing renderFaq helper.
+  if (typeof FAQS !== 'undefined') {
+    renderFaq('faq-general',  FAQS.general);
+    renderFaq('faq-booking',  FAQS.booking);
+    renderFaq('faq-hours',    FAQS.hours);
+    renderFaq('faq-courts',   FAQS.courts);
+  }
+
+  // WeChat copy button — copies the WeChat ID to clipboard with a hint.
+  const wechatBtn = document.getElementById('faq-wechat-copy');
+  if (wechatBtn && typeof CONTACT_INFO !== 'undefined') {
+    wechatBtn.addEventListener('click', () => {
+      const id = CONTACT_INFO.wechatId;
+      navigator.clipboard?.writeText(id).then(() => {
+        const hint = document.getElementById('faq-wechat-hint');
+        if (hint) {
+          hint.textContent = 'Copied!';
+          setTimeout(() => { hint.textContent = 'Click to copy WeChat ID'; }, 1500);
+        }
+      }).catch(() => {
+        const hint = document.getElementById('faq-wechat-hint');
+        if (hint) hint.textContent = 'Copy manually: ' + id;
+      });
+    });
+  }
+}
+
 // === PAGE INIT ===
 document.addEventListener('DOMContentLoaded', () => {
   initHero();
@@ -810,4 +839,5 @@ document.addEventListener('DOMContentLoaded', () => {
   if (typeof renderCoachingPage === 'function') renderCoachingPage();
   if (typeof renderEventsPage === 'function') renderEventsPage();
   if (typeof renderStringingPage === 'function') renderStringingPage();
+  if (typeof renderFaqPage === 'function') renderFaqPage();
 });
