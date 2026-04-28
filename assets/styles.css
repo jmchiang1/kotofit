@@ -419,3 +419,9 @@ body { padding-top: 64px; }
 .section-title { margin-bottom: 28px; }
 .section-title .e { font-size: 11px; color: var(--cobalt); font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; }
 .section-title h2 { font-size: clamp(28px, 4vw, 40px); font-weight: 800; letter-spacing: -0.03em; line-height: 1; margin: 8px 0 0; }
+
+/* === LOGO IMAGE === */
+.nav-logo { display: inline-flex; align-items: center; gap: 10px; }
+.nav-logo img { height: 28px; width: auto; display: block; }
+.footer .brand .logo { display: inline-flex; align-items: center; gap: 12px; }
+.footer .brand .logo img { height: 32px; width: auto; display: block; }
