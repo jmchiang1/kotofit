@@ -691,6 +691,52 @@ function openClinicRsvpModal(clinic) {
   document.getElementById('clinic-rsvp-done')?.addEventListener('click', closeModal);
 }
 
+// === EVENTS PAGE ===
+function renderEventsPage() {
+  const list = document.getElementById('events-list-page');
+  if (!list) return;
+
+  const filters = { sport: 'all', month: 'all', price: 'all' };
+
+  const matches = (e) => {
+    if (filters.sport !== 'all' && e.sport !== filters.sport) return false;
+    if (filters.month !== 'all' && e.month !== filters.month) return false;
+    if (filters.price !== 'all' && e.price !== filters.price) return false;
+    return true;
+  };
+
+  const render = () => {
+    const visible = EVENTS.filter(matches);
+    list.innerHTML = visible.map(e => `
+      <div class="event-row">
+        <div class="date"><div class="day">${escapeHtml(e.day)}</div><div class="mo">${escapeHtml(e.mo)}</div></div>
+        <div class="info"><div class="name">${escapeHtml(e.name)}</div><div class="meta">${escapeHtml(e.meta)}</div></div>
+        <button class="rsvp" data-event="${escapeHtml(e.id)}">RSVP</button>
+      </div>
+    `).join('') || `<p class="body" style="padding:32px 0">No events match those filters. Try clearing one.</p>`;
+    list.querySelectorAll('[data-event]').forEach(btn => {
+      btn.addEventListener('click', () => openRsvpModal(btn.dataset.event));
+    });
+    const meta = document.querySelector('[data-events-count]');
+    if (meta) meta.textContent = `${visible.length} event${visible.length === 1 ? '' : 's'} matching`;
+  };
+
+  const chipsEl = document.getElementById('events-filter-chips');
+  if (chipsEl) {
+    chipsEl.querySelectorAll('.chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        const dim = chip.dataset.filter;
+        chipsEl.querySelectorAll(`.chip[data-filter="${dim}"]`).forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        filters[dim] = chip.dataset.value;
+        render();
+      });
+    });
+  }
+
+  render();
+}
+
 // === PAGE INIT ===
 document.addEventListener('DOMContentLoaded', () => {
   initHero();
