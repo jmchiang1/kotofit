@@ -114,3 +114,35 @@ const FAQS = {
     { q: 'When can I pick up?', a: 'Pickup hours are tied to each location\'s open hours. We text when ready; bring your confirmation number to the front desk.' },
   ],
 };
+
+FAQS.general = [
+  { q: 'What is Kotofit?', a: 'Kotofit operates multiple sports facilities in Jersey City and Long Island City, with indoor courts for badminton, pickleball, and table tennis across four locations — each with its own hours and amenities.' },
+  { q: 'Tell me about the new Long Island City facility.', a: 'Our newest facility is at 47-10 10th Street in Long Island City — twelve courts open until 11PM, with street parking around the building. See the Locations page for the full address and hours.' },
+  { q: 'Is parking available at Kotofit facilities?', a: 'Parking varies by location. Jersey City facilities offer street parking and free lot parking with time restrictions. Long Island City has street parking available around the building.' },
+];
+
+FAQS.booking = [
+  { q: 'How can I book reservations?', a: 'Create a free account on the reservation platform, choose "Book full court / find a partner," select your time slot, and you\'ll receive a pin code via email confirmation for facility entry.' },
+  { q: 'Do I have to be a paid member to play?', a: 'No — we offer free memberships as well. Free members can book courts and open plays up to two weeks in advance.' },
+  { q: 'Can I extend my time?', a: 'Yes, additional time can be reserved if slots are available. Exceeding your reservation without booking the extension triggers automatic charges.' },
+  { q: 'How do cancellations work?', a: 'Jersey City: free cancellations 48+ hours before; $5 penalty 12-48 hours before (credited to your account). Long Island City: full refunds outside 24 hours. Coaching sessions are non-refundable across all locations.' },
+];
+
+FAQS.hours = [
+  { q: 'What are peak and off-peak hours at Jersey City locations?', a: 'Peak hours run weekdays 5:30PM-11PM and weekends 7AM-11PM. Off-peak times are weekday mornings, weekday late nights, and weekend early mornings or late nights.' },
+  { q: 'What are peak and off-peak hours at Long Island City?', a: 'Peak hours run weekdays 5PM-10PM and weekends 7AM-11PM. Off-peak includes weekday daytime, late nights, and weekend early or late times.' },
+];
+
+FAQS.courts = [
+  { q: 'How long can I stay at the facility?', a: 'You can access the court from 10 minutes before your reservation to 5 minutes after. Past that window, the next booking takes the court.' },
+  { q: 'Can I bring friends?', a: 'Yes — up to six people per court booking. Any additional players are charged at $12 per hour.' },
+  { q: 'Do I need to bring my own equipment?', a: 'No — we provide badminton racquets, pickleball paddles, and table tennis paddles plus balls. All free with your booking.' },
+  { q: 'What is my skill level?', a: 'Skill levels are split into Beginner, Intermediate, and Advanced for badminton. For pickleball, we have a reference video at the front desk and on our community channels — ask any coach if you\'re not sure where to start.' },
+  { q: 'Can Kotofit help me find partners to play with?', a: 'Yes — the reservation platform has a "Find a Partner" feature that matches players by proficiency. Member events and mixers are great ways to meet regulars at your home court too.' },
+];
+
+const CONTACT_INFO = {
+  whatsappNumber: '+1 551 328 7867',
+  whatsappUrl: 'https://wa.me/15513287867',
+  wechatId: 'kotofit1',
+};
