@@ -646,6 +646,31 @@ function initHero() {
   });
 }
 
+// === HERO IMAGERY TOGGLE ===
+function initHeroToggle() {
+  const hero = document.querySelector('.hero');
+  const btn = document.getElementById('hero-toggle');
+  if (!hero || !btn) return;
+  const STORAGE_KEY = 'kotofit-hero-imagery-hidden';
+  const labelEl = btn.querySelector('.hero-toggle-label');
+
+  const apply = (hidden) => {
+    hero.classList.toggle('players-hidden', hidden);
+    if (labelEl) labelEl.textContent = hidden ? 'Show imagery' : 'Hide imagery';
+    btn.setAttribute('aria-pressed', String(hidden));
+  };
+
+  let initial = false;
+  try { initial = localStorage.getItem(STORAGE_KEY) === '1'; } catch (e) {}
+  apply(initial);
+
+  btn.addEventListener('click', () => {
+    const next = !hero.classList.contains('players-hidden');
+    apply(next);
+    try { localStorage.setItem(STORAGE_KEY, next ? '1' : '0'); } catch (e) {}
+  });
+}
+
 // === ACTIVE NAV HIGHLIGHT ===
 function initNavHighlight() {
   const page = document.body.dataset.page;
@@ -1184,6 +1209,7 @@ function initAnnounceBar() {
 document.addEventListener('DOMContentLoaded', () => {
   initAnnounceBar();
   initHero();
+  initHeroToggle();
   initNavHighlight();
   initMobileMenu();
   renderLocations();

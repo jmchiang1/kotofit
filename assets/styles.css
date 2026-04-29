@@ -2935,3 +2935,34 @@ body {
   .hero-player-1 { opacity: 1; }
   .hero-player-2, .hero-player-3 { opacity: 0; }
 }
+
+/* === HERO IMAGERY TOGGLE === */
+.hero-toggle {
+  position: absolute;
+  bottom: 18px;
+  right: 18px;
+  z-index: 4;
+  background: rgba(24, 24, 27, 0.78);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--elevated);
+  color: var(--mute);
+  padding: 8px 12px;
+  font-family: inherit;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 150ms var(--ease-out), border-color 150ms var(--ease-out), background 150ms var(--ease-out);
+}
+.hero-toggle:hover { color: var(--bone); border-color: var(--cobalt); background: rgba(24, 24, 27, 0.92); }
+.hero-toggle:focus-visible { outline: 2px solid var(--cobalt); outline-offset: 2px; }
+
+/* When toggled off, hide players entirely (animations stop too) */
+.hero.players-hidden .hero-players { display: none; }
+
+/* Hide the toggle on viewports where players are already hidden by media query */
+@media (max-width: 1024px) {
+  .hero-toggle { display: none; }
+}
