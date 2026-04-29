@@ -79,7 +79,21 @@ section { padding: var(--section-py) 0; border-top: 1px solid var(--elevated); s
 body { padding-top: 64px; }
 
 /* === HERO === */
-.hero { position: relative; min-height: 50rem; padding: 0; border-top: 0; overflow: hidden; display: flex; flex-direction: column; background: radial-gradient(ellipse at 50% 30%, #1a1a1d 0%, var(--ink) 60%); }
+.hero {
+  position: relative;
+  min-height: 50rem;
+  padding: 0;
+  border-top: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background:
+    radial-gradient(ellipse 60% 55% at 15% 20%, rgba(37, 99, 235, 0.30), transparent 60%),
+    radial-gradient(ellipse 55% 65% at 85% 35%, rgba(29, 78, 216, 0.22), transparent 65%),
+    radial-gradient(ellipse 30% 35% at 70% 78%, rgba(67, 56, 202, 0.18), transparent 60%),
+    radial-gradient(ellipse 80% 50% at 50% 100%, rgba(0, 0, 0, 0.55), transparent 70%),
+    linear-gradient(180deg, #1c1c20 0%, var(--ink) 100%);
+}
 .hero-inner { position: relative; z-index: 1; flex: 1; display: flex; flex-direction: column; justify-content: center; padding-top: clamp(56px, 8vw, 96px); padding-bottom: clamp(56px, 8vw, 96px); gap: clamp(28px, 4vw, 44px); align-items: center; text-align: left; }
 .hero-top { width: 100%; max-width: 980px; }
 .hero-booking { width: 100%; max-width: 980px; }
@@ -119,6 +133,8 @@ body { padding-top: 64px; }
 .loc-card:hover { transform: translateY(-4px); border-color: var(--cobalt); }
 .loc-img { aspect-ratio: 4/3; background-size: cover; background-position: center; position: relative; display: flex; align-items: flex-end; padding: 12px; }
 .loc-img::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(10,10,10,0.7) 100%); pointer-events: none; }
+.loc-img.loc-img-empty { background: var(--elevated); }
+.loc-img.loc-img-empty::after { display: none; }
 .loc-img .badge { position: relative; z-index: 1; background: var(--cobalt); padding: 4px 8px; font-size: 9px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--bone); }
 .loc-img .badge.soon { background: var(--bone); color: var(--ink); }
 .loc-body { padding: 16px; }
@@ -369,6 +385,8 @@ body { padding-top: 64px; }
 .loc-card-page:hover { transform: translateY(-4px); border-color: var(--cobalt); }
 .loc-card-page .img { aspect-ratio: 16/10; background-size: cover; background-position: center; position: relative; }
 .loc-card-page .img::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0) 60%, rgba(10,10,10,0.7) 100%); pointer-events: none; }
+.loc-card-page .img.img-empty { background: var(--elevated); }
+.loc-card-page .img.img-empty::after { display: none; }
 .loc-card-page .img .badge { position: absolute; top: 14px; left: 14px; z-index: 1; background: var(--cobalt); padding: 5px 10px; font-size: 9px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--bone); }
 .loc-card-page .img .badge.soon { background: var(--bone); color: var(--ink); }
 .loc-card-page .body { padding: 22px; display: flex; flex-direction: column; gap: 12px; flex: 1; }
