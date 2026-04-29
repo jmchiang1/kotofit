@@ -741,19 +741,36 @@ function renderFaq(elementId, items) {
       <div class="faq-a-wrap"><div class="faq-a">${escapeHtml(it.a)}</div></div>
     </div>
   `).join('');
+  const closeRow = (r) => {
+    const w = r.querySelector('.faq-a-wrap');
+    const b = r.querySelector('.faq-q');
+    if (!w || !r.classList.contains('open')) return;
+    w.style.maxHeight = w.scrollHeight + 'px';
+    void w.offsetHeight;
+    r.classList.remove('open');
+    if (b) b.setAttribute('aria-expanded', 'false');
+    requestAnimationFrame(() => { w.style.maxHeight = '0px'; });
+  };
+  const openRow = (r) => {
+    const w = r.querySelector('.faq-a-wrap');
+    const b = r.querySelector('.faq-q');
+    if (!w) return;
+    r.classList.add('open');
+    if (b) b.setAttribute('aria-expanded', 'true');
+    w.style.maxHeight = w.scrollHeight + 'px';
+    const onEnd = (e) => {
+      if (e.propertyName !== 'max-height') return;
+      w.removeEventListener('transitionend', onEnd);
+      if (r.classList.contains('open')) w.style.maxHeight = 'none';
+    };
+    w.addEventListener('transitionend', onEnd);
+  };
   el.querySelectorAll('.faq-row').forEach(row => {
     const btn = row.querySelector('.faq-q');
     btn.addEventListener('click', () => {
       const wasOpen = row.classList.contains('open');
-      el.querySelectorAll('.faq-row.open').forEach(r => {
-        r.classList.remove('open');
-        const b = r.querySelector('.faq-q');
-        if (b) b.setAttribute('aria-expanded', 'false');
-      });
-      if (!wasOpen) {
-        row.classList.add('open');
-        btn.setAttribute('aria-expanded', 'true');
-      }
+      el.querySelectorAll('.faq-row.open').forEach(r => { if (r !== row) closeRow(r); });
+      if (wasOpen) closeRow(row); else openRow(row);
     });
   });
 }
@@ -841,27 +858,29 @@ function renderCoachingPage() {
 
   if (coachesEl) {
     coachesEl.innerHTML = COACHES.map(c => `
-      <article class="coach-row" data-coach-id="${escapeHtml(c.id)}">
-        <div class="img" style="background-image:url('${escapeHtml(c.img)}')"></div>
-        <div class="info">
+      <article class="coach-card" data-coach-id="${escapeHtml(c.id)}">
+        <div class="coach-card-bg" style="background-image:url('${escapeHtml(c.img)}')"></div>
+        <div class="coach-card-overlay" aria-hidden="true"></div>
+        <div class="coach-card-content">
           <div class="role">${escapeHtml(c.role)}</div>
-          <h3 class="name">${escapeHtml(c.name)}</h3>
-          <div class="specialty">${escapeHtml(c.specialty || '')}</div>
-          <p class="desc">${escapeHtml(c.desc)}</p>
-          ${Array.isArray(c.awards) && c.awards.length ? `
-            <div class="awards">
-              <div class="awards-label">Highlights</div>
-              <ul>${c.awards.map(a => `<li>${escapeHtml(a)}</li>`).join('')}</ul>
-            </div>
-          ` : ''}
-          ${c.rate ? `<div class="rate"><strong>$${c.rate}</strong>/hr (privates)</div>` : ''}
-          <button class="btn btn-ghost book" data-action="book-coach">Book with ${escapeHtml(c.name.split(' ')[0])} →</button>
+          <div class="name">${escapeHtml(c.name)}</div>
+          ${c.specialty ? `<div class="specialty">${escapeHtml(c.specialty)}</div>` : ''}
         </div>
+        <button class="coach-card-book" data-action="book-coach" aria-label="Book with ${escapeHtml(c.name)}">
+          Book with ${escapeHtml(c.name.split(' ')[0])} →
+        </button>
       </article>
     `).join('');
+
+    // Card click → bio modal. Book button click → private contact flow.
+    // The book button stops propagation so card click doesn't fire too.
+    coachesEl.querySelectorAll('.coach-card').forEach(card => {
+      card.addEventListener('click', () => openCoachBioModal(card.dataset.coachId));
+    });
     coachesEl.querySelectorAll('[data-action="book-coach"]').forEach(btn => {
-      const card = btn.closest('[data-coach-id]');
-      btn.addEventListener('click', () => {
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        const card = btn.closest('[data-coach-id]');
         const privateProgram = PROGRAMS.find(p => p.id === 'private');
         if (privateProgram) openPrivateContactModal(privateProgram, card.dataset.coachId);
       });
@@ -960,6 +979,36 @@ function openPrivateContactModal(program, coachId) {
     `);
     document.getElementById('contact-done')?.addEventListener('click', closeModal);
   });
+}
+
+function openCoachBioModal(id) {
+  const c = COACHES.find(x => x.id === id);
+  if (!c) return;
+  const firstName = c.name.split(' ')[0];
+  openModal(`
+    <div class="modal-img" style="background-image:url('${escapeHtml(c.img)}')"></div>
+    <span class="eyebrow">▸ ${escapeHtml(c.role)}</span>
+    <h3 class="display-m">${escapeHtml(c.name)}</h3>
+    ${c.specialty ? `<p class="modal-meta">${escapeHtml(c.specialty)}</p>` : ''}
+    <p class="body" style="font-size:14px;line-height:1.7;margin-bottom:18px">${escapeHtml(c.desc)}</p>
+    ${Array.isArray(c.awards) && c.awards.length ? `
+      <div class="awards" style="margin-bottom:24px">
+        <div class="awards-label">Highlights</div>
+        <ul>${c.awards.map(a => `<li>${escapeHtml(a)}</li>`).join('')}</ul>
+      </div>
+    ` : ''}
+    ${c.rate ? `<p class="modal-meta" style="margin-bottom:18px"><strong style="color:var(--cobalt)">$${c.rate}</strong>/hr · privates</p>` : ''}
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn btn-primary" id="coach-bio-book">Book with ${escapeHtml(firstName)} →</button>
+      <button class="btn btn-ghost" id="coach-bio-close">Close</button>
+    </div>
+  `);
+  document.getElementById('coach-bio-book')?.addEventListener('click', () => {
+    closeModal();
+    const privateProgram = (typeof PROGRAMS !== 'undefined') ? PROGRAMS.find(p => p.id === 'private') : null;
+    if (privateProgram) openPrivateContactModal(privateProgram, id);
+  });
+  document.getElementById('coach-bio-close')?.addEventListener('click', closeModal);
 }
 
 function openClinicRsvpModal(clinic) {

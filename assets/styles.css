@@ -2029,10 +2029,6 @@ body {
   transition: max-height 360ms cubic-bezier(0.32, 0.72, 0, 1);
 }
 
-.faq-row.open .faq-a-wrap {
-  max-height: 600px;
-}
-
 .faq-a {
   padding: 0 0 22px;
   color: var(--mute);
@@ -2364,78 +2360,62 @@ body {
 
 .coaches-roster {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
 }
+@media (max-width: 900px) { .coaches-roster { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 600px) { .coaches-roster { grid-template-columns: 1fr; } }
 
-@media (max-width: 720px) {
-  .coaches-roster {
-    grid-template-columns: 1fr;
-  }
-}
-
-.coach-row {
-  display: grid;
-  grid-template-columns: 140px 1fr;
-  gap: 18px;
-  padding: 18px;
-  background: var(--surface);
+.coach-card {
+  position: relative;
+  aspect-ratio: 4/5;
+  overflow: hidden;
+  cursor: pointer;
   border: 1px solid var(--elevated);
-  align-items: center;
+  background: var(--surface);
+  transition: transform 200ms var(--ease-out), border-color 200ms var(--ease-out);
+  text-align: left;
+  padding: 0;
 }
-
-.coach-row .img {
-  width: 140px;
-  height: 140px;
-  background-size: cover;
-  background-position: center;
-  flex: 0 0 140px;
-}
-
-.coach-row .info .role {
-  font-size: 10px;
-  color: var(--cobalt);
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  font-weight: 700;
-}
-
-.coach-row .info .name {
-  font-size: 20px;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  margin: 4px 0 8px;
-}
-
-.coach-row .info .desc {
-  font-size: 13px;
-  color: var(--mute);
-  line-height: 1.5;
-  margin: 0 0 10px;
-}
-
-.coach-row .info .specialty {
-  font-size: 12px;
+.coach-card:hover { transform: translateY(-4px); border-color: var(--cobalt); }
+.coach-card-bg { position: absolute; inset: 0; background-size: cover; background-position: center; z-index: 0; transition: transform 600ms var(--ease-out); }
+.coach-card:hover .coach-card-bg { transform: scale(1.05); }
+.coach-card-overlay { position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background:
+    linear-gradient(180deg, transparent 30%, rgba(10,10,10,0.55) 70%, rgba(10,10,10,0.95) 100%); }
+.coach-card-content { position: absolute; left: 0; bottom: 0; z-index: 2; padding: 22px 24px; max-width: 70%; }
+.coach-card-content .role { font-size: 10px; color: var(--cobalt); letter-spacing: 0.15em; text-transform: uppercase; font-weight: 700; }
+.coach-card-content .name { font-size: 22px; font-weight: 800; letter-spacing: -0.02em; margin: 4px 0 6px; color: var(--bone); }
+.coach-card-content .specialty { font-size: 11px; color: var(--bone); opacity: 0.75; line-height: 1.45; }
+.coach-card-book {
+  position: absolute; right: 18px; bottom: 18px; z-index: 3;
+  padding: 10px 14px;
+  background: rgba(37, 99, 235, 0.92);
   color: var(--bone);
-  margin-bottom: 4px;
-}
-
-.coach-row .info .rate {
-  font-size: 12px;
-  color: var(--mute);
-  margin-bottom: 12px;
-}
-
-.coach-row .info .rate strong {
-  color: var(--cobalt);
+  font-size: 10px;
   font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border: 0;
+  font-family: inherit;
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  transition: background 150ms var(--ease-out), transform 150ms var(--ease-out);
+}
+.coach-card-book:hover { background: var(--cobalt); transform: translateY(-1px); }
+@media (max-width: 600px) {
+  .coach-card { aspect-ratio: 5/4; }
+  .coach-card-content { padding: 18px 20px; max-width: 65%; }
+  .coach-card-book { right: 14px; bottom: 14px; padding: 8px 12px; font-size: 9px; }
 }
 
-.coach-row .info .awards { margin: 0 0 14px; padding: 12px 0 0; border-top: 1px solid var(--elevated); }
-.coach-row .info .awards-label { font-size: 9px; font-weight: 800; letter-spacing: 0.15em; text-transform: uppercase; color: var(--mute); margin-bottom: 8px; }
-.coach-row .info .awards ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 5px; }
-.coach-row .info .awards li { font-size: 12px; color: var(--bone); line-height: 1.45; padding-left: 18px; position: relative; }
-.coach-row .info .awards li::before { content: '★'; position: absolute; left: 0; top: 0; color: var(--cobalt); font-size: 10px; }
+/* Awards (used inside coach bio modal — also reusable) */
+.awards { margin: 0 0 14px; padding: 14px 0 0; border-top: 1px solid var(--elevated); }
+.awards-label { font-size: 9px; font-weight: 800; letter-spacing: 0.15em; text-transform: uppercase; color: var(--mute); margin-bottom: 10px; }
+.awards ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 6px; }
+.awards li { font-size: 13px; color: var(--bone); line-height: 1.45; padding-left: 18px; position: relative; }
+.awards li::before { content: '★'; position: absolute; left: 0; top: 0; color: var(--cobalt); font-size: 11px; }
 
 /* === COACHING — private contact modal === */
 .contact-options { display: flex; flex-direction: column; gap: 10px; margin: 8px 0 18px; }
@@ -2444,11 +2424,6 @@ body {
 .contact-aside strong { color: var(--bone); font-weight: 700; letter-spacing: 0.02em; }
 .contact-divider { display: flex; align-items: center; gap: 12px; margin: 0 0 14px; color: var(--mute); font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; font-weight: 700; }
 .contact-divider::before, .contact-divider::after { content: ''; flex: 1; height: 1px; background: var(--elevated); }
-
-.coach-row .info .book {
-  font-size: 10px;
-  padding: 8px 12px;
-}
 
 .clinics-list {
   display: flex;
