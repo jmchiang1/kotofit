@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Events — Kotofit</title>
-  <meta name="description" content="Tournaments, mixers, ladder leagues, and member events at Kotofit. Filter by sport, location, month, or price." />
+  <title>Private Events — Kotofit</title>
+  <meta name="description" content="Book a Kotofit facility for your private event — birthdays, corporate team events, private tournaments, charity, and film/photo shoots in Jersey City and Long Island City." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" />
@@ -45,46 +45,141 @@
   <main>
     <section class="page-hero">
       <div class="container">
-        <span class="eyebrow">▸ This season</span>
-        <h1 class="display-l">What's on.</h1>
-        <p class="lede">Tournaments, mixers, ladder leagues, and member-only events. Filter by sport, location, month, or price to find your next match.</p>
+        <span class="eyebrow">▸ Private events</span>
+        <h1 class="display-l">Make it your court.</h1>
+        <p class="lede">Birthdays, corporate team events, private tournaments, charity, film and photo shoots — book a Kotofit facility for your private event in Jersey City or Long Island City.</p>
       </div>
     </section>
 
     <section>
       <div class="container">
-        <div class="filter-chips" id="events-filter-chips">
-          <span class="chip-label">Sport</span>
-          <div class="chip-group">
-            <button class="chip active" data-filter="sport" data-value="all">All</button>
-            <button class="chip" data-filter="sport" data-value="badminton">Badminton</button>
-            <button class="chip" data-filter="sport" data-value="pickleball">Pickleball</button>
-            <button class="chip" data-filter="sport" data-value="pingpong">Ping Pong</button>
+        <div class="section-title reveal">
+          <div class="e">▸ What we host</div>
+          <h2>Pick the event.</h2>
+        </div>
+        <div class="event-types-grid reveal-stagger" id="event-types-grid">
+          <button class="event-type-card" data-event-type="birthday">
+            <div class="num">— 01</div>
+            <h3>Birthday parties</h3>
+            <p>Reserve a court for a private celebration. Bring your own food and décor — coaches available on request.</p>
+          </button>
+          <button class="event-type-card" data-event-type="tournament">
+            <div class="num">— 02</div>
+            <h3>Private tournaments</h3>
+            <p>Run single-elimination, round-robin, or ladder formats on courts of your choice. We handle scoring and brackets.</p>
+          </button>
+          <button class="event-type-card" data-event-type="corp-league">
+            <div class="num">— 03</div>
+            <h3>Corporate leagues</h3>
+            <p>Weekly or monthly recurring matches for your company. Standings tracked, courts pre-reserved on a fixed schedule.</p>
+          </button>
+          <button class="event-type-card" data-event-type="corp-team">
+            <div class="num">— 04</div>
+            <h3>Corporate team events</h3>
+            <p>One-off team-building sessions: skills clinics, mini-tournaments, mixers — led by our coaches if you want.</p>
+          </button>
+          <button class="event-type-card" data-event-type="other">
+            <div class="num">— 05</div>
+            <h3>Charity, film & more</h3>
+            <p>Charity events, film and photo shoots, art shows, dance events. We'll work with you on logistics.</p>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section id="inquire">
+      <div class="container">
+        <div class="section-title reveal">
+          <div class="e">▸ Tell us about it</div>
+          <h2>Send an inquiry.</h2>
+        </div>
+        <div class="inquiry-card reveal">
+          <form class="inquiry-form" id="inquiry-form" novalidate>
+            <div class="form-row inquiry-col-2"><label for="iq-name">Full name</label><input type="text" id="iq-name" placeholder="Alex Player" required /></div>
+            <div class="form-row inquiry-col-2"><label for="iq-email">Email</label><input type="email" id="iq-email" placeholder="alex@example.com" required /></div>
+            <div class="form-row inquiry-col-2"><label for="iq-phone">Phone</label><input type="tel" id="iq-phone" placeholder="+1 555 123 4567" /></div>
+            <div class="form-row inquiry-col-2">
+              <label for="iq-type">Event type</label>
+              <select id="iq-type">
+                <option value="birthday">Birthday party</option>
+                <option value="tournament">Private tournament</option>
+                <option value="corp-league">Corporate league</option>
+                <option value="corp-team">Corporate team event</option>
+                <option value="other">Charity / film / other</option>
+              </select>
+            </div>
+            <div class="form-row inquiry-col-2">
+              <label for="iq-location">Preferred location</label>
+              <select id="iq-location" data-locations></select>
+            </div>
+            <div class="form-row inquiry-col-2"><label for="iq-date">Preferred date</label><input type="date" id="iq-date" /></div>
+            <div class="form-row inquiry-col-2"><label for="iq-guests">Approx. number of guests</label><input type="number" id="iq-guests" min="2" max="500" placeholder="e.g. 20" /></div>
+            <div class="form-row inquiry-col-2"><label for="iq-budget">Budget range (optional)</label><input type="text" id="iq-budget" placeholder="e.g. $500–$1,000" /></div>
+            <div class="form-row inquiry-col-full"><label for="iq-notes">Tell us more</label><textarea id="iq-notes" rows="4" placeholder="Anything we should know — sport preference, format, catering plans, special requests…"></textarea></div>
+            <button class="btn btn-primary inquiry-submit" type="submit">Send inquiry →</button>
+          </form>
+          <p class="wellness-note">Heads up — most companies cover team-building and fitness sessions under wellness allowances. Worth checking with HR before you write the check.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="section-title reveal">
+          <div class="e">▸ When you can book</div>
+          <h2>Facility hours for private events.</h2>
+        </div>
+        <div class="availability-grid reveal-stagger">
+          <article class="availability-card">
+            <div class="city">Jersey City · NJ</div>
+            <h3 class="name">3rd Street</h3>
+            <p class="addr">209 3rd Street</p>
+            <div class="meta"><strong>Badminton</strong> for adults</div>
+            <div class="hours">Tue–Fri · 7:00 PM – 10:00 PM</div>
+          </article>
+          <article class="availability-card">
+            <div class="city">Jersey City · NJ</div>
+            <h3 class="name">Brunswick</h3>
+            <p class="addr">189 Brunswick Street</p>
+            <div class="meta"><strong>Badminton · Pickleball · Ping pong</strong> for kids and adults</div>
+            <div class="hours">Daily · 6:00 AM – 2:00 AM</div>
+          </article>
+          <article class="availability-card">
+            <div class="city">Jersey City · NJ</div>
+            <h3 class="name">Summit Avenue</h3>
+            <p class="addr">413 Summit Avenue</p>
+            <div class="meta"><strong>Badminton · Cricket</strong></div>
+            <div class="hours">Daily · 6:00 AM – 2:00 AM</div>
+          </article>
+          <article class="availability-card">
+            <div class="city">Long Island City · NY</div>
+            <h3 class="name">10th Street</h3>
+            <p class="addr">43-56 10th Street</p>
+            <div class="meta"><strong>Badminton · Pickleball · Ping pong</strong> for kids and adults</div>
+            <div class="hours">Daily · 6:00 AM – 11:59 PM</div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="section-title reveal">
+          <div class="e">▸ Or talk to a human</div>
+          <h2>Reach us directly.</h2>
+        </div>
+        <div class="contact-card reveal">
+          <div>
+            <div class="label">▸ Phone</div>
+            <div class="value">+1 551 328 7867</div>
+            <a class="btn btn-primary" href="tel:+15513287867">Call now →</a>
           </div>
-          <span class="chip-label" style="margin-left:14px">Location</span>
-          <div class="chip-group">
-            <button class="chip active" data-filter="location" data-value="all">All</button>
-            <button class="chip" data-filter="location" data-value="jc-3rd">3rd Street</button>
-            <button class="chip" data-filter="location" data-value="jc-bruns">Brunswick</button>
-            <button class="chip" data-filter="location" data-value="jc-summit">Summit Ave</button>
-            <button class="chip" data-filter="location" data-value="lic-10th">LIC</button>
-          </div>
-          <span class="chip-label" style="margin-left:14px">Month</span>
-          <div class="chip-group">
-            <button class="chip active" data-filter="month" data-value="all">All</button>
-            <button class="chip" data-filter="month" data-value="May">May</button>
-            <button class="chip" data-filter="month" data-value="Jun">Jun</button>
-            <button class="chip" data-filter="month" data-value="Jul">Jul</button>
-          </div>
-          <span class="chip-label" style="margin-left:14px">Price</span>
-          <div class="chip-group">
-            <button class="chip active" data-filter="price" data-value="all">All</button>
-            <button class="chip" data-filter="price" data-value="free">Free</button>
-            <button class="chip" data-filter="price" data-value="paid">Paid</button>
+          <div>
+            <div class="label">▸ WhatsApp</div>
+            <div class="value">+1 551 328 7867</div>
+            <a class="btn btn-ghost" href="https://wa.me/15513287867" target="_blank" rel="noopener">Open WhatsApp →</a>
           </div>
         </div>
-        <div class="events-results-meta" data-events-count></div>
-        <div class="events-list reveal-stagger" id="events-list-page"></div>
       </div>
     </section>
   </main>
@@ -92,8 +187,8 @@
   <section class="ready-strip">
     <div class="container inner">
       <div>
-        <h3>Want to host your <em>own</em> event?</h3>
-        <div class="ready-meta">Member-organized meetups, leagues, and tournaments — let us know.</div>
+        <h3>Just want to <em>play?</em></h3>
+        <div class="ready-meta">Skip the inquiry — book a court for tonight.</div>
       </div>
       <a href="index.html#top" class="btn btn-primary">Reserve a court →</a>
     </div>
@@ -108,7 +203,7 @@
         </div>
         <div><h4>Play</h4><ul><li><a href="locations.html">Locations</a></li><li><a href="index.html#top">Reserve</a></li><li><a href="memberships.html">Memberships</a></li><li><a href="stringing.html">Stringing</a></li><li><a href="faq.html">FAQ</a></li></ul></div>
         <div><h4>Learn</h4><ul><li><a href="coaching.html">Coaching</a></li><li><a href="coaching.html">Clinics</a></li><li><a href="coaching.html">Youth</a></li><li><a href="events.html">Events</a></li></ul></div>
-        <div><h4>Connect</h4><ul><li><a href="#">WhatsApp</a></li><li><a href="#">Instagram</a></li><li><a href="#">WeChat</a></li><li><a href="#">Contact</a></li></ul></div>
+        <div><h4>Connect</h4><ul><li><a href="https://wa.me/15513287867" target="_blank" rel="noopener">WhatsApp</a></li><li><a href="#">Instagram</a></li><li><a href="#">WeChat</a></li><li><a href="faq.html">Contact</a></li></ul></div>
       </div>
       <div class="footer-bottom">
         <div>© 2026 Kotofit</div>

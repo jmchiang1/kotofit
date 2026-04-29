@@ -36,10 +36,13 @@ function closeModal() {
 function renderLocations() {
   const grid = document.getElementById('loc-grid');
   if (!grid) return;
-  grid.innerHTML = LOCATIONS.map(loc => `
+  const openLocs = LOCATIONS.filter(l => l.status !== 'soon');
+  const soonLocs = LOCATIONS.filter(l => l.status === 'soon');
+
+  grid.innerHTML = openLocs.map(loc => `
     <button class="loc-card" data-loc-id="${escapeHtml(loc.id)}">
       <div class="loc-img${loc.img ? '' : ' loc-img-empty'}"${loc.img ? ` style="background-image:url('${escapeHtml(loc.img)}')"` : ''}>
-        <span class="badge ${loc.status === 'soon' ? 'soon' : ''}">${loc.status === 'soon' ? 'Soon' : 'Open'}</span>
+        <span class="badge">Open</span>
       </div>
       <div class="loc-body">
         <div class="city">${escapeHtml(loc.city)}</div>
@@ -51,6 +54,25 @@ function renderLocations() {
   grid.querySelectorAll('.loc-card').forEach(card => {
     card.addEventListener('click', () => openLocationModal(card.dataset.locId));
   });
+
+  const soonRow = document.getElementById('loc-grid-soon');
+  if (soonRow) {
+    soonRow.innerHTML = soonLocs.map(loc => `
+      <button class="loc-card-soon" data-loc-id="${escapeHtml(loc.id)}">
+        <div class="soon-text">
+          <div class="city">${escapeHtml(loc.city)}</div>
+          <div class="name">Coming this season</div>
+        </div>
+        <span class="soon-cta">Notify me →</span>
+      </button>
+    `).join('');
+    soonRow.querySelectorAll('.loc-card-soon').forEach(card => {
+      card.addEventListener('click', () => {
+        const loc = LOCATIONS.find(l => l.id === card.dataset.locId);
+        if (loc) openWaitlistModal(loc);
+      });
+    });
+  }
 }
 
 function openLocationModal(id) {
@@ -677,15 +699,23 @@ function renderFaq(elementId, items) {
   if (!el || !Array.isArray(items)) return;
   el.innerHTML = items.map((it, i) => `
     <div class="faq-row" data-faq-i="${i}">
-      <button class="faq-q"><span>${escapeHtml(it.q)}</span><span class="icon">+</span></button>
-      <div class="faq-a">${escapeHtml(it.a)}</div>
+      <button class="faq-q" aria-expanded="false"><span>${escapeHtml(it.q)}</span><span class="icon">+</span></button>
+      <div class="faq-a-wrap"><div class="faq-a">${escapeHtml(it.a)}</div></div>
     </div>
   `).join('');
   el.querySelectorAll('.faq-row').forEach(row => {
-    row.querySelector('.faq-q').addEventListener('click', () => {
+    const btn = row.querySelector('.faq-q');
+    btn.addEventListener('click', () => {
       const wasOpen = row.classList.contains('open');
-      el.querySelectorAll('.faq-row.open').forEach(r => r.classList.remove('open'));
-      if (!wasOpen) row.classList.add('open');
+      el.querySelectorAll('.faq-row.open').forEach(r => {
+        r.classList.remove('open');
+        const b = r.querySelector('.faq-q');
+        if (b) b.setAttribute('aria-expanded', 'false');
+      });
+      if (!wasOpen) {
+        row.classList.add('open');
+        btn.setAttribute('aria-expanded', 'true');
+      }
     });
   });
 }
@@ -737,21 +767,37 @@ function renderCoachingPage() {
 
   if (programsEl && typeof PROGRAMS !== 'undefined') {
     programsEl.innerHTML = PROGRAMS.map(p => `
-      <article class="program-card" data-program-id="${escapeHtml(p.id)}">
-        <div class="img" style="background-image:url('${escapeHtml(p.img)}')"></div>
-        <div class="body">
-          <div class="price">${escapeHtml(p.priceRange)}</div>
-          <h3 class="name">${escapeHtml(p.name)}</h3>
-          <p class="desc">${escapeHtml(p.desc)}</p>
-          <div class="cta">
-            <button class="btn btn-primary" data-action="book-program">${escapeHtml(p.cta)} →</button>
-          </div>
+      <article class="package-card${p.featured ? ' featured' : ''}" data-program-id="${escapeHtml(p.id)}">
+        ${p.featured ? '<div class="package-badge">Most popular</div>' : ''}
+        <div class="package-head">
+          <div class="package-audience">${escapeHtml(p.audience)}</div>
+          <h3 class="package-name">${escapeHtml(p.name)}</h3>
         </div>
+        <div class="package-price">
+          <span class="amount">${escapeHtml(p.priceLabel)}</span>
+          <span class="unit">${escapeHtml(p.priceUnit)}</span>
+        </div>
+        <ul class="package-specs">
+          <li><span class="k">Format</span><span class="v">${escapeHtml(p.ratio)}</span></li>
+          <li><span class="k">Total</span><span class="v">${escapeHtml(p.sessions)}</span></li>
+          <li><span class="k">Session</span><span class="v">${escapeHtml(p.sessionLength)}</span></li>
+        </ul>
+        <ul class="package-perks">
+          ${p.perks.map(perk => `<li>${escapeHtml(perk)}</li>`).join('')}
+        </ul>
+        <button class="btn ${p.featured ? 'btn-primary' : 'btn-ghost'} package-cta" data-action="register-package">${escapeHtml(p.cta)} →</button>
       </article>
     `).join('');
-    programsEl.querySelectorAll('[data-action="book-program"]').forEach(btn => {
+    programsEl.querySelectorAll('[data-action="register-package"]').forEach(btn => {
       const card = btn.closest('[data-program-id]');
-      btn.addEventListener('click', () => openProgramModal(card.dataset.programId));
+      btn.addEventListener('click', () => {
+        const program = PROGRAMS.find(p => p.id === card.dataset.programId);
+        if (program?.contactOnly) {
+          openPrivateContactModal(program);
+        } else {
+          openProgramModal(card.dataset.programId);
+        }
+      });
     });
   }
 
@@ -762,8 +808,14 @@ function renderCoachingPage() {
         <div class="info">
           <div class="role">${escapeHtml(c.role)}</div>
           <h3 class="name">${escapeHtml(c.name)}</h3>
-          <p class="desc">${escapeHtml(c.desc)}</p>
           <div class="specialty">${escapeHtml(c.specialty || '')}</div>
+          <p class="desc">${escapeHtml(c.desc)}</p>
+          ${Array.isArray(c.awards) && c.awards.length ? `
+            <div class="awards">
+              <div class="awards-label">Highlights</div>
+              <ul>${c.awards.map(a => `<li>${escapeHtml(a)}</li>`).join('')}</ul>
+            </div>
+          ` : ''}
           ${c.rate ? `<div class="rate"><strong>$${c.rate}</strong>/hr (privates)</div>` : ''}
           <button class="btn btn-ghost book" data-action="book-coach">Book with ${escapeHtml(c.name.split(' ')[0])} →</button>
         </div>
@@ -771,7 +823,10 @@ function renderCoachingPage() {
     `).join('');
     coachesEl.querySelectorAll('[data-action="book-coach"]').forEach(btn => {
       const card = btn.closest('[data-coach-id]');
-      btn.addEventListener('click', () => openProgramModal('private', { coachId: card.dataset.coachId }));
+      btn.addEventListener('click', () => {
+        const privateProgram = PROGRAMS.find(p => p.id === 'private');
+        if (privateProgram) openPrivateContactModal(privateProgram, card.dataset.coachId);
+      });
     });
   }
 
@@ -823,19 +878,50 @@ function openProgramModal(programId, opts = {}) {
       const num = 'KF-COACH-' + Math.floor(1000 + Math.random() * 9000);
       const coach = COACHES.find(c => c.id === chosen.coachId);
       const loc = LOCATIONS.find(l => l.id === chosen.location);
+      const priceLine = program.priceLabel ? `${program.priceLabel} ${program.priceUnit || ''}`.trim() : '';
       openModal(`
         <div class="step-row"><div class="step-dot active"></div><div class="step-dot active"></div><div class="step-dot active"></div></div>
-        <span class="eyebrow">▸ Booked</span>
+        <span class="eyebrow">▸ Registered</span>
         <div class="confirm-num">${num}</div>
         <h3 class="display-m">${escapeHtml(program.name)} · ${escapeHtml(coach.name)}</h3>
-        <p class="modal-meta">${escapeHtml(loc.name)} · ${escapeHtml(loc.city)}</p>
-        <p class="body" style="font-size:13px;margin-bottom:24px">${escapeHtml(coach.name)} will be in touch within 24 hours to confirm a time slot.</p>
+        <p class="modal-meta">${escapeHtml(loc.name)} · ${escapeHtml(loc.city)}${priceLine ? ' · ' + escapeHtml(priceLine) : ''}</p>
+        ${program.sessions ? `<p class="body" style="font-size:13px;margin-bottom:8px"><strong>${escapeHtml(program.sessions)}</strong> · ${escapeHtml(program.sessionLength || '')} · ${escapeHtml(program.ratio || '')}</p>` : ''}
+        <p class="body" style="font-size:13px;margin-bottom:24px">${escapeHtml(coach.name)} will email you within 24 hours to confirm your start date and weekly slot.</p>
         <button class="btn btn-primary" id="program-done">Done</button>
       `);
       document.getElementById('program-done')?.addEventListener('click', closeModal);
     }
   };
   render();
+}
+
+function openPrivateContactModal(program, coachId) {
+  const coach = coachId ? COACHES.find(c => c.id === coachId) : null;
+  const contact = (typeof CONTACT_INFO !== 'undefined') ? CONTACT_INFO : { whatsappNumber: '', whatsappUrl: '#', wechatId: '' };
+  openModal(`
+    <span class="eyebrow">▸ ${escapeHtml(program.name)}</span>
+    <h3 class="display-m">${coach ? `Book privates with ${escapeHtml(coach.name.split(' ')[0])}.` : 'Let\'s set up your sessions.'}</h3>
+    <p class="modal-meta">${coach ? escapeHtml(coach.specialty || coach.role) + ' · ' : ''}1:1 or 1:2 — message us and we'll match you with a coach and schedule.</p>
+    <div class="contact-options">
+      <a class="btn btn-primary" href="${escapeHtml(contact.whatsappUrl)}" target="_blank" rel="noopener">WhatsApp ${escapeHtml(contact.whatsappNumber)} →</a>
+      ${contact.wechatId ? `<div class="contact-aside">Or WeChat ID <strong>${escapeHtml(contact.wechatId)}</strong></div>` : ''}
+    </div>
+    <div class="contact-divider"><span>or send us a quick note</span></div>
+    <div class="form-row"><label>Email</label><input type="email" id="contact-email" placeholder="alex@example.com" /></div>
+    <div class="form-row"><label>What are you looking for?</label><input type="text" id="contact-note" placeholder="e.g., 1:1 sessions, focus on smashes" /></div>
+    <button class="btn btn-ghost" id="contact-submit" style="width:100%;justify-content:center;margin-top:8px">Send →</button>
+  `);
+  document.getElementById('contact-submit')?.addEventListener('click', () => {
+    const email = document.getElementById('contact-email')?.value.trim();
+    if (!email) { document.getElementById('contact-email')?.focus(); return; }
+    openModal(`
+      <span class="eyebrow">▸ Got it</span>
+      <h3 class="display-m">We'll be in touch.</h3>
+      <p class="modal-meta">A coach will reply to ${escapeHtml(email)} within 24 hours${coach ? ` to set up your sessions with ${escapeHtml(coach.name.split(' ')[0])}` : ''}.</p>
+      <button class="btn btn-primary" id="contact-done">Done</button>
+    `);
+    document.getElementById('contact-done')?.addEventListener('click', closeModal);
+  });
 }
 
 function openClinicRsvpModal(clinic) {
@@ -850,51 +936,65 @@ function openClinicRsvpModal(clinic) {
   document.getElementById('clinic-rsvp-done')?.addEventListener('click', closeModal);
 }
 
-// === EVENTS PAGE ===
+// === EVENTS PAGE (private events inquiry) ===
 function renderEventsPage() {
-  const list = document.getElementById('events-list-page');
-  if (!list) return;
+  const form = document.getElementById('inquiry-form');
+  if (!form) return;
 
-  const filters = { sport: 'all', location: 'all', month: 'all', price: 'all' };
-
-  const matches = (e) => {
-    if (filters.sport !== 'all' && e.sport !== filters.sport) return false;
-    if (filters.location !== 'all' && e.location !== filters.location && e.location !== 'all') return false;
-    if (filters.month !== 'all' && e.month !== filters.month) return false;
-    if (filters.price !== 'all' && e.price !== filters.price) return false;
-    return true;
-  };
-
-  const render = () => {
-    const visible = EVENTS.filter(matches);
-    list.innerHTML = visible.map(e => `
-      <div class="event-row">
-        <div class="date"><div class="day">${escapeHtml(e.day)}</div><div class="mo">${escapeHtml(e.mo)}</div></div>
-        <div class="info"><div class="name">${escapeHtml(e.name)}</div><div class="meta">${escapeHtml(e.meta)}</div></div>
-        <button class="rsvp" data-event="${escapeHtml(e.id)}">RSVP</button>
-      </div>
-    `).join('') || `<p class="body" style="padding:32px 0">No events match those filters. Try clearing one.</p>`;
-    list.querySelectorAll('[data-event]').forEach(btn => {
-      btn.addEventListener('click', () => openRsvpModal(btn.dataset.event));
-    });
-    const meta = document.querySelector('[data-events-count]');
-    if (meta) meta.textContent = `${visible.length} event${visible.length === 1 ? '' : 's'} matching`;
-  };
-
-  const chipsEl = document.getElementById('events-filter-chips');
-  if (chipsEl) {
-    chipsEl.querySelectorAll('.chip').forEach(chip => {
-      chip.addEventListener('click', () => {
-        const dim = chip.dataset.filter;
-        chipsEl.querySelectorAll(`.chip[data-filter="${dim}"]`).forEach(c => c.classList.remove('active'));
-        chip.classList.add('active');
-        filters[dim] = chip.dataset.value;
-        render();
-      });
-    });
+  // Populate the location dropdown from LOCATIONS data. Soon-locations stay
+  // selectable — a Brooklyn/Queens inquiry is a lead worth keeping.
+  const locSelect = form.querySelector('[data-locations]');
+  if (locSelect) {
+    locSelect.innerHTML = LOCATIONS.map(l => {
+      const label = l.status === 'soon'
+        ? `${l.city.split(' · ')[0]} — opening soon`
+        : `${l.name} · ${l.city}`;
+      return `<option value="${escapeHtml(l.id)}">${escapeHtml(label)}</option>`;
+    }).join('');
   }
 
-  render();
+  // Event-type cards — clicking one pre-selects the dropdown and scrolls to the form.
+  const typeSelect = form.querySelector('#iq-type');
+  document.querySelectorAll('[data-event-type]').forEach(card => {
+    card.addEventListener('click', () => {
+      if (typeSelect) typeSelect.value = card.dataset.eventType;
+      document.getElementById('inquire')?.scrollIntoView({ behavior: 'smooth' });
+      typeSelect?.focus({ preventScroll: true });
+    });
+  });
+
+  // Form submit — minimal validation, confirmation modal with reference number.
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const name = form.querySelector('#iq-name')?.value.trim();
+    const email = form.querySelector('#iq-email')?.value.trim();
+    const type = form.querySelector('#iq-type')?.value;
+    const location = form.querySelector('#iq-location')?.value;
+
+    if (!name)  { form.querySelector('#iq-name')?.focus();  return; }
+    if (!email) { form.querySelector('#iq-email')?.focus(); return; }
+
+    const typeLabel = form.querySelector(`#iq-type option[value="${type}"]`)?.textContent || type;
+    const locObj = LOCATIONS.find(l => l.id === location);
+    const locLabel = locObj ? `${locObj.name} · ${locObj.city}` : location;
+    const num = 'KF-EV-' + Math.floor(1000 + Math.random() * 9000);
+
+    openModal(`
+      <span class="eyebrow">▸ Inquiry received</span>
+      <div class="confirm-num">${num}</div>
+      <h3 class="display-m">Thanks, ${escapeHtml(name.split(' ')[0])}.</h3>
+      <p class="modal-meta">${escapeHtml(typeLabel)} · ${escapeHtml(locLabel)}</p>
+      <p class="body" style="font-size:13px;margin-bottom:24px">We'll text or call you back within 24 hours. If it's urgent, hit us on WhatsApp at +1 551 328 7867.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn btn-primary" id="inquiry-done">Done</button>
+        <a class="btn btn-ghost" href="https://wa.me/15513287867" target="_blank" rel="noopener">WhatsApp now →</a>
+      </div>
+    `);
+    document.getElementById('inquiry-done')?.addEventListener('click', () => {
+      closeModal();
+      form.reset();
+    });
+  });
 }
 
 // === STRINGING PAGE ===
@@ -979,8 +1079,23 @@ function renderFaqPage() {
   }
 }
 
+function initAnnounceBar() {
+  const bar = document.getElementById('announce-bar');
+  if (!bar) return;
+  if (sessionStorage.getItem('kotofit-announce-dismissed') === '1') {
+    bar.classList.add('dismissed');
+    document.body.classList.add('announce-dismissed');
+  }
+  document.getElementById('announce-close')?.addEventListener('click', () => {
+    bar.classList.add('dismissed');
+    document.body.classList.add('announce-dismissed');
+    sessionStorage.setItem('kotofit-announce-dismissed', '1');
+  });
+}
+
 // === PAGE INIT ===
 document.addEventListener('DOMContentLoaded', () => {
+  initAnnounceBar();
   initHero();
   initNavHighlight();
   initMobileMenu();
