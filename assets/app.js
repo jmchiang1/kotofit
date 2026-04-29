@@ -38,7 +38,7 @@ function renderLocations() {
   if (!grid) return;
   grid.innerHTML = LOCATIONS.map(loc => `
     <button class="loc-card" data-loc-id="${escapeHtml(loc.id)}">
-      <div class="loc-img" style="background-image:url('${escapeHtml(loc.img)}')">
+      <div class="loc-img${loc.img ? '' : ' loc-img-empty'}"${loc.img ? ` style="background-image:url('${escapeHtml(loc.img)}')"` : ''}>
         <span class="badge ${loc.status === 'soon' ? 'soon' : ''}">${loc.status === 'soon' ? 'Soon' : 'Open'}</span>
       </div>
       <div class="loc-body">
@@ -58,7 +58,7 @@ function openLocationModal(id) {
   if (!loc) return;
   const isSoon = loc.status === 'soon';
   openModal(`
-    <div class="modal-img" style="background-image:url('${escapeHtml(loc.img)}')"></div>
+    ${loc.img ? `<div class="modal-img" style="background-image:url('${escapeHtml(loc.img)}')"></div>` : ''}
     <span class="eyebrow">${escapeHtml(loc.city)}</span>
     <h3 class="display-m">${escapeHtml(loc.name)}</h3>
     <p class="modal-meta">${isSoon ? 'Coming this season — get notified when we open.' : `${escapeHtml(loc.courts)} courts · ${escapeHtml(loc.hours)}`}</p>
@@ -395,8 +395,8 @@ function openJoinModal(tierId) {
 function renderCoachesHomepage() {
   const grid = document.getElementById('coach-grid');
   if (!grid) return;
-  const feature = COACHES.find(c => c.feature);
-  const others = COACHES.filter(c => !c.feature);
+  const feature = COACHES.find(c => c.feature) || COACHES[0];
+  const others = COACHES.filter(c => c !== feature);
   grid.innerHTML = `
     <div class="coach-feature">
       <div class="coach-bg" style="background-image:url('${escapeHtml(feature.img)}')"></div>
@@ -407,18 +407,7 @@ function renderCoachesHomepage() {
       </div>
     </div>
     <div class="coach-side">
-      ${others.slice(0, 2).map(c => `
-        <div class="coach-mini">
-          <div class="coach-bg" style="background-image:url('${escapeHtml(c.img)}')"></div>
-          <div>
-            <div class="role">${escapeHtml(c.role)}</div>
-            <div class="name">${escapeHtml(c.name)}</div>
-          </div>
-        </div>
-      `).join('')}
-    </div>
-    <div class="coach-side">
-      ${others.slice(2, 4).map(c => `
+      ${others.map(c => `
         <div class="coach-mini">
           <div class="coach-bg" style="background-image:url('${escapeHtml(c.img)}')"></div>
           <div>
@@ -634,7 +623,7 @@ function renderLocationsPage() {
       const serviceTags = loc.services.map(s => `<span class="tag-chip">${escapeHtml(s.charAt(0).toUpperCase() + s.slice(1))}</span>`).join('');
       return `
         <article class="loc-card-page" data-loc-id="${escapeHtml(loc.id)}">
-          <div class="img" style="background-image:url('${escapeHtml(loc.img)}')">
+          <div class="img${loc.img ? '' : ' img-empty'}"${loc.img ? ` style="background-image:url('${escapeHtml(loc.img)}')"` : ''}>
             <span class="badge ${isSoon ? 'soon' : ''}">${isSoon ? 'Coming this season' : 'Open'}</span>
           </div>
           <div class="body">

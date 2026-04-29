@@ -2,36 +2,36 @@
 // Shared data used by every Kotofit page. No DOM access — pure data.
 
 const LOCATIONS = [
-  { id: 'jc-3rd',     city: 'Jersey City · NJ',       name: '3rd Street',    courts: 8,  hours: 'Open until 11PM',   img: 'https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=800&q=80&auto=format&fit=crop', status: 'open',
+  { id: 'jc-3rd',     city: 'Jersey City · NJ',       name: '3rd Street',    courts: 8,  hours: 'Open until 11PM',   img: 'assets/kotofit-nj.png', status: 'open',
     address: '123 3rd Street, Jersey City, NJ 07302',
     sports: ['badminton', 'pickleball', 'pingpong'],
     services: ['coaching', 'stringing'] },
-  { id: 'jc-bruns',   city: 'Jersey City · NJ',       name: 'Brunswick',     courts: 10, hours: 'Open until 11PM',   img: 'https://images.unsplash.com/photo-1554290712-e640351074bd?w=800&q=80&auto=format&fit=crop', status: 'open',
+  { id: 'jc-bruns',   city: 'Jersey City · NJ',       name: 'Brunswick',     courts: 10, hours: 'Open until 11PM',   img: 'assets/kotofit-nj2.png', status: 'open',
     address: '88 Brunswick Street, Jersey City, NJ 07302',
     sports: ['badminton', 'pickleball'],
     services: ['coaching', 'stringing', 'events'] },
-  { id: 'jc-summit',  city: 'Jersey City · NJ',       name: 'Summit Ave',    courts: 6,  hours: 'Open until 10PM',   img: 'https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=800&q=80&auto=format&fit=crop', status: 'open',
+  { id: 'jc-summit',  city: 'Jersey City · NJ',       name: 'Summit Ave',    courts: 6,  hours: 'Open until 10PM',   img: 'assets/kotofit-nj3.png', status: 'open',
     address: '440 Summit Avenue, Jersey City, NJ 07306',
     sports: ['badminton', 'pingpong'],
     services: ['stringing'] },
-  { id: 'lic-10th',   city: 'Long Island City · NY',  name: '10th Street',   courts: 12, hours: 'Open until 11PM',   img: 'https://images.unsplash.com/photo-1599058917212-d750089bc07e?w=800&q=80&auto=format&fit=crop', status: 'open',
+  { id: 'lic-10th',   city: 'Long Island City · NY',  name: '10th Street',   courts: 12, hours: 'Open until 11PM',   img: 'assets/kotofit-lic.png', status: 'open',
     address: '47-10 10th Street, Long Island City, NY 11101',
     sports: ['badminton', 'pickleball', 'pingpong'],
     services: ['coaching', 'stringing', 'events'] },
-  { id: 'bk-soon',    city: 'Brooklyn · NY',          name: 'Coming Soon',   courts: 0,  hours: 'Opens this season', img: 'https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=800&q=80&auto=format&fit=crop', status: 'soon',
+  { id: 'bk-soon',    city: 'Brooklyn · NY',          name: 'Coming Soon',   courts: 0,  hours: 'Opens this season', img: '', status: 'soon',
     address: 'Brooklyn — exact address coming soon',
     sports: [],
     services: [] },
-  { id: 'qns-soon',   city: 'Queens · NY',            name: 'Coming Soon',   courts: 0,  hours: 'Opens this season', img: 'https://images.unsplash.com/photo-1531315396756-905d68d21b56?w=800&q=80&auto=format&fit=crop', status: 'soon',
+  { id: 'qns-soon',   city: 'Queens · NY',            name: 'Coming Soon',   courts: 0,  hours: 'Opens this season', img: '', status: 'soon',
     address: 'Queens — exact address coming soon',
     sports: [],
     services: [] },
 ];
 
 const SPORTS = [
-  { id: 'badminton',  num: '01', name: 'Badminton',  read: 'Open play, leagues, clinics →',  img: 'https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=1200&q=80&auto=format&fit=crop', desc: 'The fastest racquet sport in the world. Open play sessions, member leagues, and clinics for every level — from first racquet to tournament prep.' },
-  { id: 'pickleball', num: '02', name: 'Pickleball', read: 'All levels, mixers, tournaments →', img: 'https://images.unsplash.com/photo-1659318006095-4d44845f3a1b?w=1200&q=80&auto=format&fit=crop', desc: "America's fastest-growing sport. Drop-in mixers every week, ladder leagues, and weekend tournaments. Easy to learn, hard to put down." },
-  { id: 'pingpong',   num: '03', name: 'Ping Pong',  read: 'Drop in, tables ready →',          img: 'https://images.unsplash.com/photo-1611251135345-18c56206b863?w=1200&q=80&auto=format&fit=crop', desc: 'Tables ready at every location. No reservation needed — drop in, grab a paddle, and play.' },
+  { id: 'badminton',  num: '01', name: 'Badminton',  read: 'Open play, leagues, clinics →',  img: 'assets/badminton-racket.jpg', desc: 'The fastest racquet sport in the world. Open play sessions, member leagues, and clinics for every level — from first racquet to tournament prep.' },
+  { id: 'pickleball', num: '02', name: 'Pickleball', read: 'All levels, mixers, tournaments →', img: 'assets/pickleball-paddle.jpg', desc: "America's fastest-growing sport. Drop-in mixers every week, ladder leagues, and weekend tournaments. Easy to learn, hard to put down." },
+  { id: 'pingpong',   num: '03', name: 'Ping Pong',  read: 'Drop in, tables ready →',          img: 'assets/tabletennis-paddle.jpg', desc: 'Tables ready at every location. No reservation needed — drop in, grab a paddle, and play.' },
 ];
 
 // Memberships are location-specific. NJ and LIC each have their own tiers
@@ -94,16 +94,19 @@ const MEMBERSHIPS = {
 };
 
 const COACHES = [
-  { id: 'c1', role: 'Head coach',  name: 'Wei Chen',     desc: 'Former national singles champion. Head of badminton clinics across all locations.',                       img: 'https://images.unsplash.com/photo-1599058917212-d750089bc07e?w=900&q=80&auto=format&fit=crop', feature: true,
-    specialty: 'Badminton singles & doubles', rate: 95 },
-  { id: 'c2', role: 'Pickleball',  name: 'Maria Lopez',  desc: 'PPA-certified pro coach with 8 years competitive play and a passion for getting beginners on the court.', img: 'https://images.unsplash.com/photo-1554290712-e640351074bd?w=600&q=80&auto=format&fit=crop',
-    specialty: 'Pickleball — beginner & intermediate', rate: 75 },
-  { id: 'c3', role: 'Youth',       name: 'Jordan Park',  desc: 'Junior development specialist. Built youth programs at three clubs before joining Kotofit.',              img: 'https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=600&q=80&auto=format&fit=crop',
-    specialty: 'Junior badminton (ages 8–17)', rate: 70 },
-  { id: 'c4', role: 'Doubles',     name: 'Aisha Khan',   desc: 'Doubles strategist. Former regional doubles champion, now coaching pairs through advanced rotations.',     img: 'https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=600&q=80&auto=format&fit=crop',
-    specialty: 'Badminton doubles', rate: 85 },
-  { id: 'c5', role: 'Private',     name: 'David Kim',    desc: 'Private-lessons specialist. 1-on-1 coaching focused on technical refinement and match prep.',              img: 'https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=600&q=80&auto=format&fit=crop',
-    specialty: 'Privates — all levels', rate: 110 },
+  { id: 'c1', role: 'Head Coach', name: 'Tariq Sharif',
+    desc: "Former world #62 in doubles. Multiple-time national badminton champion of Pakistan. Former professional coach at Rutgers University. Coached ex-national players from various countries. BWF Certified. Coached 100+ adults at Kotofit in 2024.",
+    img: 'https://images.squarespace-cdn.com/content/v1/633bb9752a5d2a489346bdb7/e4c02360-e816-4fad-8072-fd6c80e7de0d/WhatsApp+Image+2023-12-30+at+10.07.22+PM.jpeg',
+    feature: true,
+    specialty: 'Badminton — singles & doubles' },
+  { id: 'c2', role: 'Coach', name: 'Rana',
+    desc: "Two decades of experience with an Egyptian national team background. Career highlights include national, continental, and world championship participation — enriching her coaching with practical, high-level experience. BWF Certified. Coached 50+ kids and adults at Kotofit in 2024.",
+    img: 'https://images.squarespace-cdn.com/content/v1/633bb9752a5d2a489346bdb7/1d181eaf-e8c9-4878-b37a-f04bf02eecc2/coach+rana.png',
+    specialty: 'Badminton — junior & adult' },
+  { id: 'c3', role: 'Coach', name: 'Kevin Sun',
+    desc: "Began formal badminton training at a young age, entering provincial team training at nine. Develops a structured, systematic training approach grounded in solid fundamentals and match-based application. 2015 National Games Men's Singles Champion. 2016 National Games Men's Singles Runner-up. 2023 Shanghai Mixed Doubles Semifinalist.",
+    img: 'https://images.squarespace-cdn.com/content/v1/633bb9752a5d2a489346bdb7/150d85f0-ced5-4d4f-88cc-2ef5d001e2b5/Kevin+Sun.png',
+    specialty: 'Badminton — singles' },
 ];
 
 const EVENTS = [

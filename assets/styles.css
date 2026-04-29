@@ -254,7 +254,7 @@ body { padding-top: 64px; }
 .step-pick button:hover, .step-pick button.selected { border-color: var(--cobalt); background: rgba(37,99,235,0.08); }
 
 /* === COACHING === */
-.coach-grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 12px; }
+.coach-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 12px; }
 .coach-feature { aspect-ratio: 5/6; padding: 28px; display: flex; flex-direction: column; justify-content: flex-end; position: relative; overflow: hidden; color: var(--bone); }
 .coach-feature .coach-bg, .coach-mini .coach-bg { position: absolute; inset: 0; background-size: cover; background-position: center; z-index: 0; }
 .coach-feature::after, .coach-mini::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 30%, rgba(10,10,10,0.85) 100%); z-index: 1; }
