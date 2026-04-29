@@ -327,15 +327,53 @@ function renderMembershipsLocationToggle(toggleId, cardsId, tableId, initialKey,
     </button>
   `).join('');
   let active = initialKey;
+  let firstRender = true;
+  let busy = false;
+  const SWAP_MS = 220;
+
+  const doRender = (key) => {
+    renderMembershipCards(cardsId, key);
+    if (tableId) renderComparisonTable(tableId, key);
+  };
+
   const apply = (key) => {
+    if (busy && key !== active) return;
+    if (key === active && !firstRender) return;
     active = key;
     toggle.querySelectorAll('.mem-toggle-btn').forEach(b => {
       b.classList.toggle('active', b.dataset.loc === key);
     });
-    renderMembershipCards(cardsId, key);
-    if (tableId) renderComparisonTable(tableId, key);
-    if (typeof onChange === 'function') onChange(key);
+
+    if (firstRender) {
+      doRender(key);
+      firstRender = false;
+      if (typeof onChange === 'function') onChange(key);
+      return;
+    }
+
+    // Subsequent toggles: crossfade.
+    busy = true;
+    const targets = [document.getElementById(cardsId), tableId ? document.getElementById(tableId) : null].filter(Boolean);
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (reduce) {
+      doRender(key);
+      busy = false;
+      if (typeof onChange === 'function') onChange(key);
+      return;
+    }
+
+    targets.forEach(el => el.classList.add('mem-swapping'));
+    setTimeout(() => {
+      doRender(key);
+      requestAnimationFrame(() => {
+        targets.forEach(el => el.classList.remove('mem-swapping'));
+        busy = false;
+      });
+      if (typeof onChange === 'function') onChange(key);
+    }, SWAP_MS);
   };
+
   toggle.querySelectorAll('.mem-toggle-btn').forEach(b => {
     b.addEventListener('click', () => apply(b.dataset.loc));
   });
