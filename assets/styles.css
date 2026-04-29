@@ -2877,3 +2877,61 @@ body {
   .mem-grid, .mem-table-wrap { transition: none; }
   .mem-grid.mem-swapping, .mem-table-wrap.mem-swapping { opacity: 1; transform: none; }
 }
+
+/* === HERO PLAYERS — sport-matched images on the right, synced to verb cycle === */
+.hero-players {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: clamp(320px, 46vw, 700px);
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+/* Soft cobalt halo behind the player so PNG edges blend into the mesh gradient */
+.hero-player-glow {
+  position: absolute;
+  right: -8%;
+  top: 50%;
+  width: 80%;
+  height: 60%;
+  transform: translateY(-50%);
+  background: radial-gradient(ellipse at 60% 50%, rgba(37, 99, 235, 0.22), transparent 70%);
+  filter: blur(20px);
+  pointer-events: none;
+}
+.hero-player {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  height: 78%;
+  max-height: 620px;
+  width: auto;
+  object-fit: contain;
+  object-position: right center;
+  opacity: 0;
+  transform: translate3d(60px, -50%, 0);
+  animation: heroPlayerCycle 6s infinite cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: opacity, transform;
+}
+.hero-player-1 { animation-delay: 0s; }
+.hero-player-2 { animation-delay: 2s; }
+.hero-player-3 { animation-delay: 4s; }
+@keyframes heroPlayerCycle {
+  0%, 100% { opacity: 0; transform: translate3d(60px, -50%, 0); }
+  8%, 33%  { opacity: 1; transform: translate3d(0, -50%, 0); }
+  40%      { opacity: 0; transform: translate3d(-30px, -50%, 0); }
+}
+
+/* Hide on viewports where the player would crowd the booking widget */
+@media (max-width: 1024px) {
+  .hero-players { display: none; }
+}
+
+/* Reduced motion: show one player statically, no cycling */
+@media (prefers-reduced-motion: reduce) {
+  .hero-player { animation: none; transform: translate3d(0, -50%, 0); }
+  .hero-player-1 { opacity: 1; }
+  .hero-player-2, .hero-player-3 { opacity: 0; }
+}
