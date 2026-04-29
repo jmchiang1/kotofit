@@ -85,28 +85,29 @@ body { padding-top: 64px; }
 .hero-booking { width: 100%; max-width: 980px; }
 .hero-booking .booking { background: rgba(24, 24, 27, 0.88); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); text-align: left; }
 
-/* === HERO CYCLING EYEBROW === */
-.hero-eyebrow-cycle { display: grid; margin-bottom: clamp(20px, 3vw, 36px); }
-.hero-eyebrow { grid-area: 1 / 1; opacity: 0; animation: eyebrowPulse 6s infinite; }
-.hero-eyebrow-1 { animation-delay: 0s; }
-.hero-eyebrow-2 { animation-delay: 2s; }
-.hero-eyebrow-3 { animation-delay: 4s; }
-@keyframes eyebrowPulse {
-  0%, 100% { opacity: 0; }
-  3%, 30%  { opacity: 1; }
-  33%      { opacity: 0; }
+/* === HERO CYCLING SPORT WORD === */
+.hero-eyebrow-static { display: inline-block; margin-bottom: clamp(20px, 3vw, 36px); }
+.hero-sport-cycle { display: inline-grid; grid-template-areas: "stack"; vertical-align: baseline; }
+.hero-sport { grid-area: stack; justify-self: start; opacity: 0; transform: translateY(6px); animation: sportPulse 6s infinite cubic-bezier(0.4, 0, 0.2, 1); }
+.hero-sport-1 { animation-delay: 0s; }
+.hero-sport-2 { animation-delay: 2s; }
+.hero-sport-3 { animation-delay: 4s; }
+@keyframes sportPulse {
+  0%, 100% { opacity: 0; transform: translateY(6px); }
+  8%, 33%  { opacity: 1; transform: translateY(0); }
+  40%      { opacity: 0; transform: translateY(-6px); }
 }
 
 /* === HERO VERBS (verb triptych) === */
 .hero-verbs { display: flex; flex-direction: column; gap: clamp(2px, 0.5vw, 8px); }
-.hero-verb { font-size: clamp(48px, 9vw, 96px); font-weight: 900; letter-spacing: -0.04em; line-height: 0.95; text-transform: uppercase; opacity: 0.18; animation: verbPulse 6s infinite; }
+.hero-verb { font-size: clamp(48px, 9vw, 96px); font-weight: 900; letter-spacing: -0.04em; line-height: 0.95; text-transform: uppercase; opacity: 0.18; transform: translateY(0); animation: verbPulse 6s infinite cubic-bezier(0.4, 0, 0.2, 1); }
 .hero-verb-1 { animation-delay: 0s; }
 .hero-verb-2 { animation-delay: 2s; }
 .hero-verb-3 { animation-delay: 4s; }
 @keyframes verbPulse {
-  0%, 100% { opacity: 0.18; }
-  3%, 30%  { opacity: 1; }
-  33%      { opacity: 0.18; }
+  0%, 100% { opacity: 0.18; transform: translateY(0); }
+  8%, 33%  { opacity: 1; transform: translateY(-3px); }
+  40%      { opacity: 0.18; transform: translateY(0); }
 }
 
 /* === LOCATIONS === */
@@ -316,8 +317,10 @@ body { padding-top: 64px; }
 .reveal-stagger > * { opacity: 0; transform: translateY(24px); }
 @media (prefers-reduced-motion: reduce) {
   .reveal, .reveal-stagger > * { opacity: 1; transform: none; }
-  .hero-verb, .hero-eyebrow { opacity: 1 !important; animation: none !important; }
-  .hero-eyebrow-cycle { display: flex; flex-direction: column; gap: 2px; }
+  .hero-verb, .hero-sport { opacity: 1 !important; transform: none !important; animation: none !important; }
+  .hero-sport-cycle { display: inline; }
+  .hero-sport { display: inline; }
+  .hero-sport + .hero-sport::before { content: ' / '; }
   html { scroll-behavior: auto; }
 }
 
