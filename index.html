@@ -11,7 +11,14 @@
   <script src="https://cdn.jsdelivr.net/npm/motion@11/dist/motion.js"></script>
   <link rel="stylesheet" href="assets/styles.css" />
 </head>
-<body data-page="home">
+<body data-page="home" class="has-announce-bar">
+  <div class="announce-bar" id="announce-bar">
+    <div class="container announce-inner">
+      <span class="announce-text"><strong>New ▸</strong> Three new locations opening this season — Jersey City, Brooklyn, and Queens.</span>
+      <a href="#locations" class="announce-link">See what's coming →</a>
+      <button class="announce-close" id="announce-close" aria-label="Dismiss">×</button>
+    </div>
+  </div>
   <nav class="nav">
     <div class="container nav-inner">
       <a href="#top" class="nav-logo"><img src="assets/logo.png" alt="" />KOTOFIT</a>
@@ -86,6 +93,11 @@
           <p class="desc">Four locations across NJ and NY today. Brooklyn and Queens land this season.</p>
         </header>
         <div class="loc-grid reveal-stagger" id="loc-grid"></div>
+        <!-- <div class="loc-soon-head reveal">
+          <span class="eyebrow">▸ Opening this season</span>
+          <p class="desc">Three new courts on the way. Get notified when they open.</p>
+        </div> -->
+        <div class="loc-soon-row reveal-stagger" id="loc-grid-soon"></div>
       </div>
     </section>
     <section id="play">
