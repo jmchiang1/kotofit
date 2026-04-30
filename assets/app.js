@@ -524,58 +524,6 @@ function openRsvpModal(id) {
   document.getElementById('rsvp-cal')?.addEventListener('click', closeModal);
 }
 
-// === STRINGING (HOMEPAGE) ===
-function initStringing() {
-  document.getElementById('stringing-cta')?.addEventListener('click', openStringingModal);
-}
-
-function openStringingModal() {
-  let step = 1;
-  const chosen = { string: null, tension: null, location: null };
-  const render = () => {
-    if (step === 1) {
-      openModal(`
-        <div class="step-row"><div class="step-dot active"></div><div class="step-dot"></div><div class="step-dot"></div><div class="step-dot"></div></div>
-        <span class="eyebrow">▸ Step 1 of 4 · Pick a string</span>
-        <h3 class="display-m">Which string?</h3>
-        <div class="step-pick">${STRINGS.map(s => `<button data-string="${escapeHtml(s.id)}"><div style="font-weight:700">${escapeHtml(s.name)}</div><div style="font-size:11px;color:var(--mute);margin-top:2px">${escapeHtml(s.desc)} · $${s.price}</div></button>`).join('')}</div>
-      `);
-      document.querySelectorAll('[data-string]').forEach(b => b.addEventListener('click', () => { chosen.string = b.dataset.string; step = 2; render(); }));
-    } else if (step === 2) {
-      openModal(`
-        <div class="step-row"><div class="step-dot active"></div><div class="step-dot active"></div><div class="step-dot"></div><div class="step-dot"></div></div>
-        <span class="eyebrow">▸ Step 2 of 4 · Tension</span>
-        <h3 class="display-m">String tension</h3>
-        <div class="step-pick">${TENSIONS.map(t => `<button data-tension="${escapeHtml(t)}">${escapeHtml(t)}</button>`).join('')}</div>
-      `);
-      document.querySelectorAll('[data-tension]').forEach(b => b.addEventListener('click', () => { chosen.tension = b.dataset.tension; step = 3; render(); }));
-    } else if (step === 3) {
-      openModal(`
-        <div class="step-row"><div class="step-dot active"></div><div class="step-dot active"></div><div class="step-dot active"></div><div class="step-dot"></div></div>
-        <span class="eyebrow">▸ Step 3 of 4 · Drop-off location</span>
-        <h3 class="display-m">Where will you drop it off?</h3>
-        <div class="step-pick">${LOCATIONS.filter(l => l.status === 'open').map(l => `<button data-loc="${escapeHtml(l.id)}">${escapeHtml(l.name)} · ${escapeHtml(l.city)}</button>`).join('')}</div>
-      `);
-      document.querySelectorAll('.step-pick [data-loc]').forEach(b => b.addEventListener('click', () => { chosen.location = b.dataset.loc; step = 4; render(); }));
-    } else {
-      const num = 'KF-STR-' + Math.floor(1000 + Math.random() * 9000);
-      const stringObj = STRINGS.find(s => s.id === chosen.string);
-      const locObj = LOCATIONS.find(l => l.id === chosen.location);
-      openModal(`
-        <div class="step-row"><div class="step-dot active"></div><div class="step-dot active"></div><div class="step-dot active"></div><div class="step-dot active"></div></div>
-        <span class="eyebrow">▸ Order placed</span>
-        <div class="confirm-num">${num}</div>
-        <h3 class="display-m">${escapeHtml(stringObj.name)} · ${escapeHtml(chosen.tension.split(' · ')[0])}</h3>
-        <p class="modal-meta">Drop off at ${escapeHtml(locObj.name)} · We'll text you in 24 hours.</p>
-        <p class="body" style="font-size:13px;margin-bottom:24px">Bring your racquet to the front desk. Show this number.</p>
-        <button class="btn btn-primary" id="stringing-done">Done</button>
-      `);
-      document.getElementById('stringing-done')?.addEventListener('click', closeModal);
-    }
-  };
-  render();
-}
-
 // === MOBILE MENU ===
 function initMobileMenu() {
   const burger = document.querySelector('.nav-burger');
@@ -730,7 +678,7 @@ function renderLocationsPage() {
             ${isSoon ? '' : `<div class="tags">${sportTags}${serviceTags}</div>`}
             <div class="actions">
               ${isSoon
-                ? `<button class="btn btn-primary" data-action="notify" data-loc-id="${escapeHtml(loc.id)}">Get notified →</button>`
+                ? `<button class="btn btn-ghost" data-action="notify" data-loc-id="${escapeHtml(loc.id)}">Get notified →</button>`
                 : `<a class="btn btn-primary" href="index.html#top">Reserve here →</a>
                    <button class="btn btn-ghost" data-action="details" data-loc-id="${escapeHtml(loc.id)}">Details</button>`
               }
@@ -1121,56 +1069,449 @@ function renderEventsPage() {
 }
 
 // === STRINGING PAGE ===
+function renderToggleCatalog({ root, items, categories, cardMarkup, gridClass }) {
+  if (!root) return;
+  const groups = categories
+    .map(cat => ({ cat, list: items.filter(it => it.category === cat.id) }))
+    .filter(g => g.list.length > 0);
+
+  if (!groups.length) { root.innerHTML = ''; return; }
+
+  const tabs = groups.map((g, i) => `
+    <button class="cat-tab ${i === 0 ? 'is-active' : ''}" type="button" role="tab"
+            data-cat="${escapeHtml(g.cat.id)}"
+            aria-selected="${i === 0 ? 'true' : 'false'}">
+      ${escapeHtml(g.cat.tabLabel || g.cat.label)}
+    </button>
+  `).join('');
+
+  const panels = groups.map((g, i) => `
+    <div class="cat-panel ${i === 0 ? 'is-active' : ''}" data-cat="${escapeHtml(g.cat.id)}" role="tabpanel">
+      <p class="cat-desc">${escapeHtml(g.cat.desc)}</p>
+      <div class="cat-grid ${escapeHtml(gridClass)}">
+        ${g.list.map(cardMarkup).join('')}
+      </div>
+    </div>
+  `).join('');
+
+  root.innerHTML = `
+    <div class="cat-toggle">
+      <div class="cat-tabs" role="tablist">${tabs}</div>
+      <div class="cat-panels">${panels}</div>
+    </div>
+  `;
+
+  const tabEls   = root.querySelectorAll('.cat-tab');
+  const panelEls = root.querySelectorAll('.cat-panel');
+  tabEls.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const cat = tab.dataset.cat;
+      tabEls.forEach(t => {
+        const active = t.dataset.cat === cat;
+        t.classList.toggle('is-active', active);
+        t.setAttribute('aria-selected', active ? 'true' : 'false');
+      });
+      panelEls.forEach(p => p.classList.toggle('is-active', p.dataset.cat === cat));
+    });
+  });
+}
+
 function renderStringingPage() {
-  const catalog = document.getElementById('strings-catalog');
-  if (!catalog) return;
+  const catalog        = document.getElementById('strings-catalog');
+  const racketsCatalog = document.getElementById('rackets-catalog');
+  if (!catalog && !racketsCatalog) return;
 
   const dot = (n, max = 5) => Array.from({ length: max }, (_, i) => `<span class="dot ${i < n ? 'on' : ''}"></span>`).join('');
 
-  catalog.innerHTML = STRINGS.map(s => `
-    <button class="string-card" data-string-id="${escapeHtml(s.id)}">
-      <div class="gauge">${escapeHtml(s.gauge || '')}</div>
-      <h3 class="name">${escapeHtml(s.name)}</h3>
-      <p class="desc">${escapeHtml(s.desc)}</p>
-      <div class="ratings">
-        <div class="rating-row"><span class="rlabel">Durability</span><div class="dots">${dot(s.durability)}</div></div>
-        <div class="rating-row"><span class="rlabel">Control</span><div class="dots">${dot(s.control)}</div></div>
-        <div class="rating-row"><span class="rlabel">Power</span><div class="dots">${dot(s.power)}</div></div>
-      </div>
-      <div class="price">$${s.price}<small>/restring</small></div>
-    </button>
-  `).join('');
-  catalog.querySelectorAll('.string-card').forEach(card => {
-    card.addEventListener('click', () => openStringDetailModal(card.dataset.stringId));
-  });
+  const DEFAULT_STRING_IMG = 'https://images.unsplash.com/photo-1570953233426-4e235751c6f3?q=80&w=1200&auto=format&fit=crop';
 
-  // Hero CTA + ready-strip CTA both open the same flow.
-  // Note: initStringing() already wires #stringing-cta on the homepage.
-  // On this page #stringing-cta also exists in the hero, so initStringing() handles it.
-  // We only need to wire the ready-strip CTA here.
-  document.getElementById('stringing-strip-cta')?.addEventListener('click', openStringingModal);
+  const stringCardMarkup = (s) => `
+    <article class="string-card" data-string-id="${escapeHtml(s.id)}">
+      <div class="card-img" style="background-image:url('${escapeHtml(s.img || DEFAULT_STRING_IMG)}')"></div>
+      <div class="card-body">
+        <div class="gauge">${escapeHtml(s.gauge || '')}</div>
+        <h3 class="name">${escapeHtml(s.name)}</h3>
+        <div class="ratings">
+          <div class="rating-row"><span class="rlabel">Durability</span><div class="dots">${dot(s.durability)}</div></div>
+          <div class="rating-row"><span class="rlabel">Control</span><div class="dots">${dot(s.control)}</div></div>
+          <div class="rating-row"><span class="rlabel">Power</span><div class="dots">${dot(s.power)}</div></div>
+        </div>
+        <div class="meta-row">
+          <span class="playstyle">${escapeHtml(s.playstyle || '')}</span>
+          <span class="price">$${s.price}<small>/restring</small></span>
+        </div>
+      </div>
+    </article>
+  `;
+
+  if (catalog && typeof STRING_CATEGORIES !== 'undefined') {
+    renderToggleCatalog({
+      root: catalog,
+      items: STRINGS,
+      categories: STRING_CATEGORIES,
+      cardMarkup: stringCardMarkup,
+      gridClass: 'strings-grid',
+    });
+  }
+
+  const DEFAULT_RACKET_IMG = 'assets/badminton-racket.jpg';
+
+  const racketCardMarkup = (r) => `
+    <article class="racket-card" data-racket-id="${escapeHtml(r.id)}">
+      <div class="card-img" style="background-image:url('${escapeHtml(r.img || DEFAULT_RACKET_IMG)}')"></div>
+      <div class="card-body">
+        <span class="rlevel">${escapeHtml(r.level || '')}</span>
+        <h3 class="rname">${escapeHtml(r.name)}</h3>
+        <div class="rspecs">
+          <div><span class="rlabel">Weight</span><strong>${escapeHtml(r.weight || '')}</strong></div>
+          <div><span class="rlabel">Balance</span><strong>${escapeHtml(r.balance || '')}</strong></div>
+          <div><span class="rlabel">Flex</span><strong>${escapeHtml(r.flex || '')}</strong></div>
+        </div>
+        <div class="rprice">$${r.price}</div>
+      </div>
+    </article>
+  `;
+
+  if (racketsCatalog && typeof RACKET_CATEGORIES !== 'undefined' && typeof RACKETS !== 'undefined') {
+    renderToggleCatalog({
+      root: racketsCatalog,
+      items: RACKETS,
+      categories: RACKET_CATEGORIES,
+      cardMarkup: racketCardMarkup,
+      gridClass: 'rackets-grid',
+    });
+  }
 
   renderFaq('faq-stringing', typeof FAQS !== 'undefined' ? FAQS.stringing : []);
+
+  initProshopCarousel();
+  initStringQuiz();
+
+  document.getElementById('open-spec-primer')?.addEventListener('click', openSpecPrimerModal);
+  document.getElementById('open-tension-guide')?.addEventListener('click', openTensionGuideModal);
 }
 
-function openStringDetailModal(id) {
-  const s = STRINGS.find(x => x.id === id);
-  if (!s) return;
+const SPEC_PRIMER_SLIDES = [
+  { num: '01', title: 'Weight (3U / 4U / 5U)',
+    body: 'The lower the U, the heavier the frame. <strong>3U (85–89g)</strong> swings heavier and hits harder. <strong>4U (80–84g)</strong> is lighter and faster — most adult players land here. <strong>5U (75–79g)</strong> is junior or beginner-friendly.',
+    svg: `
+      <svg viewBox="0 0 280 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <ellipse cx="60"  cy="78" rx="26" ry="32"/>
+          <line   x1="60"  y1="110" x2="60"  y2="160"/>
+          <ellipse cx="140" cy="82" rx="22" ry="28"/>
+          <line   x1="140" y1="110" x2="140" y2="160"/>
+          <ellipse cx="220" cy="86" rx="18" ry="24"/>
+          <line   x1="220" y1="110" x2="220" y2="160"/>
+        </g>
+        <g font-size="13" font-weight="800" letter-spacing="0.1em" text-anchor="middle" fill="currentColor">
+          <text x="60"  y="183">3U</text>
+          <text x="140" y="183">4U</text>
+          <text x="220" y="183">5U</text>
+        </g>
+      </svg>` },
+  { num: '02', title: 'Balance',
+    body: '<strong>Head-heavy</strong> rewards smashes — power players and back-court attackers. <strong>Even</strong> balance plays everywhere — the safe pick if you\'re not sure. <strong>Head-light</strong> moves fastest — front-court doubles, drives, defense.',
+    svg: `
+      <svg viewBox="0 0 280 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <ellipse cx="65" cy="80" rx="28" ry="22"/>
+          <line   x1="93" y1="80" x2="240" y2="80"/>
+          <line   x1="240" y1="74" x2="240" y2="86"/>
+        </g>
+        <g fill="currentColor">
+          <polygon points="140,100 130,120 150,120"/>
+        </g>
+        <g font-size="11" font-weight="800" letter-spacing="0.12em" text-anchor="middle" fill="currentColor">
+          <text x="80"  y="158">HEAD-HEAVY</text>
+          <text x="140" y="158">EVEN</text>
+          <text x="210" y="158">HEAD-LIGHT</text>
+        </g>
+        <g fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="2 3" opacity="0.4">
+          <line x1="80"  y1="135" x2="80"  y2="100"/>
+          <line x1="140" y1="135" x2="140" y2="120"/>
+          <line x1="210" y1="135" x2="210" y2="86"/>
+        </g>
+      </svg>` },
+  { num: '03', title: 'Flex',
+    body: '<strong>Stiff</strong> shafts return energy fast and reward clean technique — advanced. <strong>Medium</strong> is forgiving and adds free power on slower swings — intermediate. <strong>Flexible</strong> is most forgiving — beginners and players with arm issues.',
+    svg: `
+      <svg viewBox="0 0 280 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <line  x1="60"  y1="40"  x2="60"  y2="160"/>
+          <path  d="M 140 40 Q 152 100 140 160"/>
+          <path  d="M 220 40 Q 248 100 220 160"/>
+        </g>
+        <g font-size="11" font-weight="800" letter-spacing="0.12em" text-anchor="middle" fill="currentColor">
+          <text x="60"  y="183">STIFF</text>
+          <text x="140" y="183">MEDIUM</text>
+          <text x="220" y="183">FLEXIBLE</text>
+        </g>
+      </svg>` },
+  { num: '04', title: 'Level',
+    body: 'Manufacturers tag every frame for a target player. <strong>Beginner</strong> = forgiving, light, flexible. <strong>Intermediate</strong> = balanced, builds technique. <strong>Advanced</strong> = stiff, demanding, rewards clean swings — punishes bad ones.',
+    svg: `
+      <svg viewBox="0 0 280 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <g fill="currentColor" opacity="0.85">
+          <rect x="50"  y="120" width="40" height="40" rx="3"/>
+          <rect x="120" y="80"  width="40" height="80" rx="3"/>
+          <rect x="190" y="40"  width="40" height="120" rx="3"/>
+        </g>
+        <g font-size="11" font-weight="800" letter-spacing="0.12em" text-anchor="middle" fill="currentColor">
+          <text x="70"  y="183">BEGINNER</text>
+          <text x="140" y="183">INTERMEDIATE</text>
+          <text x="210" y="183">ADVANCED</text>
+        </g>
+      </svg>` },
+];
+
+function openSpecPrimerModal() {
+  let i = 0;
+
+  const renderSlide = () => {
+    const total = SPEC_PRIMER_SLIDES.length;
+    const s = SPEC_PRIMER_SLIDES[i];
+    openModal(`
+      <div class="primer">
+        <span class="eyebrow">▸ Spec primer · ${String(i + 1).padStart(2, '0')} / ${String(total).padStart(2, '0')}</span>
+        <div class="primer-img">${s.svg}</div>
+        <h3 class="primer-title">${escapeHtml(s.title)}</h3>
+        <p class="primer-body">${s.body}</p>
+        <div class="primer-controls">
+          <button class="primer-arrow" type="button" data-action="prev" aria-label="Previous">‹</button>
+          <div class="primer-dots" role="tablist">
+            ${SPEC_PRIMER_SLIDES.map((_, n) => `
+              <button class="primer-dot ${n === i ? 'is-active' : ''}" type="button" role="tab" data-i="${n}" aria-label="Slide ${n + 1}"></button>
+            `).join('')}
+          </div>
+          <button class="primer-arrow" type="button" data-action="next" aria-label="Next">›</button>
+        </div>
+      </div>
+    `);
+
+    const backdrop = document.getElementById('modal-backdrop');
+    backdrop.querySelector('[data-action="prev"]').addEventListener('click', () => { i = (i - 1 + SPEC_PRIMER_SLIDES.length) % SPEC_PRIMER_SLIDES.length; renderSlide(); });
+    backdrop.querySelector('[data-action="next"]').addEventListener('click', () => { i = (i + 1) % SPEC_PRIMER_SLIDES.length; renderSlide(); });
+    backdrop.querySelectorAll('.primer-dot').forEach(d => {
+      d.addEventListener('click', () => { i = parseInt(d.dataset.i, 10); renderSlide(); });
+    });
+  };
+
+  renderSlide();
+}
+
+function openTensionGuideModal() {
   openModal(`
-    <span class="eyebrow">▸ ${escapeHtml(s.gauge || 'String')}</span>
-    <h3 class="display-m">${escapeHtml(s.name)}</h3>
-    <p class="modal-meta">$${s.price} per restring · Durability ${s.durability}/5 · Control ${s.control}/5 · Power ${s.power}/5</p>
-    <p class="body" style="font-size:14px;line-height:1.6;margin-bottom:24px">${escapeHtml(s.desc)}</p>
-    <div style="display:flex;gap:10px;flex-wrap:wrap">
-      <button class="btn btn-primary" id="string-book-this">Book this string →</button>
-      <button class="btn btn-ghost" id="string-detail-close">Close</button>
+    <span class="eyebrow">▸ Tension guide</span>
+    <h3 class="display-m" style="margin:8px 0 6px">What feel are you after?</h3>
+    <p class="modal-meta">Lower tension is softer, more forgiving, and adds power. Higher tension is crisper, more controlled, and demands clean technique.</p>
+    <div class="tension-guide" style="margin-top:8px">
+      <div class="tension-bar"></div>
+      <div class="tension-marks">
+        <div class="tension-mark"><div class="lbs">22 lbs</div><div class="feel">Soft feel</div></div>
+        <div class="tension-mark recommended"><div class="lbs">24 lbs</div><div class="feel">★ Recommended</div></div>
+        <div class="tension-mark"><div class="lbs">26 lbs</div><div class="feel">Crisp control</div></div>
+        <div class="tension-mark"><div class="lbs">28 lbs</div><div class="feel">Pro level</div></div>
+      </div>
     </div>
   `);
-  document.getElementById('string-book-this')?.addEventListener('click', () => {
-    closeModal();
-    openStringingModal();
-  });
-  document.getElementById('string-detail-close')?.addEventListener('click', closeModal);
+}
+
+const STRING_QUIZ_QUESTIONS = [
+  { id: 'level', title: "What's your level?",
+    options: [
+      { value: 'beginner',     label: 'Beginner',     desc: 'First season or two' },
+      { value: 'intermediate', label: 'Intermediate', desc: 'Comfortable rallies, working on placement' },
+      { value: 'advanced',     label: 'Advanced',     desc: 'Competitive matches and tournaments' },
+    ] },
+  { id: 'freq', title: 'How often do you play?',
+    options: [
+      { value: 'low',  label: '1–2x per week', desc: 'Recreational pace' },
+      { value: 'mid',  label: '3–4x per week', desc: 'Regular player' },
+      { value: 'high', label: '5+x per week',  desc: 'Daily or near-daily' },
+    ] },
+  { id: 'style', title: "What's your play style?",
+    options: [
+      { value: 'defensive', label: 'Defensive',  desc: 'Consistent rallies, retrieve everything' },
+      { value: 'allround',  label: 'All-around', desc: 'Mix of attack and defense' },
+      { value: 'attacking', label: 'Attacking',  desc: 'Smashes and clears, power game' },
+      { value: 'control',   label: 'Tactical',   desc: 'Placement, drops, deception' },
+    ] },
+  { id: 'priority', title: 'What matters most to you?',
+    options: [
+      { value: 'durability', label: 'Durability', desc: "Strings that don't break" },
+      { value: 'power',      label: 'Power',      desc: 'Explosive smashes and clears' },
+      { value: 'control',    label: 'Control',    desc: 'Precision and feel' },
+      { value: 'feel',       label: 'Comfort',    desc: 'Softer string, easier on the arm' },
+    ] },
+];
+
+function initStringQuiz() {
+  const root = document.getElementById('string-quiz');
+  if (!root) return;
+
+  let step = 0;
+  const answers = {};
+
+  const scoreString = (s) => {
+    let v = 0;
+    if (answers.level === 'beginner')     v += s.durability * 1.5;
+    if (answers.level === 'intermediate') v += (s.durability + s.control + s.power) * 0.4;
+    if (answers.level === 'advanced')     v += (s.control + s.power) * 0.9;
+
+    if (answers.freq === 'low')  v += (s.power + s.control) * 0.3;
+    if (answers.freq === 'mid')  v += (s.durability + s.control + s.power) * 0.15;
+    if (answers.freq === 'high') v += s.durability * 1.2;
+
+    if (answers.style === 'defensive') v += (s.durability + s.control) * 0.7;
+    if (answers.style === 'allround')  v += (s.durability + s.control + s.power) * 0.35;
+    if (answers.style === 'attacking') v += s.power * 1.5;
+    if (answers.style === 'control')   v += s.control * 1.5;
+
+    if (answers.priority === 'durability') v += s.durability * 2;
+    if (answers.priority === 'power')      v += s.power * 2;
+    if (answers.priority === 'control')    v += s.control * 2;
+    if (answers.priority === 'feel') {
+      // "Feel" rewards low-durability/high-spec strings (thinner gauge = more sensation)
+      // and explicitly favors the comfort multifilament — Nanogy 95 is the one
+      // string positioned around softness, so it gets a strong bonus.
+      const feel = (6 - s.durability) + s.control + (s.id === 'yonex-nano95' ? 4 : 0);
+      v += feel * 1.1;
+    }
+    return v;
+  };
+
+  const traitsOf = (s) => {
+    const t = [];
+    if (s.durability >= 4) t.push('durability');
+    if (s.control    >= 4) t.push('control');
+    if (s.power      >= 4) t.push('repulsion');
+    return t.length ? t.join(', ') : 'a balanced feel';
+  };
+
+  const dot = (n, max = 5) => Array.from({ length: max }, (_, i) => `<span class="dot ${i < n ? 'on' : ''}"></span>`).join('');
+
+  const renderQuestion = (i) => {
+    const q = STRING_QUIZ_QUESTIONS[i];
+    const dots = STRING_QUIZ_QUESTIONS.map((_, n) => `<div class="quiz-dot ${n <= i ? 'active' : ''}"></div>`).join('');
+    root.innerHTML = `
+      <div class="quiz-card">
+        <div class="quiz-progress">${dots}</div>
+        <span class="eyebrow">▸ Question ${i + 1} of ${STRING_QUIZ_QUESTIONS.length}</span>
+        <h3 class="quiz-q">${escapeHtml(q.title)}</h3>
+        <div class="quiz-options">
+          ${q.options.map(o => `
+            <button class="quiz-option" type="button" data-value="${escapeHtml(o.value)}">
+              <span class="quiz-option-label">${escapeHtml(o.label)}</span>
+              <span class="quiz-option-desc">${escapeHtml(o.desc)}</span>
+            </button>
+          `).join('')}
+        </div>
+        ${i > 0 ? '<button class="quiz-back" type="button">← Back</button>' : ''}
+      </div>
+    `;
+    root.querySelectorAll('.quiz-option').forEach(btn => {
+      btn.addEventListener('click', () => {
+        answers[q.id] = btn.dataset.value;
+        step = i + 1;
+        if (step < STRING_QUIZ_QUESTIONS.length) renderQuestion(step);
+        else renderResult();
+      });
+    });
+    root.querySelector('.quiz-back')?.addEventListener('click', () => {
+      step = i - 1;
+      renderQuestion(step);
+    });
+  };
+
+  const renderResult = () => {
+    const ranked = STRINGS.map(s => ({ s, score: scoreString(s) })).sort((a, b) => b.score - a.score);
+    const top = ranked[0].s;
+    const alt = ranked[1].s;
+
+    root.innerHTML = `
+      <div class="quiz-card quiz-result">
+        <span class="eyebrow">▸ Your match</span>
+        <h3 class="quiz-result-name">${escapeHtml(top.name)}</h3>
+        <p class="quiz-result-why">Picked for ${escapeHtml(traitsOf(top))} — matched against your level, frequency, and play style.</p>
+        <div class="quiz-result-stats">
+          <div><span class="rlabel">Durability</span><div class="dots">${dot(top.durability)}</div></div>
+          <div><span class="rlabel">Control</span><div class="dots">${dot(top.control)}</div></div>
+          <div><span class="rlabel">Power</span><div class="dots">${dot(top.power)}</div></div>
+          <div><span class="rlabel">Price</span><strong class="quiz-price">$${top.price}</strong></div>
+        </div>
+        <p class="quiz-result-desc">${escapeHtml(top.desc)}</p>
+        <div class="quiz-result-alt">
+          <span class="rlabel">Runner-up</span>
+          <strong>${escapeHtml(alt.name)}</strong>
+          <span class="alt-meta">— if you want more ${escapeHtml(traitsOf(alt))}</span>
+        </div>
+        <div class="quiz-result-actions">
+          <button class="btn btn-primary" type="button" data-action="see">See in catalog ↓</button>
+          <button class="btn btn-ghost" type="button" data-action="restart">Retake quiz</button>
+        </div>
+      </div>
+    `;
+    root.querySelector('[data-action="see"]')?.addEventListener('click', () => {
+      const card = document.querySelector(`.string-card[data-string-id="${top.id}"]`);
+      if (!card) return;
+      document.querySelectorAll('.string-card.is-recommended').forEach(c => c.classList.remove('is-recommended'));
+      card.classList.add('is-recommended');
+      card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setTimeout(() => card.classList.remove('is-recommended'), 4000);
+    });
+    root.querySelector('[data-action="restart"]')?.addEventListener('click', () => {
+      Object.keys(answers).forEach(k => delete answers[k]);
+      step = 0;
+      renderQuestion(0);
+    });
+  };
+
+  renderQuestion(0);
+}
+
+function initProshopCarousel() {
+  const root = document.getElementById('proshop-carousel');
+  if (!root) return;
+  const slides = Array.from(root.querySelectorAll('.proshop-slide'));
+  const dots   = Array.from(root.querySelectorAll('.proshop-dot'));
+  const prev   = root.querySelector('.proshop-prev');
+  const next   = root.querySelector('.proshop-next');
+  if (slides.length < 2) return;
+
+  let index = 0;
+  let timer = 0;
+
+  const show = (i) => {
+    index = (i + slides.length) % slides.length;
+    slides.forEach((s, n) => {
+      const active = n === index;
+      s.classList.toggle('is-active', active);
+      s.setAttribute('aria-hidden', active ? 'false' : 'true');
+    });
+    dots.forEach((d, n) => {
+      const active = n === index;
+      d.classList.toggle('is-active', active);
+      d.setAttribute('aria-selected', active ? 'true' : 'false');
+    });
+  };
+
+  const stepBy = (delta) => { show(index + delta); restart(); };
+
+  const start = () => { timer = window.setInterval(() => show(index + 1), 5500); };
+  const stop  = () => { if (timer) { clearInterval(timer); timer = 0; } };
+  const restart = () => { stop(); start(); };
+
+  prev?.addEventListener('click', () => stepBy(-1));
+  next?.addEventListener('click', () => stepBy(1));
+  dots.forEach((d, n) => d.addEventListener('click', () => { show(n); restart(); }));
+
+  root.addEventListener('mouseenter', stop);
+  root.addEventListener('mouseleave', start);
+  root.addEventListener('focusin',    stop);
+  root.addEventListener('focusout',   start);
+
+  start();
 }
 
 // === FAQ PAGE ===
@@ -1216,8 +1557,25 @@ function initAnnounceBar() {
   });
 }
 
+// === THEME TOGGLE ===
+function initThemeToggle() {
+  const btn = document.getElementById('theme-toggle');
+  if (!btn) return;
+  btn.addEventListener('click', () => {
+    const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+    const next = isLight ? 'dark' : 'light';
+    if (next === 'light') {
+      document.documentElement.setAttribute('data-theme', 'light');
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+    }
+    try { localStorage.setItem('kotofit-theme', next); } catch (e) { /* ignore */ }
+  });
+}
+
 // === PAGE INIT ===
 document.addEventListener('DOMContentLoaded', () => {
+  initThemeToggle();
   initAnnounceBar();
   initHero();
   initHeroToggle();
@@ -1229,7 +1587,6 @@ document.addEventListener('DOMContentLoaded', () => {
   renderMemberships();
   renderCoachesHomepage();
   renderEventsHomepage();
-  initStringing();
   // Page-specific renderers (no-ops if their target elements don't exist):
   if (typeof renderLocationsPage === 'function') renderLocationsPage();
   if (typeof renderMembershipsPage === 'function') renderMembershipsPage();

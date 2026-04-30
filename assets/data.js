@@ -143,13 +143,144 @@ const EVENTS = [
   { id: 'e12', day: '18', mo: 'Jul', name: 'Summer Doubles League Final',meta: '3rd Street · 6:00 PM · Spectators welcome',        sport: 'badminton',  location: 'jc-3rd',     month: 'Jul', price: 'free' },
 ];
 
+const STRING_CATEGORIES = [
+  { id: 'durability', label: 'Built for durability', tabLabel: 'Durability',
+    desc: 'Longer-lasting strings for high-frequency players, beginners, and anyone who breaks strings often.' },
+  { id: 'power',      label: 'Built for power',      tabLabel: 'Power',
+    desc: 'Explosive repulsion strings for attackers who want every smash to feel heavy.' },
+  { id: 'control',    label: 'Built for control & feel', tabLabel: 'Control & feel',
+    desc: 'Refined, sensitive strings for tactical players who shape every shot.' },
+];
+
+// To use a real product photo for any item below, add an `img` field with
+// either a local path (e.g. `img: 'assets/strings/yonex-bg65.png'`) or any
+// hosted URL. The renderer falls back to a shared default if `img` is unset.
 const STRINGS = [
-  { id: 'yonex-bg65',  name: 'Yonex BG65',     desc: 'Durable all-round string. Best for beginners and high-frequency players who break strings often.', price: 22, gauge: '0.70mm', durability: 5, control: 3, power: 3 },
-  { id: 'yonex-bg80',  name: 'Yonex BG80',     desc: 'Power and repulsion. The choice of attacking players who want every smash to feel explosive.',     price: 28, gauge: '0.68mm', durability: 4, control: 3, power: 5 },
-  { id: 'ashaway-zm',  name: 'Ashaway Zymax',  desc: 'Pro tour favorite. Crisp control with surprising durability — equally at home in singles and doubles.', price: 32, gauge: '0.66mm', durability: 4, control: 5, power: 4 },
+  // === DURABILITY ===
+  { id: 'yonex-bg65',       name: 'Yonex BG65',           category: 'durability',
+    img: 'https://us.yonex.com/cdn/shop/files/BG65-2_WHITE_1.jpg?v=1752002883&width=1946',
+    desc: 'Durable all-round string. The most-strung badminton string in the world — best for beginners and high-frequency players who break strings often.',
+    price: 22, gauge: '0.70mm', durability: 5, control: 3, power: 3,
+    pickIf: 'You break strings often or play 4+ times a week.',
+    playstyle: 'All-round · Durable' },
+  { id: 'yonex-bg65ti',     name: 'Yonex BG65 Titanium',  category: 'durability',
+    img: 'https://us.yonex.com/cdn/shop/files/ABG65TIW_White_1.jpg?v=1770434589',
+    desc: 'BG65 with a titanium hydride coating. Same proven durability with a slightly crisper feel and a touch more snap.',
+    price: 25, gauge: '0.70mm', durability: 5, control: 3, power: 4,
+    pickIf: 'You loved BG65 but want a bit more pop on smashes.',
+    playstyle: 'All-round · Crisper' },
+  { id: 'yonex-nano95',     name: 'Yonex Nanogy 95',      category: 'durability',
+    img: 'https://us.yonex.com/cdn/shop/files/NBG95_Red_1.png?v=1770434568&width=1946',
+    desc: 'Refined nylon multifilament. Soft on the arm with surprising control — a comfortable middle ground for intermediate players.',
+    price: 26, gauge: '0.69mm', durability: 4, control: 4, power: 3,
+    pickIf: 'You want control without the harshness of a thinner string.',
+    playstyle: 'Comfort · Control' },
+  { id: 'victor-vbs66n',    name: 'Victor VBS-66N',       category: 'durability',
+    img: 'https://cdn.shopify.com/s/files/1/0595/4342/1085/products/VBS-66NRL.jpg?v=1653736225',
+    desc: 'Affordable performance. Balanced feel for intermediate players who want more than a beginner string without paying pro prices.',
+    price: 24, gauge: '0.66mm', durability: 3, control: 4, power: 4,
+    pickIf: 'You want a step up from BG65 without spending $30.',
+    playstyle: 'Balanced · Value' },
+
+  // === POWER ===
+  { id: 'yonex-bg80',       name: 'Yonex BG80',           category: 'power',
+    img: 'https://us.yonex.com/cdn/shop/files/BG80-2_WHITE_1.jpg?v=1764804978&width=1946',
+    desc: 'Power and repulsion. The choice of attacking players who want every smash to feel explosive.',
+    price: 28, gauge: '0.68mm', durability: 4, control: 3, power: 5,
+    pickIf: 'You play attacking — smashes are your money shot.',
+    playstyle: 'Power · Repulsion' },
+  { id: 'yonex-aerobite-boost', name: 'Yonex Aerobite Boost', category: 'power',
+    img: 'https://www.badmintonavenue.com/cdn/shop/files/yonex-aerobite-boost-0-72-0-61mm-badminton-hybrid-200m-reel-red-front__98676__17694.1698772299.jpg?v=1726216750&width=2400',
+    desc: 'Hybrid string — thicker mains for power, thinner crosses for repulsion. A doubles-tour favorite for back-court hammers.',
+    price: 32, gauge: '0.72/0.61mm', durability: 3, control: 4, power: 5,
+    pickIf: 'You play doubles back-court and want extra power on every smash.',
+    playstyle: 'Hybrid · Doubles power' },
+  { id: 'ashaway-zm70fire', name: 'Ashaway Zymax 70',     category: 'power',
+    img: 'https://www.badmintonalley.com/v/vspfiles/photos/STRING-ASHAWAY-ZYMAX-70-WHT-2.jpg?v-cache=1765504033',
+    desc: 'Built around explosive feel. Snappy, loud, and tuned for big hitters who want maximum repulsion at standard gauge.',
+    price: 30, gauge: '0.70mm', durability: 4, control: 3, power: 5,
+    pickIf: 'You want max power without dropping to a thinner gauge.',
+    playstyle: 'Power · Loud' },
+
+  // === CONTROL & FEEL ===
+  { id: 'yonex-bg66u',      name: 'Yonex BG66 Ultimax',   category: 'control',
+    img: 'https://us.yonex.com/cdn/shop/files/BG66UM-2_METALLIC-WHITE_1.jpg?v=1752003035',
+    desc: 'A pro-tour staple. Ultra-fine 0.65mm gauge for sharp repulsion and unmatched feel — at the cost of longevity.',
+    price: 32, gauge: '0.65mm', durability: 2, control: 5, power: 5,
+    pickIf: 'You prioritize feel and shot precision over string longevity.',
+    playstyle: 'Pro-grade · Sharp' },
+  { id: 'ashaway-zm',       name: 'Ashaway Zymax 69 Fire',category: 'control',
+    img: 'https://www.badmintonwarehouse.com/cdn/shop/products/ashaway-zymax-69-fire-0-69mm-badminton-string-orange-or-white-1_700x700.jpg?v=1528316787',
+    desc: 'Pro-tour favorite. Crisp, defined control with surprising durability — equally at home in singles and doubles.',
+    price: 32, gauge: '0.69mm', durability: 4, control: 5, power: 4,
+    pickIf: 'You want pro-level control without giving up durability.',
+    playstyle: 'Control · All-court' },
+  { id: 'yonex-aerosonic',  name: 'Yonex Aerosonic',      category: 'control',
+    img: 'https://us.yonex.com/cdn/shop/files/ABGASW_White_1.jpg?v=1740344297&width=1946',
+    desc: "Yonex's thinnest string at 0.61mm. The most sensation per shot — built for advanced players who don't mind restringing every two weeks.",
+    price: 34, gauge: '0.61mm', durability: 1, control: 5, power: 4,
+    pickIf: "You're advanced and want the sharpest possible feel.",
+    playstyle: 'Pro · Ultra-thin' },
 ];
 
 const TENSIONS = ['22 lbs · Soft feel', '24 lbs · Balanced (recommended)', '26 lbs · Crisp control', '28 lbs · Pro level'];
+
+const RACKET_CATEGORIES = [
+  { id: 'attack',   label: 'Attack',    tabLabel: 'Attack',
+    desc: 'Head-heavy, stiff frames. Built around the smash — for singles players and doubles back-court hitters.' },
+  { id: 'allround', label: 'All-round', tabLabel: 'All-round',
+    desc: 'Balanced frames that handle every shot well. The right pick for most intermediate-to-advanced players.' },
+  { id: 'speed',    label: 'Speed',     tabLabel: 'Speed',
+    desc: 'Head-light, aerodynamic frames built for fast hands — defensive doubles play, drives, and counter-attacks.' },
+];
+
+const RACKETS = [
+  // === ATTACK ===
+  { id: 'astrox-99pro',     name: 'Yonex Astrox 99 Pro',     category: 'attack',
+    img: 'https://yumo.ca/cdn/shop/files/Yonex_Astrox99Pro_Black_Green_Badminton_Racket_YumoProShop.png?v=1756334590',
+    desc: "Kento Momota's signature singles racquet. Built around the rotational generator concept for explosive smashes.",
+    price: 260, weight: '4U (83g)', balance: 'Head-heavy', flex: 'Stiff', level: 'Advanced',
+    pickIf: 'You play singles and your smash is your best weapon.' },
+  { id: 'astrox-88dpro',    name: 'Yonex Astrox 88D Pro',    category: 'attack',
+    img: 'https://yumo.ca/cdn/shop/files/Yonex_Astrox88DPro_Black_Silver_Badminton_Racket_YumoProShop.png?v=1708629919',
+    desc: 'The doubles back-court hammer. Thicker shaft and head-heavy build — engineered for the rear-court attacker.',
+    price: 250, weight: '3U (88g)', balance: 'Head-heavy', flex: 'Stiff', level: 'Advanced',
+    pickIf: 'You play doubles back-court and want every smash to land heavy.' },
+  { id: 'thruster-falcon',  name: 'Victor Thruster Falcon',  category: 'attack',
+    img: 'https://yumo.ca/cdn/shop/products/Victor_TK-F_ThrusterF_ehanced_badminton_racket_black_1_yumoproshop.jpg?v=1611944420',
+    desc: 'Aggressive head-heavy frame at a more accessible price. Fast through the air despite the weight bias.',
+    price: 200, weight: '4U (83g)', balance: 'Head-heavy', flex: 'Medium', level: 'Intermediate',
+    pickIf: "You're moving up to your first attack-oriented frame." },
+
+  // === ALL-ROUND ===
+  { id: 'astrox-88spro',    name: 'Yonex Astrox 88S Pro',    category: 'allround',
+    img: 'https://yumo.ca/cdn/shop/files/Yonex_Astrox88SPro_Black_Silver_Badminton_Racket_YumoProShop.png?v=1765309385',
+    desc: 'The doubles front-court counterpart to the 88D. Even balance for fast hands and net play, with enough head weight to finish.',
+    price: 250, weight: '3U (88g)', balance: 'Even', flex: 'Stiff', level: 'Advanced',
+    pickIf: 'You play doubles front-court and need quick hands without giving up power.' },
+  { id: 'arcsaber-11pro',   name: 'Yonex Arcsaber 11 Pro',   category: 'allround',
+    img: 'https://yumo.ca/cdn/shop/products/Yonex_2022_ARC11PRO_Red_Badminton_racket_YumoProShop.png?v=1642022794',
+    desc: 'A control-first all-rounder built for the precise player. Holds the shuttle longer for refined shot placement.',
+    price: 260, weight: '3U (88g)', balance: 'Even', flex: 'Stiff', level: 'Advanced',
+    pickIf: 'You shape every shot — drops, drives, clears with placement intent.' },
+  { id: 'arcsaber-7pro',    name: 'Yonex Arcsaber 7 Pro',    category: 'allround',
+    img: 'https://yumo.ca/cdn/shop/products/arc7-p.png?v=1656528668',
+    desc: 'A more forgiving Arcsaber. Even balance with a medium-flex shaft — comfortable for full-rally singles play.',
+    price: 200, weight: '4U (83g)', balance: 'Even', flex: 'Medium', level: 'Intermediate',
+    pickIf: "You're intermediate and want one racquet that does everything well." },
+
+  // === SPEED ===
+  { id: 'nanoflare-700',    name: 'Yonex Nanoflare 700',     category: 'speed',
+    img: 'https://www.badmintonwarehouse.com/cdn/shop/products/Nanoflare_700_Badminton_Racket_Cyan_Frame_1024x.jpg?v=1646751153',
+    desc: 'Head-light frame engineered for speed. Built for the doubles player who lives at the net and counter-attacks fast.',
+    price: 200, weight: '4U (83g)', balance: 'Head-light', flex: 'Medium', level: 'Intermediate',
+    pickIf: "You're a fast-hands doubles player who counter-drives everything." },
+  { id: 'nanoflare-800pro', name: 'Yonex Nanoflare 800 Pro', category: 'speed',
+    img: 'https://yumo.ca/cdn/shop/files/Yonex_NF800Pro_Green_Badminton_Racket_YumoProShop.png?v=1698259077',
+    desc: 'The flagship speed frame. Aerodynamic head, head-light balance, stiff shaft — built for elite-level fast play.',
+    price: 260, weight: '4U (83g)', balance: 'Head-light', flex: 'Stiff', level: 'Advanced',
+    pickIf: 'You play fast doubles at a high level and want the quickest racquet you can hold.' },
+];
 
 const PROGRAMS = [
   { id: 'adults-group', name: 'Adults Group Coaching',

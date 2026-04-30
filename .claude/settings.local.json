@@ -4,7 +4,10 @@
       "Bash(uipro init *)",
       "Bash(node -e ' *)",
       "Bash(npx --yes http-server -p 8765 -s)",
-      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8765/index.html)"
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8765/index.html)",
+      "WebSearch",
+      "Bash(curl -s -o /tmp/abb.jpg -L -m 15 \"https://www.yonex.com/media/catalog/product/a/b/abb.jpg\")",
+      "Read(//tmp/**)"
     ]
   }
 }

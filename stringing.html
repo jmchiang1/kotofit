@@ -3,13 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Stringing — Kotofit</title>
-  <meta name="description" content="Professional racquet stringing in 24 hours. Choose your tension, your string, your timing — at any Kotofit location." />
+  <title>Pro Shop & Stringing — Kotofit</title>
+  <meta name="description" content="Pro-grade rackets, the strings we trust, and 24-hour stringing — at every Kotofit location." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" />
   <script src="https://cdn.jsdelivr.net/npm/motion@11/dist/motion.js"></script>
   <link rel="stylesheet" href="assets/styles.css" />
+  <script>(function(){try{var s=localStorage.getItem('kotofit-theme');var p=s||(window.matchMedia&&window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');if(p==='light')document.documentElement.setAttribute('data-theme','light');}catch(e){}})();</script>
 </head>
 <body data-page="stringing">
 
@@ -21,11 +22,11 @@
         <li><a href="memberships.html">Memberships</a></li>
         <li><a href="coaching.html">Coaching</a></li>
         <li><a href="events.html">Events</a></li>
-        <li><a href="stringing.html">Stringing</a></li>
+        <li><a href="stringing.html">Equipment</a></li>
         <li><a href="faq.html">FAQ</a></li>
       </ul>
       <a href="index.html#top" class="nav-cta">Reserve Court →</a>
-      <button class="nav-burger" aria-label="Open menu"><span></span></button>
+      <button class="nav-theme" type="button" id="theme-toggle" aria-label="Toggle light and dark mode"><svg class="theme-icon theme-icon-dark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><svg class="theme-icon theme-icon-light" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></button><button class="nav-burger" aria-label="Open menu"><span></span></button>
     </div>
   </nav>
 
@@ -36,7 +37,7 @@
       <a href="memberships.html">Memberships</a>
       <a href="coaching.html">Coaching</a>
       <a href="events.html">Events</a>
-      <a href="stringing.html">Stringing</a>
+      <a href="stringing.html">Equipment</a>
       <a href="faq.html">FAQ</a>
     </nav>
     <a href="index.html#top" class="mm-cta">Reserve a court →</a>
@@ -45,19 +46,60 @@
   <main>
     <section class="page-hero">
       <div class="container">
-        <span class="eyebrow">▸ Professional stringing</span>
-        <h1 class="display-l">Strung in 24 hours.</h1>
-        <p class="lede">Drop your racquet at any Kotofit location. Choose your tension, your string, your timing. We'll text when it's ready.</p>
-        <div style="margin-top:24px">
-          <button class="btn btn-secondary" id="stringing-cta">Book stringing →</button>
-        </div>
+        <span class="eyebrow">▸ Pro shop & stringing</span>
+        <h1 class="display-l">Equipped to play.</h1>
+        <p class="lede">Pro-grade rackets, the strings we trust, and 24-hour stringing — at every Kotofit front desk. Drop in, get advice, walk out ready.</p>
       </div>
     </section>
 
     <section>
       <div class="container">
         <div class="section-title reveal">
-          <div class="e">▸ How it works</div>
+          <div class="e">▸ The pro shop</div>
+          <h2>Where it happens.</h2>
+          <p class="section-sub">Every Kotofit front desk doubles as a pro shop. Rackets, strings, grips, shuttles, and a calibrated stringing machine — staffed by people who play.</p>
+        </div>
+        <div class="proshop-carousel reveal" id="proshop-carousel" aria-roledescription="carousel" aria-label="Pro shop">
+          <div class="proshop-track">
+            <figure class="proshop-slide is-active" aria-hidden="false">
+              <img src="assets/proshop.png" alt="Pro shop interior with strings and accessories" />
+            </figure>
+            <figure class="proshop-slide" aria-hidden="true">
+              <img src="assets/proshop2.png" alt="Stringing machine and racquet on the bench" />
+            </figure>
+            <figure class="proshop-slide" aria-hidden="true">
+              <img src="assets/proshop3.png" alt="Detail of strings and grips on the wall" />
+            </figure>
+          </div>
+          <button class="proshop-arrow proshop-prev" type="button" aria-label="Previous image">‹</button>
+          <button class="proshop-arrow proshop-next" type="button" aria-label="Next image">›</button>
+          <div class="proshop-dots" role="tablist" aria-label="Carousel pagination">
+            <button class="proshop-dot is-active" type="button" role="tab" aria-selected="true"  aria-label="Show image 1"></button>
+            <button class="proshop-dot"            type="button" role="tab" aria-selected="false" aria-label="Show image 2"></button>
+            <button class="proshop-dot"            type="button" role="tab" aria-selected="false" aria-label="Show image 3"></button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="section-head-row reveal">
+          <div class="section-title">
+            <div class="e">▸ Racket catalog</div>
+            <h2>The rackets we stock.</h2>
+            <p class="section-sub">Eight frames, grouped by how you play. Demo rackets available at the front desk if you want to try before you buy.</p>
+          </div>
+          <button class="btn btn-ghost section-action" type="button" id="open-spec-primer">How to read a racket →</button>
+        </div>
+        <div class="rackets-catalog reveal-stagger" id="rackets-catalog"></div>
+      </div>
+    </section>
+
+    <!-- <section>
+      <div class="container">
+        <div class="section-title reveal">
+          <div class="e">▸ How stringing works</div>
           <h2>Three steps.</h2>
         </div>
         <div class="process-grid reveal-stagger">
@@ -78,13 +120,17 @@
           </div>
         </div>
       </div>
-    </section>
+    </section> -->
 
     <section>
       <div class="container">
-        <div class="section-title reveal">
-          <div class="e">▸ String catalog</div>
-          <h2>Pick your string.</h2>
+        <div class="section-head-row reveal">
+          <div class="section-title">
+            <div class="e">▸ String catalog</div>
+            <h2>The strings we stock.</h2>
+            <p class="section-sub">Ten strings, grouped by what you optimize for. Bring your own if you prefer — labor only is $15.</p>
+          </div>
+          <button class="btn btn-ghost section-action" type="button" id="open-tension-guide">Tension guide →</button>
         </div>
         <div class="strings-catalog reveal-stagger" id="strings-catalog"></div>
       </div>
@@ -93,18 +139,11 @@
     <section>
       <div class="container">
         <div class="section-title reveal">
-          <div class="e">▸ Tension guide</div>
-          <h2>What feel are you after?</h2>
+          <div class="e">▸ Find your string</div>
+          <h2>Take the 30-second quiz.</h2>
+          <p class="section-sub">Four quick questions. We'll match you with the string that fits your game.</p>
         </div>
-        <div class="tension-guide reveal">
-          <div class="tension-bar"></div>
-          <div class="tension-marks">
-            <div class="tension-mark"><div class="lbs">22 lbs</div><div class="feel">Soft feel</div></div>
-            <div class="tension-mark recommended"><div class="lbs">24 lbs</div><div class="feel">★ Recommended</div></div>
-            <div class="tension-mark"><div class="lbs">26 lbs</div><div class="feel">Crisp control</div></div>
-            <div class="tension-mark"><div class="lbs">28 lbs</div><div class="feel">Pro level</div></div>
-          </div>
-        </div>
+        <div class="string-quiz reveal" id="string-quiz"></div>
       </div>
     </section>
 
@@ -123,9 +162,9 @@
     <div class="container inner">
       <div>
         <h3>Racquet feeling <em>tired?</em></h3>
-        <div class="ready-meta">Drop it off at the front desk on your next visit.</div>
+        <div class="ready-meta">Drop it off at any Kotofit front desk on your next visit. We'll handle it from there.</div>
       </div>
-      <button class="btn btn-secondary" id="stringing-strip-cta">Book stringing →</button>
+      <a class="btn btn-ghost" href="locations.html">Find a location →</a>
     </div>
   </section>
 
@@ -136,7 +175,7 @@
           <div class="logo"><img src="assets/logo.png" alt="" />KOTOFIT</div>
           <p>America's home for badminton, pickleball, and indoor sports. Four locations across NJ and NY, growing.</p>
         </div>
-        <div><h4>Play</h4><ul><li><a href="locations.html">Locations</a></li><li><a href="index.html#top">Reserve</a></li><li><a href="memberships.html">Memberships</a></li><li><a href="stringing.html">Stringing</a></li><li><a href="faq.html">FAQ</a></li></ul></div>
+        <div><h4>Play</h4><ul><li><a href="locations.html">Locations</a></li><li><a href="index.html#top">Reserve</a></li><li><a href="memberships.html">Memberships</a></li><li><a href="stringing.html">Equipment</a></li><li><a href="faq.html">FAQ</a></li></ul></div>
         <div><h4>Learn</h4><ul><li><a href="coaching.html">Coaching</a></li><li><a href="coaching.html">Clinics</a></li><li><a href="coaching.html">Youth</a></li><li><a href="events.html">Events</a></li></ul></div>
         <div><h4>Connect</h4><ul><li><a href="#">WhatsApp</a></li><li><a href="#">Instagram</a></li><li><a href="#">WeChat</a></li><li><a href="#">Contact</a></li></ul></div>
       </div>
