@@ -251,22 +251,37 @@ function findTier(tierId) {
   return null;
 }
 
-function renderTierPriceBlock(tier) {
+function renderTierPriceBlock(tier, billing = 'mo') {
   if (tier.priceMo === 0) {
     return `<div class="price">$0<small>free tier</small></div>`;
   }
-  const monthly = tier.priceMo != null
-    ? `<div class="price">$${tier.priceMo}<small>/mo</small></div>`
-    : '';
-  const quarterly = tier.priceQ != null
-    ? (tier.priceMo != null
-        ? `<div class="price-alt">or <strong>$${tier.priceQ}</strong> / quarter</div>`
-        : `<div class="price">$${tier.priceQ}<small>/quarter</small></div>`)
-    : '';
-  return monthly + quarterly;
+  if (billing === 'q') {
+    if (tier.priceQ == null) {
+      return `
+        <div class="price price-unavailable">Monthly only</div>
+        <div class="price-alt">$${tier.priceMo} / mo</div>
+      `;
+    }
+    const std = tier.standardPriceQ;
+    return `
+      <div class="price">$${tier.priceQ}<small>/quarter</small></div>
+      ${std ? `<div class="price-alt"><span class="price-strike">$${std}</span> standard</div>` : ''}
+    `;
+  }
+  if (tier.priceMo == null) {
+    return `
+      <div class="price price-unavailable">Quarterly only</div>
+      <div class="price-alt">$${tier.priceQ} / quarter</div>
+    `;
+  }
+  const std = tier.standardPriceMo;
+  return `
+    <div class="price">$${tier.priceMo}<small>/mo</small></div>
+    ${std ? `<div class="price-alt"><span class="price-strike">$${std}</span> standard</div>` : ''}
+  `;
 }
 
-function renderMembershipCards(containerId, locationKey) {
+function renderMembershipCards(containerId, locationKey, billing = 'mo') {
   const grid = document.getElementById(containerId);
   if (!grid) return;
   const loc = MEMBERSHIPS[locationKey];
@@ -277,13 +292,13 @@ function renderMembershipCards(containerId, locationKey) {
       ${t.limitedOffer ? `<div class="limited-pill">Limited time offer</div>` : ''}
       <div class="tier">${escapeHtml(t.name)}</div>
       <div class="tier-tag">${escapeHtml(t.tagline)}</div>
-      <div class="price-block">${renderTierPriceBlock(t)}</div>
+      <div class="price-block">${renderTierPriceBlock(t, billing)}</div>
       <ul>${t.perks.map(p => `<li>${escapeHtml(p)}</li>`).join('')}</ul>
-      <button class="mem-cta" data-tier="${escapeHtml(t.id)}">${escapeHtml(t.cta)}</button>
+      <button class="mem-cta" data-tier="${escapeHtml(t.id)}" data-billing="${billing}">${escapeHtml(t.cta)}</button>
     </div>
   `).join('');
   grid.querySelectorAll('[data-tier]').forEach(btn => {
-    btn.addEventListener('click', () => openJoinModal(btn.dataset.tier));
+    btn.addEventListener('click', () => openJoinModal(btn.dataset.tier, btn.dataset.billing));
   });
   // Children inserted after initReveal() observed the parent never get the reveal
   // animation — motion.dev's inView fires once per element. Force them visible.
@@ -317,7 +332,7 @@ function renderComparisonTable(containerId, locationKey) {
 
 // Build segmented NJ/LIC toggle, wire it to re-render cards (+ optional table).
 // Returns a controller with getActive() so callers can read the current selection.
-function renderMembershipsLocationToggle(toggleId, cardsId, tableId, initialKey, onChange) {
+function renderMembershipsLocationToggle(toggleId, cardsId, tableId, initialKey, onChange, getBillingMode) {
   const toggle = document.getElementById(toggleId);
   if (!toggle) return null;
   const keys = Object.keys(MEMBERSHIPS);
@@ -331,8 +346,10 @@ function renderMembershipsLocationToggle(toggleId, cardsId, tableId, initialKey,
   let busy = false;
   const SWAP_MS = 220;
 
+  const getBilling = () => (typeof getBillingMode === 'function' ? getBillingMode() : 'mo');
+
   const doRender = (key) => {
-    renderMembershipCards(cardsId, key);
+    renderMembershipCards(cardsId, key, getBilling());
     if (tableId) renderComparisonTable(tableId, key);
   };
 
@@ -378,7 +395,56 @@ function renderMembershipsLocationToggle(toggleId, cardsId, tableId, initialKey,
     b.addEventListener('click', () => apply(b.dataset.loc));
   });
   apply(active);
-  return { getActive: () => active };
+
+  const refresh = () => {
+    const target = document.getElementById(cardsId);
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce || !target) {
+      renderMembershipCards(cardsId, active, getBilling());
+      return;
+    }
+    target.classList.add('mem-swapping');
+    setTimeout(() => {
+      renderMembershipCards(cardsId, active, getBilling());
+      requestAnimationFrame(() => target.classList.remove('mem-swapping'));
+    }, SWAP_MS);
+  };
+
+  return { getActive: () => active, refresh };
+}
+
+// Monthly/Quarterly billing toggle. Visible only for locations that offer both.
+function renderBillingToggle(toggleId, onChange) {
+  const toggle = document.getElementById(toggleId);
+  if (!toggle) return null;
+  toggle.innerHTML = `
+    <button class="billing-toggle-btn active" data-billing="mo">Monthly</button>
+    <button class="billing-toggle-btn" data-billing="q">Quarterly<span class="billing-save">Save ~10%</span></button>
+  `;
+  let active = 'mo';
+  toggle.querySelectorAll('[data-billing]').forEach(b => {
+    b.addEventListener('click', () => {
+      if (b.dataset.billing === active) return;
+      active = b.dataset.billing;
+      toggle.querySelectorAll('[data-billing]').forEach(x =>
+        x.classList.toggle('active', x.dataset.billing === active)
+      );
+      if (typeof onChange === 'function') onChange(active);
+    });
+  });
+  return {
+    getActive: () => active,
+    reset: () => {
+      active = 'mo';
+      toggle.querySelectorAll('[data-billing]').forEach(x =>
+        x.classList.toggle('active', x.dataset.billing === 'mo')
+      );
+    },
+    setVisible: (visible) => {
+      if (visible) toggle.removeAttribute('hidden');
+      else toggle.setAttribute('hidden', '');
+    },
+  };
 }
 
 // Homepage entry point: toggle (if present) + cards. No table on homepage.
@@ -394,15 +460,21 @@ function renderMemberships() {
   }
 }
 
-function openJoinModal(tierId) {
+function openJoinModal(tierId, billing = 'mo') {
   const found = findTier(tierId);
   if (!found) return;
   const { tier, locationKey } = found;
   const locDef = MEMBERSHIPS[locationKey];
   const eligibleLocations = LOCATIONS.filter(l => l.status === 'open' && locDef.locationIds.includes(l.id));
-  const priceLine = tier.priceMo != null
-    ? `${tier.name} · $${tier.priceMo}/mo${tier.priceQ != null ? ` (or $${tier.priceQ}/quarter)` : ''}`
-    : `${tier.name} · $${tier.priceQ}/quarter`;
+  // Coerce billing to whichever cycle this tier actually offers (e.g. Platinum is quarterly only).
+  let cycle = billing;
+  if (cycle === 'mo' && tier.priceMo == null) cycle = 'q';
+  if (cycle === 'q' && tier.priceQ == null) cycle = 'mo';
+  const priceLine = tier.priceMo === 0
+    ? `${tier.name} · Free`
+    : cycle === 'q'
+      ? `${tier.name} · $${tier.priceQ}/quarter`
+      : `${tier.name} · $${tier.priceMo}/mo`;
   let step = 1;
   let chosenLoc = null;
   const render = () => {
@@ -458,7 +530,7 @@ function renderCoachesHomepage() {
   const feature = COACHES.find(c => c.feature) || COACHES[0];
   const others = COACHES.filter(c => c !== feature);
   grid.innerHTML = `
-    <div class="coach-feature">
+    <div class="coach-feature" data-coach-id="${escapeHtml(feature.id)}" role="button" tabindex="0" aria-label="View ${escapeHtml(feature.name)}'s bio">
       <div class="coach-bg" style="background-image:url('${escapeHtml(feature.img)}')"></div>
       <div>
         <div class="role">${escapeHtml(feature.role)}</div>
@@ -468,7 +540,7 @@ function renderCoachesHomepage() {
     </div>
     <div class="coach-side">
       ${others.map(c => `
-        <div class="coach-mini">
+        <div class="coach-mini" data-coach-id="${escapeHtml(c.id)}" role="button" tabindex="0" aria-label="View ${escapeHtml(c.name)}'s bio">
           <div class="coach-bg" style="background-image:url('${escapeHtml(c.img)}')"></div>
           <div>
             <div class="role">${escapeHtml(c.role)}</div>
@@ -478,6 +550,15 @@ function renderCoachesHomepage() {
       `).join('')}
     </div>
   `;
+  grid.querySelectorAll('[data-coach-id]').forEach(el => {
+    el.addEventListener('click', () => openCoachBioModal(el.dataset.coachId));
+    el.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        openCoachBioModal(el.dataset.coachId);
+      }
+    });
+  });
 }
 
 // === EVENTS (HOMEPAGE — shows 4) ===
@@ -812,20 +893,36 @@ function renderMembershipsPage() {
       : 'Most LIC players start with Silver — $49/mo, 20% off open play, plus 1 free UBR/DUPR session each month.';
   };
 
-  const controller = renderMembershipsLocationToggle(
+  // LIC offers both monthly and quarterly; NJ is monthly-only — billing toggle hides
+  // for NJ and resets to 'mo' on every location change.
+  const billingController = renderBillingToggle('billing-toggle-page', () => {
+    if (locationController) locationController.refresh();
+  });
+
+  const handleLocationChange = (key) => {
+    updateCtaBlurb(key);
+    if (billingController) {
+      billingController.setVisible(key === 'lic');
+      billingController.reset();
+    }
+  };
+
+  const locationController = renderMembershipsLocationToggle(
     'mem-toggle-page',
     'mem-grid',
     'mem-table-wrap',
     'nj',
-    updateCtaBlurb
+    handleLocationChange,
+    () => billingController ? billingController.getActive() : 'mo'
   );
 
   renderFaq('faq-memberships', typeof FAQS !== 'undefined' ? FAQS.memberships : []);
 
   document.getElementById('join-cta')?.addEventListener('click', () => {
-    const activeKey = controller ? controller.getActive() : 'nj';
+    const activeKey = locationController ? locationController.getActive() : 'nj';
     const featured = MEMBERSHIPS[activeKey].tiers.find(t => t.featured) || MEMBERSHIPS[activeKey].tiers[0];
-    openJoinModal(featured.id);
+    const billing = billingController ? billingController.getActive() : 'mo';
+    openJoinModal(featured.id, billing);
   });
 }
 
