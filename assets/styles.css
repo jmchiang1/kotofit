@@ -3768,6 +3768,18 @@ section {
 @media (max-width: 540px) { .event-types-grid { grid-template-columns: 1fr; } }
 .event-type-card { background: var(--surface); border: 1px solid var(--elevated); padding: 24px; text-align: left; cursor: pointer; transition: transform 200ms var(--ease-out), border-color 200ms; display: flex; flex-direction: column; gap: 10px; color: var(--bone); border-radius: var(--radius-md); }
 .event-type-card:hover { transform: translateY(-4px); border-color: var(--cobalt); }
+.event-type-card .event-type-icon {
+  width: 48px;
+  height: 48px;
+  background: var(--elevated);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--cobalt);
+  margin-bottom: 4px;
+}
+.event-type-card .event-type-icon svg { width: 24px; height: 24px; }
 .event-type-card .num { font-size: 11px; color: var(--cobalt); letter-spacing: 0.15em; font-weight: 700; }
 .event-type-card h3 { font-size: 20px; font-weight: 800; letter-spacing: -0.02em; margin: 0; }
 .event-type-card p { font-size: 13px; color: var(--mute); line-height: 1.55; margin: 0; }
