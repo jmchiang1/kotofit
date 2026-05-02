@@ -71,8 +71,13 @@ function openModal(html) {
     ${html}
   </div>`;
   backdrop.querySelector(".modal-close").addEventListener("click", closeModal);
-  backdrop.classList.add("open");
   document.body.style.overflow = "hidden";
+  // Force a frame between inserting the new modal and toggling .open so the
+  // browser paints the closed state once, then transitions to open. Otherwise
+  // both states apply in the same frame and the transition is skipped.
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => backdrop.classList.add("open"));
+  });
 }
 function closeModal() {
   const backdrop = document.getElementById("modal-backdrop");
@@ -181,7 +186,7 @@ function openLocationModal(id) {
       if (isSoon) {
         openWaitlistModal(loc);
       } else {
-        window.location.href = "index.html#top";
+        window.open(CONTACT_INFO.bookingUrl, "_blank", "noopener");
       }
     });
 }
@@ -268,19 +273,7 @@ function initBooking() {
   });
 
   document.getElementById("check-courts").addEventListener("click", () => {
-    const sport = document.querySelector(
-      '[data-bf="sport"] [data-val]'
-    ).textContent;
-    const location = document.querySelector(
-      '[data-bf="location"] [data-val]'
-    ).textContent;
-    const date = document.querySelector(
-      '[data-bf="date"] [data-val]'
-    ).textContent;
-    const time = document.querySelector(
-      '[data-bf="time"] [data-val]'
-    ).textContent;
-    openCourtModal({ sport, location, date, time });
+    window.open(CONTACT_INFO.bookingUrl, "_blank", "noopener");
   });
 }
 

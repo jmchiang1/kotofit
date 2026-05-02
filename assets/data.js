@@ -377,7 +377,14 @@ FAQS.courts = [
 ];
 
 const CONTACT_INFO = {
+  bookingUrl:     'https://app.courtreserve.com/Online/Account/LogIn/8848',
   whatsappNumber: '+1 551 328 7867',
-  whatsappUrl: 'https://wa.me/15513287867',
-  wechatId: 'kotofit1',
+  whatsappUrl:    'https://wa.me/15513287867',
+  whatsappGroups: {
+    licBadminton:  'https://chat.whatsapp.com/Llg9BxWg2XTK6yQdOGf0jM',
+    njBadminton:   'https://chat.whatsapp.com/KnHpnqDshtdIYQEmgdpkP0',
+    licPickleball: 'https://chat.whatsapp.com/D3xVb3cQsZE7AUUdhXo6cI',
+  },
+  instagram: 'https://www.instagram.com/kotofit?igsh=aG1tOTYyNHB5OHk%3D',
+  wechatId:  'kotofit1',
 };
