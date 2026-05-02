@@ -965,6 +965,16 @@ section {
   border-radius: var(--radius-md) var(--radius-md) 0 0;
 }
 
+/* Carousel inside a modal — extends to the modal edges, top corners only */
+.modal .modal-carousel {
+  margin: -32px -32px 24px;
+}
+
+.modal .modal-carousel .proshop-carousel {
+  border: 0;
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+}
+
 /* === BOOKING === */
 .booking {
   background: var(--surface);

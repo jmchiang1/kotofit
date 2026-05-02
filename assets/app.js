@@ -147,14 +147,32 @@ function openLocationModal(id) {
   const loc = LOCATIONS.find((l) => l.id === id);
   if (!loc) return;
   const isSoon = loc.status === "soon";
+  const images = Array.isArray(loc.images) ? loc.images : (loc.img ? [loc.img] : []);
+  const hero =
+    images.length > 1
+      ? `<div class="modal-carousel">
+           <div class="proshop-carousel" aria-roledescription="carousel" aria-label="${escapeHtml(loc.name)} photos">
+             <div class="proshop-track">
+               ${images.map((src, i) => `
+                 <figure class="proshop-slide ${i === 0 ? "is-active" : ""}" aria-hidden="${i === 0 ? "false" : "true"}">
+                   <img src="${escapeHtml(src)}" alt="${escapeHtml(loc.name)} interior ${i + 1}" />
+                 </figure>
+               `).join("")}
+             </div>
+             <button class="proshop-arrow proshop-prev" type="button" aria-label="Previous photo">‹</button>
+             <button class="proshop-arrow proshop-next" type="button" aria-label="Next photo">›</button>
+             <div class="proshop-dots" role="tablist" aria-label="Photo pagination">
+               ${images.map((_, i) => `
+                 <button class="proshop-dot ${i === 0 ? "is-active" : ""}" type="button" role="tab" aria-selected="${i === 0 ? "true" : "false"}" aria-label="Show photo ${i + 1}"></button>
+               `).join("")}
+             </div>
+           </div>
+         </div>`
+      : images.length === 1
+      ? `<div class="modal-img" style="background-image:url('${escapeHtml(images[0])}')"></div>`
+      : "";
   openModal(`
-    ${
-      loc.img
-        ? `<div class="modal-img" style="background-image:url('${escapeHtml(
-            loc.img
-          )}')"></div>`
-        : ""
-    }
+    ${hero}
     <span class="eyebrow">${escapeHtml(loc.city)}</span>
     <h3 class="display-m">${escapeHtml(loc.name)}</h3>
     <p class="modal-meta">${
@@ -189,6 +207,9 @@ function openLocationModal(id) {
         window.open(CONTACT_INFO.bookingUrl, "_blank", "noopener");
       }
     });
+  // Wire up auto-rotating carousel if the modal has multiple images
+  const carouselEl = document.querySelector("#modal-backdrop .proshop-carousel");
+  if (carouselEl) initImageCarousel(carouselEl);
 }
 
 function openWaitlistModal(loc) {
@@ -2230,8 +2251,11 @@ function initStringQuiz() {
   renderQuestion(0);
 }
 
-function initProshopCarousel() {
-  const root = document.getElementById("proshop-carousel");
+// Generic image carousel initializer — works on any element with .proshop-slide
+// children (and optional .proshop-dot / .proshop-prev / .proshop-next controls).
+// Auto-rotates every `interval` ms, pauses on hover/focus, returns control fns.
+function initImageCarousel(root, options) {
+  options = options || {};
   if (!root) return;
   const slides = Array.from(root.querySelectorAll(".proshop-slide"));
   const dots = Array.from(root.querySelectorAll(".proshop-dot"));
@@ -2239,6 +2263,7 @@ function initProshopCarousel() {
   const next = root.querySelector(".proshop-next");
   if (slides.length < 2) return;
 
+  const interval = options.interval || 5500;
   let index = 0;
   let timer = 0;
 
@@ -2256,32 +2281,15 @@ function initProshopCarousel() {
     });
   };
 
-  const stepBy = (delta) => {
-    show(index + delta);
-    restart();
-  };
-
-  const start = () => {
-    timer = window.setInterval(() => show(index + 1), 5500);
-  };
-  const stop = () => {
-    if (timer) {
-      clearInterval(timer);
-      timer = 0;
-    }
-  };
-  const restart = () => {
-    stop();
-    start();
-  };
+  const stepBy = (delta) => { show(index + delta); restart(); };
+  const start   = () => { timer = window.setInterval(() => show(index + 1), interval); };
+  const stop    = () => { if (timer) { clearInterval(timer); timer = 0; } };
+  const restart = () => { stop(); start(); };
 
   prev?.addEventListener("click", () => stepBy(-1));
   next?.addEventListener("click", () => stepBy(1));
   dots.forEach((d, n) =>
-    d.addEventListener("click", () => {
-      show(n);
-      restart();
-    })
+    d.addEventListener("click", () => { show(n); restart(); })
   );
 
   root.addEventListener("mouseenter", stop);
@@ -2290,6 +2298,11 @@ function initProshopCarousel() {
   root.addEventListener("focusout", start);
 
   start();
+  return { show, stepBy, start, stop };
+}
+
+function initProshopCarousel() {
+  initImageCarousel(document.getElementById("proshop-carousel"));
 }
 
 // === FAQ PAGE ===
