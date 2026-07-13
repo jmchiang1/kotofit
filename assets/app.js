@@ -12,6 +12,16 @@ function escapeHtml(s) {
     .replace(/'/g, "&#39;");
 }
 
+// Link that opens an address in Google Maps (native app on mobile, web elsewhere).
+function mapsLink(address) {
+  const href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+    address
+  )}`;
+  return `<a class="modal-maps" href="${escapeHtml(
+    href
+  )}" target="_blank" rel="noopener">Open in Google Maps ↗</a>`;
+}
+
 // Returns true if the location is open at `now` (defaults to current time).
 // schedule rules use HH:MM strings; when close <= open, the close time is
 // treated as the next day (e.g. 6AM → 2AM).
@@ -173,8 +183,12 @@ function openLocationModal(id) {
       : "";
   openModal(`
     ${hero}
-    <span class="eyebrow">${escapeHtml(loc.city)}</span>
     <h3 class="display-m">${escapeHtml(loc.name)}</h3>
+    ${
+      loc.address
+        ? `<div class="modal-addr">${escapeHtml(loc.address)}</div>`
+        : ""
+    }
     <p class="modal-meta">${
       isSoon
         ? "Coming this season — get notified when we open."
@@ -191,10 +205,11 @@ function openLocationModal(id) {
             )
             .join("")}</div>`
     }
-    <div style="display:flex;gap:10px;flex-wrap:wrap">
+    <div class="modal-actions">
       <button class="btn btn-primary" id="loc-modal-primary">${
         isSoon ? "Notify me" : "Reserve here →"
       }</button>
+      ${isSoon || !loc.address ? "" : mapsLink(loc.address)}
     </div>
   `);
   document
@@ -246,7 +261,7 @@ function openWaitlistModal(loc) {
 function initBooking() {
   if (!document.getElementById("check-courts")) return;
   const BOOKING_OPTIONS = {
-    sport: ["Badminton", "Pickleball", "Ping Pong"],
+    sport: ["Badminton", "Pickleball", "Ping Pong", "Cricket"],
     location: [
       "3rd Street · JC",
       "Brunswick · JC",
@@ -296,70 +311,6 @@ function initBooking() {
   document.getElementById("check-courts").addEventListener("click", () => {
     window.open(CONTACT_INFO.bookingUrl, "_blank", "noopener");
   });
-}
-
-function openCourtModal({ sport, location, date, time }) {
-  const slots = [
-    { time, court: "Court 1", avail: true },
-    { time, court: "Court 2", avail: false },
-    { time, court: "Court 3", avail: true },
-    { time, court: "Court 4", avail: true },
-    { time, court: "Court 5", avail: false },
-    { time, court: "Court 6", avail: true },
-    { time, court: "Court 7", avail: false },
-    { time, court: "Court 8", avail: true },
-    { time, court: "Court 9", avail: true },
-  ];
-  openModal(`
-    <span class="eyebrow">▸ Available courts</span>
-    <h3 class="display-m">${escapeHtml(sport)} · ${escapeHtml(location)}</h3>
-    <p class="modal-meta">${escapeHtml(date)} at ${escapeHtml(time)}</p>
-    <div class="court-grid">
-      ${slots
-        .map(
-          (s) => `
-        <button class="court-slot ${s.avail ? "avail" : "booked"}" ${
-            s.avail ? `data-court="${escapeHtml(s.court)}"` : "disabled"
-          }>
-          <span class="slot-time">${escapeHtml(s.time)}</span>
-          <span class="slot-court">${escapeHtml(s.court)}</span>
-        </button>
-      `
-        )
-        .join("")}
-    </div>
-    <p class="body" style="font-size:12px">${
-      slots.filter((s) => s.avail).length
-    } of ${slots.length} courts available.</p>
-  `);
-  document.querySelectorAll(".court-slot.avail").forEach((slot) => {
-    slot.addEventListener("click", () => {
-      openConfirmModal({
-        sport,
-        location,
-        date,
-        time,
-        court: slot.dataset.court,
-      });
-    });
-  });
-}
-
-function openConfirmModal({ sport, location, date, time, court }) {
-  const num = "KF-" + Math.floor(1000 + Math.random() * 9000);
-  openModal(`
-    <span class="eyebrow">▸ You're booked</span>
-    <div class="confirm-num">${num}</div>
-    <h3 class="display-m">${escapeHtml(sport)} · ${escapeHtml(court)}</h3>
-    <p class="modal-meta">${escapeHtml(location)} · ${escapeHtml(
-    date
-  )} at ${escapeHtml(time)}</p>
-    <p class="body" style="font-size:13px;margin-bottom:24px">Confirmation sent to your email. See you on the court.</p>
-    <button class="btn btn-primary" id="confirm-done">Done</button>
-  `);
-  document
-    .getElementById("confirm-done")
-    ?.addEventListener("click", closeModal);
 }
 
 // === PLAY TILES ===
@@ -937,32 +888,84 @@ function initHero() {
   });
 }
 
-// === HERO IMAGERY TOGGLE ===
-function initHeroToggle() {
-  const hero = document.querySelector(".hero");
-  const btn = document.getElementById("hero-toggle");
-  if (!hero || !btn) return;
-  const STORAGE_KEY = "kotofit-hero-imagery-hidden";
-  const labelEl = btn.querySelector(".hero-toggle-label");
+// === VIEWPORT CHROME ===
+// Publishes the combined height of the announce bar and nav as --chrome-h so the
+// hero can claim exactly the rest of the viewport. Measured rather than hardcoded:
+// the bar wraps to two lines on narrow screens and disappears entirely once
+// dismissed, and the hero has to grow to match in both cases.
+function initViewportChrome() {
+  const bar = document.getElementById("announce-bar");
+  const nav = document.querySelector(".nav");
+  if (!nav) return;
 
-  const apply = (hidden) => {
-    hero.classList.toggle("players-hidden", hidden);
-    if (labelEl) labelEl.textContent = hidden ? "Show imagery" : "Hide imagery";
-    btn.setAttribute("aria-pressed", String(hidden));
+  const measure = () => {
+    // offsetHeight is 0 for the dismissed bar (display: none), which is what we want.
+    const h = (bar?.offsetHeight || 0) + nav.offsetHeight;
+    document.documentElement.style.setProperty("--chrome-h", `${h}px`);
   };
 
-  let initial = false;
-  try {
-    initial = localStorage.getItem(STORAGE_KEY) === "1";
-  } catch (e) {}
-  apply(initial);
+  measure();
 
-  btn.addEventListener("click", () => {
-    const next = !hero.classList.contains("players-hidden");
-    apply(next);
-    try {
-      localStorage.setItem(STORAGE_KEY, next ? "1" : "0");
-    } catch (e) {}
+  if (typeof ResizeObserver !== "undefined") {
+    const ro = new ResizeObserver(measure);
+    ro.observe(nav);
+    if (bar) ro.observe(bar);
+  } else {
+    window.addEventListener("resize", measure);
+  }
+
+  // The bar is hidden with display:none, which some browsers don't report to the
+  // observer — remeasure on dismiss so the hero reclaims the space either way.
+  document.getElementById("announce-close")?.addEventListener("click", measure);
+}
+
+// === HERO CAROUSEL ===
+// Cross-fades the court photos and keeps the corner tag naming whichever
+// location is on screen. Slide order and copy live in the markup.
+function initHeroCarousel() {
+  const slides = [...document.querySelectorAll(".hero-slide")];
+  const pin = document.getElementById("hero-locpin");
+  if (slides.length === 0) return;
+
+  const nameEl = pin?.querySelector(".hero-locpin-name");
+  const addrEl = pin?.querySelector(".hero-locpin-addr");
+
+  const show = (i) => {
+    slides.forEach((s, n) => s.classList.toggle("is-active", n === i));
+    if (nameEl) nameEl.textContent = slides[i].dataset.loc || "";
+    if (addrEl) addrEl.textContent = slides[i].dataset.addr || "";
+  };
+
+  let current = 0;
+  show(current);
+
+  // A rotating background is decoration, not content — hold on one frame for
+  // anyone who asked for less motion.
+  const still = window.matchMedia("(prefers-reduced-motion: reduce)");
+  if (still.matches || slides.length < 2) return;
+
+  // Preload the rest so the first transition into each isn't a grey flash.
+  slides.slice(1).forEach((s) => {
+    const url = (s.style.backgroundImage.match(/url\(["']?(.+?)["']?\)/) || [])[1];
+    if (url) new Image().src = url;
+  });
+
+  let timer = setInterval(() => {
+    current = (current + 1) % slides.length;
+    show(current);
+  }, 3000);
+
+  // Don't burn frames animating a hero nobody is looking at.
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+      clearInterval(timer);
+      timer = null;
+    } else if (!timer) {
+      timer = setInterval(() => {
+        current = (current + 1) % slides.length;
+        show(current);
+      }, 3000);
+    }
   });
 }
 
@@ -2378,8 +2381,11 @@ function initThemeToggle() {
 document.addEventListener("DOMContentLoaded", () => {
   initThemeToggle();
   initAnnounceBar();
+  // After initAnnounceBar — a bar dismissed earlier in the session is already
+  // hidden by the time we measure.
+  initViewportChrome();
   initHero();
-  initHeroToggle();
+  initHeroCarousel();
   initNavHighlight();
   initMobileMenu();
   renderLocations();

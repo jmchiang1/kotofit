@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -10,13 +10,13 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" />
   <script src="https://cdn.jsdelivr.net/npm/motion@11/dist/motion.js"></script>
   <link rel="stylesheet" href="assets/styles.css" />
-  <script>(function(){try{var s=localStorage.getItem('kotofit-theme');var p=s||(window.matchMedia&&window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');if(p==='light')document.documentElement.setAttribute('data-theme','light');}catch(e){}})();</script>
+  <script>(function(){try{if(localStorage.getItem('kotofit-theme')==='dark')document.documentElement.removeAttribute('data-theme');}catch(e){}})();</script>
 </head>
 <body data-page="memberships">
 
   <nav class="nav">
     <div class="container nav-inner">
-      <a href="index.html" class="nav-logo"><img src="assets/logo.png" alt="" />KOTOFIT</a>
+      <a href="index.html" class="nav-logo"><img src="assets/logo.png" alt="Kotofit" /></a>
       <ul class="nav-links">
         <li><a href="locations.html">Locations</a></li>
         <li><a href="memberships.html">Memberships</a></li>
@@ -46,7 +46,6 @@
   <main>
     <section class="page-hero">
       <div class="container">
-        <span class="eyebrow">▸ Member perks</span>
         <h1 class="display-l">Play more. Pay less.</h1>
         <p class="lede">Two locations, two membership families. Discounts on bookings, advance reservations, free UBR/DUPR sessions in LIC, and coaching credits. Pick your home court below.</p>
       </div>
@@ -62,7 +61,6 @@
     <section>
       <div class="container">
         <div class="section-title reveal">
-          <div class="e">▸ Compare side by side</div>
           <h2>What's included.</h2>
         </div>
         <div class="mem-table-wrap reveal" id="mem-table-wrap"></div>
@@ -72,32 +70,20 @@
     <section>
       <div class="container">
         <div class="section-title reveal">
-          <div class="e">▸ Frequently asked</div>
           <h2>Common questions.</h2>
         </div>
         <div class="faq reveal-stagger" id="faq-memberships"></div>
       </div>
     </section>
 
-    <section>
+    <!-- <section>
       <div class="container" style="text-align:center">
-        <span class="eyebrow">▸ Ready to belong?</span>
         <h2 class="display-l" style="max-width:18ch;margin:14px auto">Join the home court.</h2>
         <p class="lede" style="margin:0 auto 28px" id="join-cta-blurb">Most NJ players go with Open Play Elite — $35/mo, 30% off open play, 21-day advance booking.</p>
         <button class="btn btn-primary" id="join-cta">Become a member →</button>
       </div>
-    </section>
+    </section> -->
   </main>
-
-  <section class="ready-strip">
-    <div class="container inner">
-      <div>
-        <h3>Want to test the courts <em>first?</em></h3>
-        <div class="ready-meta">Drop in tonight — no membership required.</div>
-      </div>
-      <a href="book.html" class="btn btn-primary">Reserve a court →</a>
-    </div>
-  </section>
 
   <footer class="footer">
     <div class="container">

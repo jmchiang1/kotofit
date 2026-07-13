@@ -118,7 +118,7 @@ const LOCATIONS = [
     sports: ['badminton', 'pickleball', 'pingpong'],
     services: ['coaching', 'stringing'] },
   { id: 'jc-bruns',   city: 'Jersey City · NJ',       name: 'Brunswick',     courts: 10, hours: 'Open until 11PM',   img: 'https://images.unsplash.com/photo-1554290712-e640351074bd?w=800&q=80&auto=format&fit=crop', status: 'open',
-    address: '88 Brunswick Street, Jersey City, NJ 07302',
+    address: '189 New Brunswick Street, Jersey City, NJ 07302',
     sports: ['badminton', 'pickleball'],
     services: ['coaching', 'stringing', 'events'] },
   { id: 'jc-summit',  city: 'Jersey City · NJ',       name: 'Summit Ave',    courts: 6,  hours: 'Open until 10PM',   img: 'https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=800&q=80&auto=format&fit=crop', status: 'open',

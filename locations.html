@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -10,13 +10,13 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" />
   <script src="https://cdn.jsdelivr.net/npm/motion@11/dist/motion.js"></script>
   <link rel="stylesheet" href="assets/styles.css" />
-  <script>(function(){try{var s=localStorage.getItem('kotofit-theme');var p=s||(window.matchMedia&&window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');if(p==='light')document.documentElement.setAttribute('data-theme','light');}catch(e){}})();</script>
+  <script>(function(){try{if(localStorage.getItem('kotofit-theme')==='dark')document.documentElement.removeAttribute('data-theme');}catch(e){}})();</script>
 </head>
 <body data-page="locations">
 
   <nav class="nav">
     <div class="container nav-inner">
-      <a href="index.html" class="nav-logo"><img src="assets/logo.png" alt="" />KOTOFIT</a>
+      <a href="index.html" class="nav-logo"><img src="assets/logo.png" alt="Kotofit" /></a>
       <ul class="nav-links">
         <li><a href="locations.html">Locations</a></li>
         <li><a href="memberships.html">Memberships</a></li>
@@ -46,7 +46,6 @@
   <main>
     <section class="page-hero">
       <div class="container">
-        <span class="eyebrow">▸ Four open. Two coming.</span>
         <h1 class="display-l">Find your court.</h1>
         <p class="lede">Four Kotofit locations across NJ and NY today. Brooklyn and Queens land this season.</p>
       </div>
@@ -74,16 +73,6 @@
       </div>
     </section>
   </main>
-
-  <section class="ready-strip">
-    <div class="container inner">
-      <div>
-        <h3>Ready to <em>play?</em></h3>
-        <div class="ready-meta">Court reservations take 30 seconds. We'll have a court waiting.</div>
-      </div>
-      <a href="book.html" class="btn btn-primary">Reserve a court →</a>
-    </div>
-  </section>
 
   <footer class="footer">
     <div class="container">

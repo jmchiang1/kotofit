@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -10,13 +10,13 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" />
   <script src="https://cdn.jsdelivr.net/npm/motion@11/dist/motion.js"></script>
   <link rel="stylesheet" href="assets/styles.css" />
-  <script>(function(){try{var s=localStorage.getItem('kotofit-theme');var p=s||(window.matchMedia&&window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');if(p==='light')document.documentElement.setAttribute('data-theme','light');}catch(e){}})();</script>
+  <script>(function(){try{if(localStorage.getItem('kotofit-theme')==='dark')document.documentElement.removeAttribute('data-theme');}catch(e){}})();</script>
 </head>
 <body data-page="book">
 
   <nav class="nav">
     <div class="container nav-inner">
-      <a href="index.html" class="nav-logo"><img src="assets/logo.png" alt="" />KOTOFIT</a>
+      <a href="index.html" class="nav-logo"><img src="assets/logo.png" alt="Kotofit" /></a>
       <ul class="nav-links">
         <li><a href="locations.html">Locations</a></li>
         <li><a href="memberships.html">Memberships</a></li>
@@ -46,7 +46,6 @@
   <main>
     <section class="page-hero">
       <div class="container">
-        <span class="eyebrow">▸ Play at Kotofit</span>
         <h1 class="display-l">Three ways to play.</h1>
         <p class="lede">Reserve a full court, drop in for open play, or book a badminton coaching session — we hand off to CourtReserve to finish the booking.</p>
 
@@ -56,16 +55,16 @@
               <svg viewBox="0 0 480 320" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                 <!-- Court surface in 3/4 perspective -->
                 <path d="M 60 270 L 420 270 L 335 170 L 145 170 Z"
-                      fill="#2563eb" fill-opacity="0.10"
-                      stroke="#2563eb" stroke-width="2" stroke-linejoin="round"/>
+                      fill="#22239D" fill-opacity="0.10"
+                      stroke="#22239D" stroke-width="2" stroke-linejoin="round"/>
                 <!-- Long center line, perspective -->
                 <line x1="240" y1="270" x2="240" y2="170"
-                      stroke="#2563eb" stroke-width="1.5" stroke-opacity="0.35"/>
+                      stroke="#22239D" stroke-width="1.5" stroke-opacity="0.35"/>
                 <!-- Net base, horizontal across the middle -->
                 <line x1="103" y1="220" x2="377" y2="220"
-                      stroke="#2563eb" stroke-width="2.5" stroke-linecap="round"/>
+                      stroke="#22239D" stroke-width="2.5" stroke-linecap="round"/>
                 <!-- Net mesh hatching -->
-                <g stroke="#2563eb" stroke-width="1.5" stroke-opacity="0.55">
+                <g stroke="#22239D" stroke-width="1.5" stroke-opacity="0.55">
                   <line x1="140" y1="220" x2="140" y2="232"/>
                   <line x1="180" y1="220" x2="180" y2="232"/>
                   <line x1="220" y1="220" x2="220" y2="232"/>
@@ -74,20 +73,20 @@
                   <line x1="340" y1="220" x2="340" y2="232"/>
                 </g>
                 <!-- Net posts -->
-                <line x1="103" y1="220" x2="103" y2="240" stroke="#2563eb" stroke-width="2.5" stroke-linecap="round"/>
-                <line x1="377" y1="220" x2="377" y2="240" stroke="#2563eb" stroke-width="2.5" stroke-linecap="round"/>
+                <line x1="103" y1="220" x2="103" y2="240" stroke="#22239D" stroke-width="2.5" stroke-linecap="round"/>
+                <line x1="377" y1="220" x2="377" y2="240" stroke="#22239D" stroke-width="2.5" stroke-linecap="round"/>
                 <!-- Motion trails arcing toward the shuttlecock -->
-                <path d="M 230 50 Q 290 70 340 95"  fill="none" stroke="#2563eb" stroke-width="2.5" stroke-linecap="round" stroke-opacity="0.22"/>
-                <path d="M 260 55 Q 305 80 350 100" fill="none" stroke="#2563eb" stroke-width="2.5" stroke-linecap="round" stroke-opacity="0.38"/>
-                <path d="M 290 65 Q 320 90 360 110" fill="none" stroke="#2563eb" stroke-width="2.5" stroke-linecap="round" stroke-opacity="0.55"/>
-                <!-- Shuttlecock mid-flight, lemon accent -->
+                <path d="M 230 50 Q 290 70 340 95"  fill="none" stroke="#22239D" stroke-width="2.5" stroke-linecap="round" stroke-opacity="0.22"/>
+                <path d="M 260 55 Q 305 80 350 100" fill="none" stroke="#22239D" stroke-width="2.5" stroke-linecap="round" stroke-opacity="0.38"/>
+                <path d="M 290 65 Q 320 90 360 110" fill="none" stroke="#22239D" stroke-width="2.5" stroke-linecap="round" stroke-opacity="0.55"/>
+                <!-- Shuttlecock mid-flight, coral accent -->
                 <g transform="translate(380 115) rotate(-25)">
                   <polygon points="-32,-15 4,0 -32,15"
-                           fill="#ffe600" stroke="#2563eb" stroke-width="1.5" stroke-linejoin="round"/>
-                  <line x1="-26" y1="-11" x2="0" y2="-1" stroke="#2563eb" stroke-width="1" stroke-opacity="0.45"/>
-                  <line x1="-30" y1="0"   x2="0" y2="0"  stroke="#2563eb" stroke-width="1" stroke-opacity="0.35"/>
-                  <line x1="-26" y1="11"  x2="0" y2="1"  stroke="#2563eb" stroke-width="1" stroke-opacity="0.45"/>
-                  <circle cx="6" cy="0" r="6" fill="#ffe600" stroke="#2563eb" stroke-width="1.5"/>
+                           fill="#00E5C0" stroke="#22239D" stroke-width="1.5" stroke-linejoin="round"/>
+                  <line x1="-26" y1="-11" x2="0" y2="-1" stroke="#22239D" stroke-width="1" stroke-opacity="0.45"/>
+                  <line x1="-30" y1="0"   x2="0" y2="0"  stroke="#22239D" stroke-width="1" stroke-opacity="0.35"/>
+                  <line x1="-26" y1="11"  x2="0" y2="1"  stroke="#22239D" stroke-width="1" stroke-opacity="0.45"/>
+                  <circle cx="6" cy="0" r="6" fill="#00E5C0" stroke="#22239D" stroke-width="1.5"/>
                 </g>
               </svg>
             </div>
@@ -101,28 +100,28 @@
               <svg viewBox="0 0 480 320" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                 <!-- Subtle ground line -->
                 <line x1="60" y1="250" x2="420" y2="250"
-                      stroke="#2563eb" stroke-width="1.5" stroke-opacity="0.22" stroke-dasharray="6 6"/>
+                      stroke="#22239D" stroke-width="1.5" stroke-opacity="0.22" stroke-dasharray="6 6"/>
                 <!-- Three player silhouettes — same head shape, varying scale -->
                 <!-- Figure A (left) -->
-                <rect x="100" y="180" width="40" height="68" rx="14" fill="#2563eb"/>
-                <circle cx="120" cy="160" r="15" fill="#2563eb"/>
+                <rect x="100" y="180" width="40" height="68" rx="14" fill="#22239D"/>
+                <circle cx="120" cy="160" r="15" fill="#22239D"/>
                 <!-- Figure B (center, smaller — implies further back) -->
-                <rect x="226" y="195" width="32" height="55" rx="12" fill="#2563eb"/>
-                <circle cx="242" cy="178" r="13" fill="#2563eb"/>
+                <rect x="226" y="195" width="32" height="55" rx="12" fill="#22239D"/>
+                <circle cx="242" cy="178" r="13" fill="#22239D"/>
                 <!-- Figure C (right) -->
-                <rect x="340" y="180" width="40" height="68" rx="14" fill="#2563eb"/>
-                <circle cx="360" cy="160" r="15" fill="#2563eb"/>
-                <!-- Shuttle path (lemon, soaring over all three) -->
+                <rect x="340" y="180" width="40" height="68" rx="14" fill="#22239D"/>
+                <circle cx="360" cy="160" r="15" fill="#22239D"/>
+                <!-- Shuttle path (coral, soaring over all three) -->
                 <path d="M 110 130 Q 240 35 370 130"
-                      fill="none" stroke="#ffe600" stroke-width="3" stroke-linecap="round" stroke-opacity="0.85"/>
+                      fill="none" stroke="#00E5C0" stroke-width="3" stroke-linecap="round" stroke-opacity="0.85"/>
                 <!-- Shuttlecock at apex -->
                 <g transform="translate(220 55) rotate(-10)">
                   <polygon points="-22,-10 3,0 -22,10"
-                           fill="#ffe600" stroke="#2563eb" stroke-width="1.5" stroke-linejoin="round"/>
-                  <line x1="-18" y1="-7" x2="0" y2="-1" stroke="#2563eb" stroke-width="1" stroke-opacity="0.45"/>
-                  <line x1="-20" y1="0"  x2="0" y2="0"  stroke="#2563eb" stroke-width="1" stroke-opacity="0.35"/>
-                  <line x1="-18" y1="7"  x2="0" y2="1"  stroke="#2563eb" stroke-width="1" stroke-opacity="0.45"/>
-                  <circle cx="5" cy="0" r="5" fill="#ffe600" stroke="#2563eb" stroke-width="1.5"/>
+                           fill="#00E5C0" stroke="#22239D" stroke-width="1.5" stroke-linejoin="round"/>
+                  <line x1="-18" y1="-7" x2="0" y2="-1" stroke="#22239D" stroke-width="1" stroke-opacity="0.45"/>
+                  <line x1="-20" y1="0"  x2="0" y2="0"  stroke="#22239D" stroke-width="1" stroke-opacity="0.35"/>
+                  <line x1="-18" y1="7"  x2="0" y2="1"  stroke="#22239D" stroke-width="1" stroke-opacity="0.45"/>
+                  <circle cx="5" cy="0" r="5" fill="#00E5C0" stroke="#22239D" stroke-width="1.5"/>
                 </g>
               </svg>
             </div>
@@ -136,23 +135,23 @@
               <svg viewBox="0 0 480 320" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                 <!-- Subtle ground line -->
                 <line x1="60" y1="250" x2="420" y2="250"
-                      stroke="#2563eb" stroke-width="1.5" stroke-opacity="0.22" stroke-dasharray="6 6"/>
+                      stroke="#22239D" stroke-width="1.5" stroke-opacity="0.22" stroke-dasharray="6 6"/>
                 <!-- Instructor (left, larger) — raised arm + body + head -->
                 <line x1="158" y1="172" x2="205" y2="105"
-                      stroke="#2563eb" stroke-width="14" stroke-linecap="round"/>
-                <rect x="116" y="162" width="44" height="86" rx="15" fill="#2563eb"/>
-                <circle cx="138" cy="142" r="18" fill="#2563eb"/>
+                      stroke="#22239D" stroke-width="14" stroke-linecap="round"/>
+                <rect x="116" y="162" width="44" height="86" rx="15" fill="#22239D"/>
+                <circle cx="138" cy="142" r="18" fill="#22239D"/>
                 <!-- Student (right, smaller — mirroring instructor's pose) -->
                 <line x1="368" y1="184" x2="400" y2="130"
-                      stroke="#2563eb" stroke-width="11" stroke-linecap="round"/>
-                <rect x="334" y="178" width="34" height="70" rx="12" fill="#2563eb"/>
-                <circle cx="351" cy="160" r="14" fill="#2563eb"/>
+                      stroke="#22239D" stroke-width="11" stroke-linecap="round"/>
+                <rect x="334" y="178" width="34" height="70" rx="12" fill="#22239D"/>
+                <circle cx="351" cy="160" r="14" fill="#22239D"/>
                 <!-- Lemon directional arrow — instruction flowing left to right -->
                 <path d="M 220 78 Q 295 35 378 112"
-                      fill="none" stroke="#ffe600" stroke-width="4" stroke-linecap="round"/>
+                      fill="none" stroke="#00E5C0" stroke-width="4" stroke-linecap="round"/>
                 <!-- Arrowhead V at the student end -->
                 <path d="M 365 100 L 378 112 L 370 124"
-                      fill="none" stroke="#ffe600" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                      fill="none" stroke="#00E5C0" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
             </div>
             <h3>Badminton coaching</h3>
@@ -166,7 +165,6 @@
     <section>
       <div class="container">
         <div class="section-title reveal">
-          <div class="e">▸ How it works</div>
           <h2>Five simple steps.</h2>
           <p class="section-sub">From signup to highlight reel — exactly what to expect on your first visit.</p>
         </div>
@@ -203,7 +201,6 @@
     <section>
       <div class="container">
         <div class="section-title reveal">
-          <div class="e">▸ Court rates</div>
           <h2>Pay per play.</h2>
           <p class="section-sub">No commitment needed. <a href="memberships.html">Members</a> get up to 30% off these rates and longer advance booking windows.</p>
         </div>
@@ -236,7 +233,6 @@
     <section>
       <div class="container">
         <div class="section-title reveal">
-          <div class="e">▸ Need anything else?</div>
           <h2>Questions before you book.</h2>
           <p class="section-sub">Equipment, parking, peak hours, partner-finding — answered on the FAQ page. Or message us directly.</p>
         </div>
@@ -260,16 +256,6 @@
       </div>
     </section>
   </main>
-
-  <section class="ready-strip">
-    <div class="container inner">
-      <div>
-        <h3>Ready to <em>play?</em></h3>
-        <div class="ready-meta">Reserve in under a minute. We'll see you on the court.</div>
-      </div>
-      <a class="btn btn-primary" href="https://app.courtreserve.com/Online/Account/LogIn/8848" target="_blank" rel="noopener">Open CourtReserve →</a>
-    </div>
-  </section>
 
   <footer class="footer">
     <div class="container">

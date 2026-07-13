@@ -1,22 +1,51 @@
+/* === FONTS ===
+   Futura Heavy is self-hosted — it is not a Google font, so visitors without it
+   installed would otherwise fall back to Inter. Only one weight exists, so every
+   display size renders at Heavy regardless of the font-weight we ask for. */
+@font-face {
+  font-family: 'Futura Heavy';
+  src: url('fonts/futura-heavy.otf') format('opentype');
+  font-weight: 400 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* === DESIGN TOKENS === */
 :root {
+  /* Headings and display type. Body copy stays on Inter. */
+  --font-display: 'Futura Heavy', 'Futura', 'Jost', 'Century Gothic', -apple-system, sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+
   --ink: #161616;
   --surface: #18181b;
   --elevated: #27272a;
   --line: #3f3f46;
   --bone: #ffffff;
   --mute: #a1a1aa;
-  --cobalt: #2563eb;
-  --cobalt-hover: #1d4ed8;
-  --lemon: #ffe600;
-  --lemon-hover: #fdd900;
+  --cobalt: #22239d;
+  --cobalt-hover: #191a7d;
+  /* Same blue as --cobalt, as channels — for the rgba() tints below, so a colour
+     change never has to be chased through hardcoded rgba values again. */
+  --cobalt-rgb: 34, 35, 157;
+  --accent: #00e5c0;
+  --accent-hover: #0fcfae;
+  /* Same aqua as channels, for the rgba() tints below. */
+  --accent-rgb: 0, 229, 192;
+
+  /* Accent as TEXT (not as a fill) — darkens in light mode so it stays legible
+     on pale backgrounds. Never use --accent for text on --ink/--surface. */
+  --accent-ink: #4ff0d6;
+
+  /* Alternating section band — the deep-blue panel between light sections. */
+  --band: #22239d;
 
   /* Constant text tokens that DO NOT theme — for elements with fixed-color backgrounds.
      --on-cobalt: text on cobalt buttons/labels.
-     --on-lemon:  text on lemon (yellow) buttons / announce bar.
+     --on-accent: text on aqua accent fills (buttons, badges, pills) — the aqua is
+                  bright, so this is DARK, unlike --on-cobalt.
      --on-dark:   text on dark photo/gradient overlays (e.g. sport tiles, coach cards). */
   --on-cobalt: #ffffff;
-  --on-lemon:  #161616;
+  --on-accent: #06251f;
   --on-dark:   #ffffff;
 
   /* Glass tokens — flip in light mode */
@@ -43,6 +72,9 @@
   --bone:     #18181b;
   --mute:     #52525b;
 
+  --accent-ink: #00806b;
+
+
   --glass-strong: rgba(255, 255, 255, 0.94);
   --glass-soft:   rgba(255, 255, 255, 0.75);
   --glass-border: rgba(0, 0, 0, 0.08);
@@ -66,7 +98,7 @@ body {
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  font-family: var(--font-body);
   background: var(--ink);
   color: var(--bone);
   font-size: 15px;
@@ -110,13 +142,16 @@ ul {
 }
 
 /* === TYPOGRAPHY === */
-.display-xl {
-  font-size: clamp(48px, 9vw, 96px);
-  line-height: 0.92;
-  font-weight: 900;
-  letter-spacing: -0.04em;
-  text-transform: uppercase;
-  margin: 0;
+/* Everything that reads as a heading runs on Futura Heavy; the per-element rules
+   below keep their own size and tracking. */
+h1, h2, h3, h4, h5, h6,
+.display-l,
+.display-m,
+.hero-title,
+.price,
+.confirm-num,
+.event-row .date .day {
+  font-family: var(--font-display);
 }
 
 .display-l {
@@ -182,12 +217,12 @@ ul {
 }
 
 .btn-secondary {
-  background: var(--lemon);
-  color: var(--on-lemon);
+  background: var(--accent);
+  color: var(--on-accent);
 }
 
 .btn-secondary:hover {
-  background: var(--lemon-hover);
+  background: var(--accent-hover);
 }
 
 .btn-ghost {
@@ -206,6 +241,65 @@ section {
   padding: var(--section-py) 0;
   border-top: 1px solid var(--elevated);
   scroll-margin-top: 64px;
+}
+
+/* Alternating brand-blue band. Apply .band to every other section so the page
+   reads as stacked panels instead of one long white sheet.
+
+   The band is dark in BOTH themes, so rather than restyle every component inside
+   it, the theme tokens are re-pointed for the subtree: surfaces become translucent
+   white, text goes light. Anything built from tokens adapts for free — only things
+   that hardcode the blue (a cobalt button on a cobalt panel) need the overrides
+   further down. */
+section.band {
+  background: var(--band);
+  border-top: 0;
+  border-bottom: 0;
+
+  --ink: #22239d;
+  --surface: rgba(255, 255, 255, 0.10);
+  --elevated: rgba(255, 255, 255, 0.28);
+  --line: rgba(255, 255, 255, 0.36);
+  --bone: #ffffff;
+  --mute: rgba(255, 255, 255, 0.66);
+  --accent-ink: #4ff0d6;
+
+  color: var(--bone);
+}
+
+/* A cobalt fill would vanish against the cobalt panel — invert it. */
+section.band .btn-primary,
+section.band .nav-cta {
+  background: #ffffff;
+  color: var(--cobalt);
+}
+
+section.band .btn-primary:hover,
+section.band .nav-cta:hover {
+  background: rgba(255, 255, 255, 0.88);
+  color: var(--cobalt);
+}
+
+/* Same reason: cobalt-tinted icon chips and cobalt eyebrow text. */
+section.band .event-row .event-img,
+section.band .event-row .event-img[data-event-type="tournament"],
+section.band .event-row .event-img[data-event-type="final"] {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+}
+
+section.band .event-row .event-img[data-event-type="appreciation"] {
+  background: rgba(var(--accent-rgb), 0.20);
+  color: var(--accent-ink);
+}
+
+section.band .eyebrow,
+section.band .event-row .date .mo {
+  color: var(--accent-ink);
+}
+
+section.band + section {
+  border-top: 0;
 }
 
 .section-head {
@@ -230,10 +324,12 @@ section {
   margin-top: 10px;
 }
 
-/* === ANNOUNCE BAR === */
+/* === ANNOUNCE BAR ===
+   Neutral strip; the accent appears only in the "New" pill and the link. */
 .announce-bar {
-  background: var(--lemon);
-  color: var(--on-lemon);
+  background: var(--elevated);
+  color: var(--bone);
+  border-bottom: 1px solid var(--line);
   display: flex;
   align-items: center;
   min-height: 40px;
@@ -251,6 +347,7 @@ section {
   font-size: 12px;
   font-weight: 500;
   letter-spacing: 0.01em;
+  color: var(--mute);
   flex: 1;
   min-width: 0;
   overflow: hidden;
@@ -259,11 +356,15 @@ section {
 }
 
 .announce-text strong {
+  font-size: 9px;
   font-weight: 800;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  margin-right: 6px;
-  color: var(--on-lemon);
+  margin-right: 10px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--on-accent);
 }
 
 .announce-link {
@@ -271,16 +372,16 @@ section {
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--on-lemon);
-  border-bottom: 1px solid rgba(22, 22, 22, 0.4);
+  color: var(--accent-ink);
+  border-bottom: 1px solid transparent;
   padding-bottom: 1px;
   transition: border-color 150ms;
   flex-shrink: 0;
 }
 
 .announce-link:hover {
-  border-bottom-color: var(--on-lemon);
-  color: var(--on-lemon);
+  border-bottom-color: var(--accent-ink);
+  color: var(--accent-ink);
 }
 
 .announce-close {
@@ -289,15 +390,16 @@ section {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--on-lemon);
+  color: var(--mute);
   font-size: 18px;
   opacity: 0.7;
-  transition: opacity 150ms;
+  transition: opacity 150ms, color 150ms;
   flex-shrink: 0;
   margin-right: -8px;
 }
 
 .announce-close:hover {
+  color: var(--bone);
   opacity: 1;
 }
 
@@ -414,7 +516,14 @@ section {
   top: 7px;
 }
 
+/* Pinned to the bar's right edge, outside the container, so the Reserve CTA can
+   sit flush at the end of the nav row. Taken out of flow — .nav is sticky, so it
+   is the positioning context, and the container keeps its own centering. */
 .nav-theme {
+  position: absolute;
+  right: 24px;
+  top: 50%;
+  transform: translateY(-50%);
   background: transparent;
   border: 0;
   color: var(--bone);
@@ -425,8 +534,15 @@ section {
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  margin-left: clamp(20px, 4vw, 56px);
   transition: background 150ms var(--ease-out), color 150ms var(--ease-out);
+}
+
+/* Below ~1330px the container runs close to the viewport edge, so the pinned
+   toggle would sit on top of the CTA (or the burger). Reserve its width. */
+@media (max-width: 1330px) {
+  .nav-inner {
+    padding-right: calc(var(--pad-x) + 60px);
+  }
 }
 
 .nav-theme:hover {
@@ -459,22 +575,88 @@ section {
   }
 }
 
-
 /* === HERO === */
+/* Announce bar + nav + hero always total one viewport. --chrome-h is the measured
+   height of the announce bar and nav (see initViewportChrome in app.js); the hero
+   absorbs whatever is left, so dismissing the bar just makes the hero taller.
+   The fallback value is the usual 41px bar + 64px nav, used before JS runs. */
 .hero {
   position: relative;
-  min-height: 50rem;
+  min-height: calc(100vh - var(--chrome-h, 105px));
+  /* svh = the viewport with mobile browser chrome showing, so the booking widget
+     isn't pushed under the address bar on first paint. */
+  min-height: calc(100svh - var(--chrome-h, 105px));
   padding: 0;
   border-top: 0;
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  background: #0b0e14;
+  color: var(--on-dark);
+}
+
+/* Court photos + scrim. The hero stays dark in both themes — the photo is the
+   background, so text on it is always --on-dark. */
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+/* Slides cross-fade in place; only the active one is opaque. The slow zoom runs
+   for the whole cycle so the image is never completely still. */
+.hero-slide {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center 38%;
+  opacity: 0;
+  transform: scale(1.03);
+  transition: opacity 1400ms var(--ease-out), transform 9000ms linear;
+  will-change: opacity, transform;
+}
+
+.hero-slide.is-active {
+  opacity: 1;
+  transform: scale(1.09);
+}
+
+.hero-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
   background:
-    radial-gradient(circle clamp(380px, 50vw, 720px) at 15% 22%, rgba(37, 99, 235, 0.50), transparent 65%),
-    radial-gradient(circle clamp(380px, 50vw, 720px) at 85% 35%, rgba(29, 78, 216, 0.40), transparent 65%),
-    radial-gradient(circle clamp(260px, 32vw, 440px) at 70% 80%, rgba(99, 102, 241, 0.28), transparent 65%),
-    radial-gradient(ellipse 80% 50% at 50% 100%, rgba(0, 0, 0, 0.50), transparent 70%),
-    linear-gradient(180deg, #1c1c20 0%, var(--ink) 100%);
+    linear-gradient(90deg, rgba(8, 11, 18, 0.90) 0%, rgba(8, 11, 18, 0.62) 45%, rgba(8, 11, 18, 0.35) 100%),
+    linear-gradient(180deg, rgba(8, 11, 18, 0.55) 0%, rgba(8, 11, 18, 0.30) 35%, rgba(8, 11, 18, 0.88) 100%);
+}
+
+/* Photo credit tag — names the court in the current slide. */
+.hero-locpin {
+  position: absolute;
+  right: clamp(20px, 4vw, 48px);
+  bottom: 22px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.hero-locpin-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.35;
+}
+
+.hero-locpin-addr {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.62);
+}
+
+/* The tag would sit on top of the booking widget on narrow screens. */
+@media (max-width: 900px) {
+  .hero-locpin {
+    display: none;
+  }
 }
 
 .hero-inner {
@@ -506,127 +688,59 @@ section {
   -webkit-backdrop-filter: blur(14px);
   backdrop-filter: blur(14px);
   text-align: left;
-  /* Koto: glass over the sky gradient + lifted shadow. Radius inherits from base .booking. */
-  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.35);
+  /* Koto: glass over the court photo + lifted shadow. Radius inherits from base .booking. */
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.45);
 }
 
-/* Welcome microcopy — bridges the bold verbs and the booking widget */
+.hero-title {
+  font-size: clamp(44px, 7vw, 84px);
+  font-weight: 900;
+  letter-spacing: 0;
+  line-height: 0.98;
+  margin: 0;
+  color: var(--on-dark);
+  text-wrap: balance;
+}
+
+/* Sport list — one <li> per sport, wraps and stays even as we add more. */
+.hero-sports {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: clamp(20px, 2.6vw, 30px);
+}
+
+.hero-sports li {
+  font-size: clamp(11px, 1vw, 12px);
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--on-dark);
+  padding: 9px 15px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.07);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+
+/* Location line */
 .hero-welcome {
+  display: flex;
+  align-items: center;
+  gap: 9px;
   width: 100%;
   max-width: 980px;
   font-size: clamp(15px, 1.4vw, 18px);
-  color: rgba(255, 255, 255, 0.72);
+  color: rgba(255, 255, 255, 0.78);
   font-weight: 500;
   letter-spacing: -0.005em;
-  margin-top: clamp(14px, 2vw, 22px);
+  margin: clamp(18px, 2.2vw, 26px) 0 0;
 }
 
 .hero-welcome strong {
-  color: var(--lemon);
+  color: var(--on-dark);
   font-weight: 700;
-  letter-spacing: 0.005em;
-}
-
-/* === HERO CYCLING SPORT WORD === */
-.hero-eyebrow-static {
-  display: inline-block;
-  margin-bottom: clamp(20px, 3vw, 36px);
-}
-
-.hero-sport-cycle {
-  display: inline-grid;
-  grid-template-areas: "stack";
-  vertical-align: baseline;
-}
-
-.hero-sport {
-  grid-area: stack;
-  justify-self: start;
-  opacity: 0;
-  transform: translateY(6px);
-  animation: sportPulse 6s infinite cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.hero-sport-1 {
-  animation-delay: 0s;
-}
-
-.hero-sport-2 {
-  animation-delay: 2s;
-}
-
-.hero-sport-3 {
-  animation-delay: 4s;
-}
-
-@keyframes sportPulse {
-
-  0%,
-  100% {
-    opacity: 0;
-    transform: translateY(6px);
-  }
-
-  8%,
-  33% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  40% {
-    opacity: 0;
-    transform: translateY(-6px);
-  }
-}
-
-/* === HERO VERBS (verb triptych) === */
-.hero-verbs {
-  display: flex;
-  flex-direction: column;
-  gap: clamp(2px, 0.5vw, 8px);
-}
-
-.hero-verb {
-  font-size: clamp(48px, 9vw, 96px);
-  font-weight: 900;
-  letter-spacing: -0.04em;
-  line-height: 0.95;
-  text-transform: uppercase;
-  opacity: 0.18;
-  transform: translateY(0);
-  animation: verbPulse 6s infinite cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.hero-verb-1 {
-  animation-delay: 0s;
-}
-
-.hero-verb-2 {
-  animation-delay: 2s;
-}
-
-.hero-verb-3 {
-  animation-delay: 4s;
-}
-
-@keyframes verbPulse {
-
-  0%,
-  100% {
-    opacity: 0.18;
-    transform: translateY(0);
-  }
-
-  8%,
-  33% {
-    opacity: 1;
-    transform: translateY(-3px);
-  }
-
-  40% {
-    opacity: 0.18;
-    transform: translateY(0);
-  }
 }
 
 /* === LOCATIONS === */
@@ -696,13 +810,13 @@ section {
   top: 14px;
   right: 14px;
   z-index: 1;
-  background: var(--lemon);
+  background: var(--accent);
   padding: 5px 10px;
   font-size: 10px;
   font-weight: 800;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--on-lemon);
+  color: var(--on-accent);
   border-radius: var(--radius-sm);
 }
 
@@ -745,34 +859,9 @@ section {
   line-height: 1.45;
 }
 
-.loc-body .meta .meta-courts {
-  color: var(--bone);
-  font-weight: 600;
-}
-
 .loc-card-page .meta .meta-hours {
   color: var(--mute);
   /* margin-left: auto; */
-}
-
-/* === LOCATIONS — coming-soon compact row === */
-.loc-soon-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 24px;
-  flex-wrap: wrap;
-  margin: 48px 0 16px;
-  padding-top: 32px;
-  border-top: 1px solid var(--elevated);
-}
-
-.loc-soon-head .desc {
-  color: var(--mute);
-  font-size: 13px;
-  max-width: 340px;
-  margin: 0;
-  line-height: 1.5;
 }
 
 .loc-soon-row {
@@ -957,6 +1046,35 @@ section {
   font-weight: 600;
 }
 
+.modal .modal-addr {
+  margin: 0 0 6px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--mute);
+}
+
+/* Reserve sits left; the maps link is pushed to the far corner of the same row. */
+.modal .modal-actions {
+  display: flex;
+  align-items: end;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.modal .modal-maps {
+  margin-left: auto;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--cobalt);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.modal .modal-maps:hover {
+  text-decoration: underline;
+}
+
 .modal .modal-img {
   aspect-ratio: 16/9;
   background-size: cover;
@@ -1092,55 +1210,6 @@ section {
 
 .b-dropdown button:hover {
   background: var(--elevated);
-}
-
-/* === COURT GRID (in modal) === */
-.court-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-  margin: 16px 0 24px;
-}
-
-.court-slot {
-  padding: 14px 8px;
-  text-align: center;
-  font-size: 12px;
-  font-weight: 700;
-  border: 1px solid var(--elevated);
-  cursor: pointer;
-  transition: all 150ms;
-}
-
-.court-slot.avail {
-  border-color: var(--cobalt);
-  color: var(--cobalt);
-}
-
-.court-slot.avail:hover {
-  background: var(--cobalt);
-  color: var(--on-cobalt);
-}
-
-.court-slot.booked {
-  color: var(--mute);
-  cursor: not-allowed;
-  opacity: 0.5;
-}
-
-.court-slot .slot-time {
-  display: block;
-  font-size: 14px;
-}
-
-.court-slot .slot-court {
-  display: block;
-  font-size: 9px;
-  font-weight: 600;
-  opacity: 0.7;
-  margin-top: 2px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
 }
 
 .confirm-num {
@@ -1306,9 +1375,9 @@ section {
   font-weight: 800;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--on-lemon);
-  background: var(--lemon);
-  border: 1px solid var(--lemon-hover);
+  color: var(--on-accent);
+  background: var(--accent);
+  border: 1px solid var(--accent-hover);
   padding: 4px 8px;
   border-radius: 999px;
 }
@@ -1523,11 +1592,7 @@ section {
   font-size: 11px;
   font-weight: 800;
   letter-spacing: 0.15em;
-  color: var(--lemon);
-}
-
-[data-theme="light"] .perk-tile .perk-num {
-  color: var(--cobalt);
+  color: var(--accent-ink);
 }
 
 .perk-tile .perk-label {
@@ -1626,7 +1691,7 @@ section {
 .step-pick button:hover,
 .step-pick button.selected {
   border-color: var(--cobalt);
-  background: rgba(37, 99, 235, 0.08);
+  background: rgba(var(--cobalt-rgb), 0.08);
 }
 
 /* === COACHING === */
@@ -1773,7 +1838,7 @@ section {
 /* === COMMUNITY & EVENTS === */
 .comm-grid {
   display: grid;
-  grid-template-columns: 1.3fr 1fr;
+  grid-template-columns: 1fr;
   gap: 32px;
   align-items: start;
 }
@@ -1812,16 +1877,12 @@ section {
 /* Subtle per-type tint for faster visual scanning */
 .event-row .event-img[data-event-type="tournament"],
 .event-row .event-img[data-event-type="final"] {
-  background: rgba(37, 99, 235, 0.12);
+  background: rgba(var(--cobalt-rgb), 0.12);
 }
 
 .event-row .event-img[data-event-type="appreciation"] {
-  background: rgba(255, 230, 0, 0.18);
-  color: #b88500;
-}
-
-[data-theme="light"] .event-row .event-img[data-event-type="appreciation"] {
-  color: #8a6500;
+  background: rgba(var(--accent-rgb), 0.16);
+  color: var(--accent-ink);
 }
 
 @media (max-width: 540px) {
@@ -1886,37 +1947,6 @@ section {
 .event-row .rsvp:hover {
   background: var(--bone);
   color: var(--ink);
-}
-
-.testimonial {
-  background: var(--surface);
-  padding: 32px;
-  border-left: 3px solid var(--cobalt);
-  border-radius: 0 var(--radius-md) var(--radius-md) 0;
-}
-
-.testimonial .quote {
-  font-size: 22px;
-  font-weight: 600;
-  line-height: 1.35;
-  letter-spacing: -0.01em;
-  color: var(--bone);
-}
-
-.testimonial .who {
-  margin-top: 24px;
-  font-size: 12px;
-  color: var(--mute);
-}
-
-.testimonial .who strong {
-  color: var(--bone);
-}
-
-@media (max-width: 900px) {
-  .comm-grid {
-    grid-template-columns: 1fr;
-  }
 }
 
 /* === STRINGING === */
@@ -2007,19 +2037,6 @@ section {
   transform: translateY(-4px);
   border-color: var(--cobalt);
 }
-
-.book-action-card .ba-icon {
-  width: 56px;
-  height: 56px;
-  background: var(--elevated);
-  border-radius: var(--radius-sm);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--cobalt);
-}
-
-.book-action-card .ba-icon svg { width: 28px; height: 28px; }
 
 /* Larger custom illustration variant — replaces .ba-icon when a card leads with art */
 .book-action-card .ba-illustration {
@@ -2186,7 +2203,7 @@ section {
 .peak-hours {
   margin-top: 22px;
   padding: 22px 24px;
-  background: rgba(37, 99, 235, 0.06);
+  background: rgba(var(--cobalt-rgb), 0.06);
   border-left: 2px solid var(--cobalt);
   border-radius: var(--radius-sm);
 }
@@ -2405,25 +2422,6 @@ section {
     transform: none;
   }
 
-  .hero-verb,
-  .hero-sport {
-    opacity: 1 !important;
-    transform: none !important;
-    animation: none !important;
-  }
-
-  .hero-sport-cycle {
-    display: inline;
-  }
-
-  .hero-sport {
-    display: inline;
-  }
-
-  .hero-sport+.hero-sport::before {
-    content: ' / ';
-  }
-
   html {
     scroll-behavior: auto;
   }
@@ -2446,33 +2444,57 @@ section {
   background: var(--cobalt);
 }
 
-/* === PAGE HERO (used by sub-pages, smaller than the homepage hero) === */
+/* === PAGE HERO (used by sub-pages, smaller than the homepage hero) ===
+   A solid brand-navy panel, so a subpage opens with the same dark, confident
+   header the homepage gets from its photo. Tokens are re-pointed exactly as in
+   section.band — anything token-built adapts; only the cobalt-colored bits
+   inside (book.html's action cards) need the overrides below. */
 .page-hero {
   position: relative;
   overflow: hidden;
   padding: clamp(64px, 9vw, 120px) 0 clamp(48px, 6vw, 80px);
   border-top: 0;
+  border-bottom: 0;
   min-height: 360px;
   display: flex;
   align-items: center;
-}
+  background: var(--band);
 
-.page-hero::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  /* Sky-blue overlay matches the home hero — softer than the original cobalt. */
-  background:
-    linear-gradient(180deg, rgba(10, 10, 10, 0) 0%, var(--ink) 100%),
-    radial-gradient(ellipse 70% 80% at 50% 25%, rgba(147, 197, 253, 0.20), transparent 70%),
-    radial-gradient(ellipse 50% 60% at 80% 60%, rgba(125, 211, 252, 0.12), transparent 65%);
-  z-index: 0;
+  --ink: #22239d;
+  --surface: rgba(255, 255, 255, 0.10);
+  --elevated: rgba(255, 255, 255, 0.28);
+  --line: rgba(255, 255, 255, 0.36);
+  --bone: #ffffff;
+  --mute: rgba(255, 255, 255, 0.66);
+  --accent-ink: #4ff0d6;
+
+  color: var(--bone);
 }
 
 .page-hero .container {
   position: relative;
   z-index: 1;
   text-align: center;
+}
+
+/* book.html puts its action cards inside the hero; cobalt-on-cobalt would vanish. */
+.page-hero .book-action-card:hover {
+  border-color: rgba(255, 255, 255, 0.55);
+}
+
+/* Those illustrations are drawn in #22239D — they need a light plate to sit on,
+   or it's navy line art on a navy panel. */
+.page-hero .ba-illustration {
+  background: rgba(255, 255, 255, 0.94);
+}
+
+.page-hero .ba-arrow,
+.page-hero .book-action-card:hover .ba-arrow {
+  color: var(--accent-ink);
+}
+
+.page-hero .eyebrow {
+  color: var(--accent-ink);
 }
 
 .page-hero h1 {
@@ -2486,39 +2508,6 @@ section {
   max-width: 640px;
   margin: 0 auto;
   line-height: 1.55;
-}
-
-/* === READY TO PLAY STRIP (above footer on every sub-page) === */
-.ready-strip {
-  background: var(--surface);
-  border-top: 1px solid var(--elevated);
-  border-bottom: 1px solid var(--elevated);
-  padding: 36px 0;
-}
-
-.ready-strip .inner {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 24px;
-  flex-wrap: wrap;
-}
-
-.ready-strip h3 {
-  font-size: clamp(20px, 2.4vw, 28px);
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  margin: 0;
-}
-
-.ready-strip h3 em {
-  font-style: normal;
-  color: var(--cobalt);
-}
-
-.ready-strip .ready-meta {
-  color: var(--mute);
-  font-size: 13px;
 }
 
 /* === FILTER CHIPS (used by locations + events) === */
@@ -2713,13 +2702,13 @@ section {
   top: 14px;
   right: 14px;
   z-index: 1;
-  background: var(--lemon);
+  background: var(--accent);
   padding: 5px 10px;
   font-size: 9px;
   font-weight: 800;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--on-lemon);
+  color: var(--on-accent);
   border-radius: var(--radius-sm);
 }
 
@@ -2888,7 +2877,7 @@ section {
 .package-card { position: relative; background: var(--surface); border: 1px solid var(--elevated); padding: 24px; display: flex; flex-direction: column; gap: 18px; transition: transform 200ms var(--ease-out), border-color 200ms; border-radius: var(--radius-md); }
 .package-card:hover { transform: translateY(-4px); border-color: var(--cobalt); }
 .package-card.featured { border-color: var(--cobalt); box-shadow: 0 0 0 1px var(--cobalt); }
-.package-badge { position: absolute; top: -10px; left: 20px; background: var(--lemon); color: var(--on-lemon); padding: 4px 10px; font-size: 9px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; border-radius: var(--radius-sm); }
+.package-badge { position: absolute; top: -10px; left: 20px; background: var(--accent); color: var(--on-accent); padding: 4px 10px; font-size: 9px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; border-radius: var(--radius-sm); }
 .package-head { display: flex; flex-direction: column; gap: 6px; }
 .package-audience { font-size: 10px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--cobalt); }
 .package-name { font-size: 20px; font-weight: 800; letter-spacing: -0.02em; margin: 0; line-height: 1.15; }
@@ -2907,61 +2896,6 @@ section {
 @media (max-width: 900px) {
   .package-card { padding: 22px; }
   .package-price .amount { font-size: 28px; }
-}
-
-.program-card {
-  background: var(--surface);
-  border: 1px solid var(--elevated);
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  transition: transform 200ms, border-color 200ms;
-  border-radius: var(--radius-md);
-}
-
-.program-card:hover {
-  transform: translateY(-4px);
-  border-color: var(--cobalt);
-}
-
-.program-card .img {
-  aspect-ratio: 16/10;
-  background-size: cover;
-  background-position: center;
-}
-
-.program-card .body {
-  padding: 24px;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.program-card .name {
-  font-size: 22px;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  margin: 0;
-}
-
-.program-card .desc {
-  color: var(--mute);
-  font-size: 14px;
-  line-height: 1.55;
-}
-
-.program-card .price {
-  font-size: 11px;
-  color: var(--cobalt);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  font-weight: 700;
-}
-
-.program-card .cta {
-  margin-top: auto;
-  padding-top: 12px;
 }
 
 .coaches-roster {
@@ -2997,7 +2931,7 @@ section {
 .coach-card-book {
   position: absolute; right: 18px; bottom: 18px; z-index: 3;
   padding: 10px 14px;
-  background: rgba(37, 99, 235, 0.92);
+  background: rgba(var(--cobalt-rgb), 0.92);
   color: var(--on-cobalt);
   font-size: 10px;
   font-weight: 800;
@@ -3121,57 +3055,6 @@ section {
   .clinic-row .rsvp {
     grid-column: 2;
   }
-}
-
-/* === EVENTS PAGE === */
-.events-results-meta {
-  font-size: 12px;
-  color: var(--mute);
-  margin: 12px 0 24px;
-  letter-spacing: 0.05em;
-}
-
-/* === STRINGING PAGE === */
-.process-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-}
-
-@media (max-width: 768px) {
-  .process-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-.process-card {
-  background: var(--surface);
-  border: 1px solid var(--elevated);
-  padding: 28px;
-  border-radius: var(--radius-md);
-}
-
-.process-card .num {
-  font-size: 56px;
-  font-weight: 900;
-  letter-spacing: -0.04em;
-  line-height: 1;
-  color: var(--cobalt);
-  margin-bottom: 16px;
-}
-
-.process-card h3 {
-  font-size: 20px;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  margin: 0 0 8px;
-}
-
-.process-card p {
-  color: var(--mute);
-  font-size: 14px;
-  line-height: 1.55;
-  margin: 0;
 }
 
 .cat-toggle {
@@ -3634,7 +3517,7 @@ section {
 
 .quiz-option:hover {
   border-color: var(--cobalt);
-  background: rgba(37, 99, 235, 0.06);
+  background: rgba(var(--cobalt-rgb), 0.06);
   transform: translateY(-1px);
 }
 
@@ -3739,7 +3622,7 @@ section {
 
 .quiz-result-alt {
   padding: 14px 18px;
-  background: rgba(37, 99, 235, 0.06);
+  background: rgba(var(--cobalt-rgb), 0.06);
   border-left: 2px solid var(--cobalt);
   border-radius: 4px;
   display: flex;
@@ -3774,13 +3657,13 @@ section {
 /* Catalog highlight when "See in catalog" clicked */
 .string-card.is-recommended {
   border-color: var(--cobalt);
-  box-shadow: 0 0 0 2px var(--cobalt), 0 0 32px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 0 0 2px var(--cobalt), 0 0 32px rgba(var(--cobalt-rgb), 0.3);
   animation: rec-pulse 1.4s ease-in-out;
 }
 
 @keyframes rec-pulse {
-  0%, 100% { box-shadow: 0 0 0 2px var(--cobalt), 0 0 32px rgba(37, 99, 235, 0.3); }
-  50%      { box-shadow: 0 0 0 2px var(--cobalt), 0 0 56px rgba(37, 99, 235, 0.55); }
+  0%, 100% { box-shadow: 0 0 0 2px var(--cobalt), 0 0 32px rgba(var(--cobalt-rgb), 0.3); }
+  50%      { box-shadow: 0 0 0 2px var(--cobalt), 0 0 56px rgba(var(--cobalt-rgb), 0.55); }
 }
 
 /* === PROSHOP CAROUSEL (stringing page) === */
@@ -3970,8 +3853,9 @@ section {
   gap: 10px;
 }
 
+/* The mark stands alone in the nav now, so it carries a bit more height. */
 .nav-logo img {
-  height: 28px;
+  height: 36px;
   width: auto;
   display: block;
 }
@@ -4008,12 +3892,22 @@ section {
 }
 
 .contact-card .label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.15em;
   text-transform: uppercase;
   color: var(--mute);
   margin-bottom: 8px;
+}
+
+.contact-card .label-icon {
+  width: 14px;
+  height: 14px;
+  flex: none;
+  color: var(--cobalt);
 }
 
 .contact-card .value {
@@ -4125,91 +4019,251 @@ section {
   .mem-grid.mem-swapping, .mem-table-wrap.mem-swapping { opacity: 1; transform: none; }
 }
 
-/* === HERO PLAYERS — sport-matched images, bottom-anchored cutoff === */
-.hero-players {
-  position: absolute;
-  top: 0;
-  /* Container extends past hero bottom so .hero { overflow: hidden } cleanly
-     clips the image — gives the magazine "cropped at the edge" feel. */
-  bottom: -80px;
-  right: 0;
-  width: clamp(420px, 58vw, 940px);
-  z-index: 0;
-  pointer-events: none;
-}
-/* Soft sky halo behind the player so PNG edges blend into the mesh gradient */
-.hero-player-glow {
-  position: absolute;
-  right: -5%;
-  bottom: 0;
-  width: 85%;
-  height: 75%;
-  background: radial-gradient(ellipse at 60% 70%, rgba(125, 211, 252, 0.28), transparent 70%);
-  filter: blur(24px);
-  pointer-events: none;
-}
-.hero-player {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  height: 100%;
-  max-height: 920px;
-  width: auto;
-  object-fit: contain;
-  object-position: right bottom;
-  opacity: 0;
-  transform: translate3d(60px, 0, 0);
-  animation: heroPlayerCycle 6s infinite cubic-bezier(0.4, 0, 0.2, 1);
-  will-change: opacity, transform;
-}
-.hero-player-1 { animation-delay: 0s; }
-.hero-player-2 { animation-delay: 2s; }
-.hero-player-3 { animation-delay: 4s; }
-@keyframes heroPlayerCycle {
-  0%, 100% { opacity: 0; transform: translate3d(60px, 0, 0); }
-  8%, 33%  { opacity: 1; transform: translate3d(0, 0, 0); }
-  40%      { opacity: 0; transform: translate3d(-30px, 0, 0); }
+
+/* === DUBR — player ratings platform === */
+.dubr {
+  display: grid;
+  grid-template-columns: 1fr 0.85fr;
+  gap: clamp(32px, 5vw, 64px);
+  align-items: center;
 }
 
-/* Hide on viewports where the player would crowd the verbs / booking widget */
-@media (max-width: 1024px) {
-  .hero-players { display: none; }
+.dubr-text h2 {
+  margin: 0 0 16px;
 }
 
-/* Reduced motion: show one player statically, no cycling */
-@media (prefers-reduced-motion: reduce) {
-  .hero-player { animation: none; transform: translate3d(0, 0, 0); }
-  .hero-player-1 { opacity: 1; }
-  .hero-player-2, .hero-player-3 { opacity: 0; }
-}
-
-/* === HERO IMAGERY TOGGLE === */
-.hero-toggle {
-  position: absolute;
-  bottom: 18px;
-  right: 18px;
-  z-index: 4;
-  background: var(--glass-strong);
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
-  border: 1px solid var(--elevated);
+.dubr-text p {
   color: var(--mute);
-  padding: 8px 12px;
-  font-family: inherit;
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: color 150ms var(--ease-out), border-color 150ms var(--ease-out), background 150ms var(--ease-out);
+  font-size: 15px;
+  line-height: 1.65;
+  margin: 0 0 22px;
+  max-width: 480px;
 }
-.hero-toggle:hover { color: var(--bone); border-color: var(--cobalt); background: var(--glass-strong); }
-.hero-toggle:focus-visible { outline: 2px solid var(--cobalt); outline-offset: 2px; }
 
-/* When toggled off, hide players entirely (animations stop too) */
-.hero.players-hidden .hero-players { display: none; }
+.dubr-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0 0 28px;
+  font-size: 14px;
+  color: var(--bone);
+}
 
-/* Hide the toggle on viewports where players are already hidden by media query */
-@media (max-width: 1024px) {
-  .hero-toggle { display: none; }
+.dubr-list li {
+  position: relative;
+  padding-left: 26px;
+  line-height: 1.5;
+}
+
+.dubr-list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 6px;
+  width: 14px;
+  height: 8px;
+  border-left: 2px solid var(--accent-ink);
+  border-bottom: 2px solid var(--accent-ink);
+  transform: rotate(-45deg);
+}
+
+/* Two stat cards, fanned — a suggestion of the product, not a fake screenshot. */
+.dubr-visual {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 8px 0;
+}
+
+.dubr-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 22px 24px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--elevated);
+  background: var(--surface);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.10);
+}
+
+.dubr-card-1 {
+  background: var(--cobalt);
+  border-color: var(--cobalt);
+  color: var(--on-cobalt);
+  transform: rotate(-1.2deg);
+}
+
+.dubr-card-2 {
+  transform: rotate(1deg) translateX(6%);
+}
+
+.dubr-card-label {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+
+.dubr-rating {
+  font-family: var(--font-display);
+  font-size: 52px;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.dubr-delta {
+  font-size: 12px;
+  font-weight: 700;
+  opacity: 0.9;
+}
+
+.dubr-match {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--bone);
+}
+
+.dubr-meta {
+  font-size: 12px;
+  color: var(--mute);
+}
+
+@media (max-width: 900px) {
+  .dubr {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* === MOBILE APP === */
+.app-section {
+  display: grid;
+  grid-template-columns: 1fr 0.9fr;
+  gap: clamp(32px, 5vw, 72px);
+  align-items: center;
+}
+
+.app-text h2 {
+  margin: 0 0 16px;
+}
+
+.app-text p {
+  color: var(--mute);
+  font-size: 15px;
+  line-height: 1.65;
+  margin: 0 0 28px;
+  max-width: 460px;
+}
+
+.app-badges {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.app-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 18px 11px 14px;
+  border-radius: var(--radius-sm);
+  background: var(--bone);
+  color: black;
+  transition: transform 150ms var(--ease-out), opacity 150ms;
+}
+
+.app-badge:hover {
+  transform: translateY(-2px);
+  opacity: 0.9;
+}
+
+.app-badge svg {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.app-badge span {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.app-badge small {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+/* --- iPhone mockup: rounded shell, inner bezel, notch --- */
+.app-phones {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 520px;
+}
+
+.phone {
+  position: relative;
+  width: 230px;
+  padding: 8px;
+  border-radius: 38px;
+  background: #0d0f14;
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  box-shadow:
+    0 2px 0 rgba(255, 255, 255, 0.12) inset,
+    0 30px 60px rgba(0, 0, 0, 0.30);
+}
+
+.phone img {
+  display: block;
+  width: 100%;
+  border-radius: 30px;
+}
+
+/* The pill-shaped cutout at the top of the screen. */
+.phone-notch {
+  position: absolute;
+  top: 17px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 82px;
+  height: 20px;
+  border-radius: 999px;
+  background: #0d0f14;
+  z-index: 1;
+}
+
+.phone-back {
+  transform: rotate(-5deg) translateX(26%) scale(0.92);
+  z-index: 0;
+}
+
+.phone-front {
+  transform: rotate(3deg) translateX(-22%);
+  z-index: 1;
+}
+
+@media (max-width: 900px) {
+  .app-section {
+    grid-template-columns: 1fr;
+  }
+
+  .app-phones {
+    min-height: 460px;
+    margin-top: 12px;
+  }
+
+  .phone {
+    width: 195px;
+  }
 }
