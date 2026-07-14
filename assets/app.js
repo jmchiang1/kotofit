@@ -774,7 +774,20 @@ function initMobileMenu() {
   const mm = document.getElementById("mobile-menu");
   const mmClose = document.getElementById("mm-close");
   if (!mm) return;
+  // Park the close button (and the menu's theme icon beside it) on the burger's
+  // exact spot. Measured at open time because the burger's y depends on whether
+  // the announce bar is showing and whether the page is scrolled.
+  const alignChrome = () => {
+    if (!burger) return;
+    const r = burger.getBoundingClientRect();
+    mm.style.setProperty("--mm-close-top", `${r.top}px`);
+    mm.style.setProperty("--mm-close-left", `${r.left}px`);
+    mm.style.setProperty("--mm-close-right", "auto");
+    mm.style.setProperty("--mm-theme-left", `${r.left - 44}px`);
+    mm.style.setProperty("--mm-theme-right", "auto");
+  };
   const openMm = () => {
+    alignChrome();
     mm.classList.add("open");
     mm.setAttribute("aria-hidden", "false");
     document.body.style.overflow = "hidden";

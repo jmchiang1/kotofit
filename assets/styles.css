@@ -543,9 +543,9 @@ section.band + section {
 /* Below ~1330px the container runs close to the viewport edge, so the pinned
    toggle would sit on top of the CTA (or the burger). Reserve its width. */
 @media (max-width: 1330px) {
-  .nav-inner {
+  /* .nav-inner {
     padding-right: calc(var(--pad-x) + 60px);
-  }
+  } */
 }
 
 .nav-theme:hover {
@@ -2453,45 +2453,47 @@ body[data-page="home"] .nav:not(.is-solid) .nav-burger span::after {
   }
 }
 
-/* Theme switch lives in the menu on mobile (the nav icon is hidden there). */
+/* Theme switch lives in the menu on mobile (the nav icon is hidden there).
+   Same icon-only button as the desktop nav, parked to the left of the close. */
 .mm-theme {
-  display: flex;
+  position: fixed;
+  top: var(--mm-close-top, 12px);
+  left: var(--mm-theme-left, auto);
+  right: var(--mm-theme-right, calc(var(--pad-x) + 44px));
+  display: inline-flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  width: 100%;
-  margin-top: 24px;
-  padding: 14px 16px;
-  background: var(--surface);
-  border: 1px solid var(--elevated);
-  border-radius: var(--radius-sm);
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: transparent;
+  border: 0;
+  border-radius: 50%;
   color: var(--bone);
   cursor: pointer;
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
 }
 
 .mm-theme:hover {
   background: var(--elevated);
 }
 
-.mm-theme-label {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
+.mm-theme:focus-visible {
+  outline: 2px solid var(--cobalt);
+  outline-offset: 2px;
 }
 
-.mm-theme-state {
-  color: var(--mute);
-}
-
+/* The close button sits exactly where the burger was: JS measures the burger on
+   open and writes --mm-close-top/left, so the icon doesn't jump. The fallbacks
+   match the burger's resting spot (nav is 64px tall, 40px button, var(--pad-x)). */
 .mobile-menu .close {
-  position: absolute;
-  top: 18px;
-  right: 24px;
-  font-size: 24px;
+  position: fixed;
+  top: var(--mm-close-top, 12px);
+  left: var(--mm-close-left, auto);
+  right: var(--mm-close-right, var(--pad-x));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  line-height: 1;
   color: var(--bone);
   width: 40px;
   height: 40px;
