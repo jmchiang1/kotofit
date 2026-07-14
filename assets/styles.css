@@ -434,6 +434,9 @@ section.band + section {
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--elevated);
+  transition: background 250ms var(--ease-out),
+              border-color 250ms var(--ease-out),
+              backdrop-filter 250ms var(--ease-out);
 }
 
 .nav-inner {
@@ -566,7 +569,8 @@ section.band + section {
 @media (max-width: 768px) {
 
   .nav-links,
-  .nav-cta {
+  .nav-cta,
+  .nav-theme {
     display: none;
   }
 
@@ -575,18 +579,57 @@ section.band + section {
   }
 }
 
+/* --- Transparent nav over the hero (home page only) ---
+   The home page opens with the photo carousel behind the nav, so the bar itself is
+   invisible and its contents go white. `.is-solid` is added by JS the moment the
+   page scrolls, restoring the glass bar. Scoped to :not(.is-solid) rather than
+   toggled entirely in JS so the first paint is already correct — no white flash. */
+body[data-page="home"] .nav:not(.is-solid) {
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-bottom-color: transparent;
+}
+
+body[data-page="home"] .nav:not(.is-solid) .nav-links a {
+  color: rgba(255, 255, 255, 0.82);
+}
+
+body[data-page="home"] .nav:not(.is-solid) .nav-links a:hover {
+  color: #ffffff;
+}
+
+body[data-page="home"] .nav:not(.is-solid) .nav-theme {
+  color: #ffffff;
+}
+
+body[data-page="home"] .nav:not(.is-solid) .nav-theme:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+body[data-page="home"] .nav:not(.is-solid) .nav-burger span,
+body[data-page="home"] .nav:not(.is-solid) .nav-burger span::before,
+body[data-page="home"] .nav:not(.is-solid) .nav-burger span::after {
+  background: #ffffff;
+}
+
 /* === HERO === */
 /* Announce bar + nav + hero always total one viewport. --chrome-h is the measured
    height of the announce bar and nav (see initViewportChrome in app.js); the hero
    absorbs whatever is left, so dismissing the bar just makes the hero taller.
    The fallback value is the usual 41px bar + 64px nav, used before JS runs. */
+/* The hero slides UP underneath the nav (negative margin) so the carousel shows
+   through the transparent nav, then pads its content back down by the same amount
+   so nothing hides behind it. Only the announce bar is subtracted from the
+   viewport height now — the nav floats over the hero rather than stacking above it. */
 .hero {
   position: relative;
-  min-height: calc(100vh - var(--chrome-h, 105px));
+  min-height: calc(100vh - var(--announce-h, 41px));
   /* svh = the viewport with mobile browser chrome showing, so the booking widget
      isn't pushed under the address bar on first paint. */
-  min-height: calc(100svh - var(--chrome-h, 105px));
-  padding: 0;
+  min-height: calc(100svh - var(--announce-h, 41px));
+  margin-top: calc(-1 * var(--nav-h, 64px));
+  padding: var(--nav-h, 64px) 0 0;
   border-top: 0;
   overflow: hidden;
   display: flex;
@@ -718,7 +761,7 @@ section.band + section {
   color: var(--on-dark);
   padding: 9px 15px;
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.22);
+  /* border: 1px solid rgba(255, 255, 255, 0.22); */
   background: rgba(255, 255, 255, 0.07);
   -webkit-backdrop-filter: blur(6px);
   backdrop-filter: blur(6px);
@@ -2330,25 +2373,118 @@ section.band + section {
 }
 
 @media (max-width: 540px) {
+  /* Play and Learn are short lists — pairing them keeps the footer from turning
+     into one long column. Brand and Connect (long links) stay full width. */
   .footer-grid {
-    grid-template-columns: 1fr;
-    gap: 28px;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px 20px;
+  }
+
+  .footer-grid > .brand,
+  .footer-grid > div:last-child {
+    grid-column: 1 / -1;
   }
 }
 
-/* === MOBILE NAV === */
+/* === MOBILE NAV ===
+   Kept in the DOM and hidden with opacity/visibility (not display:none) so the
+   panel can fade and its contents can slide in. `visibility` is transitioned with
+   a delay on close so the panel stays hittable-free but visible while it fades. */
 .mobile-menu {
   position: fixed;
   inset: 0;
   background: var(--ink);
   z-index: 150;
-  display: none;
+  display: flex;
   flex-direction: column;
   padding: 80px 24px 32px;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity 260ms var(--ease-out),
+    visibility 0s linear 260ms;
 }
 
 .mobile-menu.open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transition:
+    opacity 260ms var(--ease-out),
+    visibility 0s;
+}
+
+/* Contents rise into place just behind the panel fade. */
+.mobile-menu nav a,
+.mobile-menu .mm-theme,
+.mobile-menu .mm-cta {
+  opacity: 0;
+  transform: translateY(12px);
+  transition:
+    opacity 320ms var(--ease-out),
+    transform 320ms var(--ease-out);
+}
+
+.mobile-menu.open nav a,
+.mobile-menu.open .mm-theme,
+.mobile-menu.open .mm-cta {
+  opacity: 1;
+  transform: none;
+}
+
+.mobile-menu.open nav a:nth-child(1) { transition-delay: 60ms; }
+.mobile-menu.open nav a:nth-child(2) { transition-delay: 90ms; }
+.mobile-menu.open nav a:nth-child(3) { transition-delay: 120ms; }
+.mobile-menu.open nav a:nth-child(4) { transition-delay: 150ms; }
+.mobile-menu.open nav a:nth-child(5) { transition-delay: 180ms; }
+.mobile-menu.open nav a:nth-child(6) { transition-delay: 210ms; }
+.mobile-menu.open nav a:nth-child(7) { transition-delay: 240ms; }
+.mobile-menu.open .mm-theme { transition-delay: 260ms; }
+.mobile-menu.open .mm-cta { transition-delay: 290ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile-menu,
+  .mobile-menu nav a,
+  .mobile-menu .mm-theme,
+  .mobile-menu .mm-cta {
+    transition: none;
+    transform: none;
+  }
+}
+
+/* Theme switch lives in the menu on mobile (the nav icon is hidden there). */
+.mm-theme {
   display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  margin-top: 24px;
+  padding: 14px 16px;
+  background: var(--surface);
+  border: 1px solid var(--elevated);
+  border-radius: var(--radius-sm);
+  color: var(--bone);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.mm-theme:hover {
+  background: var(--elevated);
+}
+
+.mm-theme-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mm-theme-state {
+  color: var(--mute);
 }
 
 .mobile-menu .close {
@@ -4067,69 +4203,45 @@ section.band + section {
   transform: rotate(-45deg);
 }
 
-/* Two stat cards, fanned — a suggestion of the product, not a fake screenshot. */
+/* Real product shots, stacked and fanned — the rating card with the open-play
+   listing overlapping beneath it. Both are dark navy cards, so they read as one
+   object against the light section. */
 .dubr-visual {
   position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  padding: 8px 0;
+  padding-bottom: 40px;
 }
 
-.dubr-card {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 22px 24px;
+.dubr-shot {
+  display: block;
+  width: 100%;
+  height: auto;
   border-radius: var(--radius-md);
-  border: 1px solid var(--elevated);
-  background: var(--surface);
-  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.10);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.22);
 }
 
-.dubr-card-1 {
-  background: var(--cobalt);
-  border-color: var(--cobalt);
-  color: var(--on-cobalt);
+.dubr-shot-rating {
   transform: rotate(-1.2deg);
 }
 
-.dubr-card-2 {
-  transform: rotate(1deg) translateX(6%);
+/* Overlaps the rating card's lower edge and sits slightly right of it. */
+.dubr-shot-open {
+  position: relative;
+  width: 88%;
+  margin: -34px 0 0 auto;
+  transform: rotate(1.4deg);
+  box-shadow: 0 22px 48px rgba(0, 0, 0, 0.28);
 }
 
-.dubr-card-label {
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  opacity: 0.85;
-}
+@media (max-width: 900px) {
+  .dubr-shot-rating,
+  .dubr-shot-open {
+    transform: none;
+  }
 
-.dubr-rating {
-  font-family: var(--font-display);
-  font-size: 52px;
-  font-weight: 900;
-  line-height: 1;
-  letter-spacing: -0.03em;
-}
-
-.dubr-delta {
-  font-size: 12px;
-  font-weight: 700;
-  opacity: 0.9;
-}
-
-.dubr-match {
-  font-size: 22px;
-  font-weight: 800;
-  letter-spacing: -0.01em;
-  color: var(--bone);
-}
-
-.dubr-meta {
-  font-size: 12px;
-  color: var(--mute);
+  .dubr-shot-open {
+    width: 100%;
+    margin: 14px 0 0;
+  }
 }
 
 @media (max-width: 900px) {
@@ -4173,6 +4285,7 @@ section.band + section {
   background: var(--bone);
   color: black;
   transition: transform 150ms var(--ease-out), opacity 150ms;
+  border: 2px solid black;
 }
 
 .app-badge:hover {
@@ -4180,9 +4293,11 @@ section.band + section {
   opacity: 0.9;
 }
 
+/* Sized to the two-line text stack beside it, as on the real store badges —
+   the glyph reads as tall as "Download on the" + "App Store" together. */
 .app-badge svg {
-  width: 24px;
-  height: 24px;
+  width: 30px;
+  height: 30px;
   flex-shrink: 0;
 }
 
@@ -4265,5 +4380,55 @@ section.band + section {
 
   .phone {
     width: 195px;
+  }
+}
+
+/* === MOBILE: FULL-WIDTH BUTTONS & CTAs ===
+   Action buttons go edge-to-edge on phones; the rows that hold them stack so
+   two side-by-side buttons don't each shrink to half a screen. Excludes
+   controls that are not page-level actions (toggles, chips, dropdowns, icon
+   buttons), which stay sized to their content. */
+@media (max-width: 768px) {
+  .btn,
+  .mem-cta,
+  .stringing-text .stringing-cta,
+  .package-cta,
+  .soon-cta,
+  .mm-cta,
+  .inquiry-submit,
+  .booking-cta {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .faq-cta .btns,
+  .mem-cta-row,
+  .loc-card-page .actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  /* Sport / Service filter pills: one full-width row each, chips spread out. */
+  .filter-chips {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filter-chips .chip-group {
+    width: -webkit-fill-available;
+    width: stretch;
+    justify-content: space-between;
+  }
+
+  .filter-chips .chip-label {
+    margin: 4px 0 0;
+  }
+
+  /* Four chips across a 320px screen: trim the horizontal padding so the row
+     spreads instead of overflowing the pill. */
+  .filter-chips .chip {
+    padding: 8px 10px;
+    letter-spacing: 0.04em;
   }
 }

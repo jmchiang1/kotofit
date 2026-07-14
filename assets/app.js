@@ -900,8 +900,13 @@ function initViewportChrome() {
 
   const measure = () => {
     // offsetHeight is 0 for the dismissed bar (display: none), which is what we want.
-    const h = (bar?.offsetHeight || 0) + nav.offsetHeight;
-    document.documentElement.style.setProperty("--chrome-h", `${h}px`);
+    const announceH = bar?.offsetHeight || 0;
+    const navH = nav.offsetHeight;
+    const root = document.documentElement.style;
+    root.setProperty("--announce-h", `${announceH}px`);
+    root.setProperty("--nav-h", `${navH}px`);
+    // Both together, for anything that needs the full header stack.
+    root.setProperty("--chrome-h", `${announceH + navH}px`);
   };
 
   measure();
@@ -917,6 +922,36 @@ function initViewportChrome() {
   // The bar is hidden with display:none, which some browsers don't report to the
   // observer — remeasure on dismiss so the hero reclaims the space either way.
   document.getElementById("announce-close")?.addEventListener("click", measure);
+}
+
+// === NAV ON SCROLL ===
+// The home nav is transparent over the hero carousel and turns solid as soon as
+// the page moves. Other pages have no hero, so their nav is solid from the start
+// (the CSS default) and this just keeps the class in sync harmlessly.
+function initNavScroll() {
+  const nav = document.querySelector(".nav");
+  if (!nav) return;
+
+  const SOLID_AFTER = 24; // px — "as soon as we start scrolling"
+  let ticking = false;
+
+  const apply = () => {
+    nav.classList.toggle("is-solid", window.scrollY > SOLID_AFTER);
+    ticking = false;
+  };
+
+  apply(); // a reload partway down the page must start solid
+
+  window.addEventListener(
+    "scroll",
+    () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(apply);
+      }
+    },
+    { passive: true }
+  );
 }
 
 // === HERO CAROUSEL ===
@@ -2358,23 +2393,26 @@ function initAnnounceBar() {
 
 // === THEME TOGGLE ===
 function initThemeToggle() {
-  const btn = document.getElementById("theme-toggle");
-  if (!btn) return;
-  btn.addEventListener("click", () => {
-    const isLight =
-      document.documentElement.getAttribute("data-theme") === "light";
-    const next = isLight ? "dark" : "light";
-    if (next === "light") {
-      document.documentElement.setAttribute("data-theme", "light");
-    } else {
-      document.documentElement.removeAttribute("data-theme");
-    }
-    try {
-      localStorage.setItem("kotofit-theme", next);
-    } catch (e) {
-      /* ignore */
-    }
-  });
+  // Two triggers share this: the nav icon (desktop) and the row inside the
+  // mobile menu, which is the only one visible on phones.
+  const btns = document.querySelectorAll("[data-theme-toggle]");
+  btns.forEach((btn) =>
+    btn.addEventListener("click", () => {
+      const isLight =
+        document.documentElement.getAttribute("data-theme") === "light";
+      const next = isLight ? "dark" : "light";
+      if (next === "light") {
+        document.documentElement.setAttribute("data-theme", "light");
+      } else {
+        document.documentElement.removeAttribute("data-theme");
+      }
+      try {
+        localStorage.setItem("kotofit-theme", next);
+      } catch (e) {
+        /* ignore */
+      }
+    }),
+  );
 }
 
 // === PAGE INIT ===
@@ -2384,6 +2422,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // After initAnnounceBar — a bar dismissed earlier in the session is already
   // hidden by the time we measure.
   initViewportChrome();
+  initNavScroll();
   initHero();
   initHeroCarousel();
   initNavHighlight();

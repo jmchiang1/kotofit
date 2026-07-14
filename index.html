@@ -35,7 +35,7 @@
         <li><a href="faq.html">FAQ</a></li>
       </ul>
       <a href="book.html" class="nav-cta">Reserve Court →</a>
-      <button class="nav-theme" type="button" id="theme-toggle" aria-label="Toggle light and dark mode"><svg class="theme-icon theme-icon-dark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><svg class="theme-icon theme-icon-light" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></button><button class="nav-burger" aria-label="Open menu"><span></span></button>
+      <button class="nav-theme" type="button" id="theme-toggle" data-theme-toggle aria-label="Toggle light and dark mode"><svg class="theme-icon theme-icon-dark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><svg class="theme-icon theme-icon-light" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></button><button class="nav-burger" aria-label="Open menu"><span></span></button>
     </div>
   </nav>
   <div class="mobile-menu" id="mobile-menu" aria-hidden="true">
@@ -49,6 +49,10 @@
       <a href="stringing.html">Equipment</a>
       <a href="faq.html">FAQ</a>
     </nav>
+    <button class="mm-theme" type="button" data-theme-toggle aria-label="Toggle light and dark mode">
+      <span class="mm-theme-label"><svg class="theme-icon theme-icon-dark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><span class="theme-icon-dark">Dark mode</span><svg class="theme-icon theme-icon-light" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg><span class="theme-icon-light">Light mode</span></span>
+      <span class="mm-theme-state" aria-hidden="true"><span class="theme-icon-dark">On</span><span class="theme-icon-light">Off</span></span>
+    </button>
     <a href="book.html" class="mm-cta">Reserve a court →</a>
   </div>
   <main>
@@ -131,10 +135,10 @@
           <!-- <p class="desc">Discounts on every booking, advance reservations, coaching credits, and more.</p> -->
         </header>
         <div class="mem-perks-teaser reveal-stagger">
-          <div class="perk-tile"><div class="perk-num">— 01</div><div class="perk-label">Up to 30% off court bookings</div></div>
-          <div class="perk-tile"><div class="perk-num">— 02</div><div class="perk-label">21-day advance booking window</div></div>
-          <div class="perk-tile"><div class="perk-num">— 03</div><div class="perk-label">Free UBR/DUPR open plays in LIC</div></div>
-          <div class="perk-tile"><div class="perk-num">— 04</div><div class="perk-label">Up to $150 off coaching packages</div></div>
+          <div class="perk-tile"><div class="perk-num">01</div><div class="perk-label">Up to 30% off court bookings</div></div>
+          <div class="perk-tile"><div class="perk-num">02</div><div class="perk-label">21-day advance booking window</div></div>
+          <div class="perk-tile"><div class="perk-num">03</div><div class="perk-label">Free UBR/DUPR open plays in LIC</div></div>
+          <div class="perk-tile"><div class="perk-num">04</div><div class="perk-label">Up to $150 off coaching packages</div></div>
         </div>
         <div class="mem-cta-row reveal">
           <a href="memberships.html" class="btn btn-primary">See all membership plans →</a>
@@ -169,7 +173,7 @@
         <div class="dubr reveal">
           <div class="dubr-text">
             <h2 class="display-l">Know your level.<br />Find your match.</h2>
-            <p>Dubr rates every player on skill, so you're matched against people who actually push you. Track your rating as it climbs, find open plays near you, and see where you stand in the club.</p>
+            <p>DUBR rates every player on skill, so you're matched against people who actually push you. Track your rating as it climbs, find open plays near you, and see where you stand in the club.</p>
             <ul class="dubr-list">
               <li>A skill rating that updates with every match you play</li>
               <li>Open plays and games matched to your level</li>
@@ -177,17 +181,11 @@
             </ul>
             <a class="btn btn-primary" href="https://dubr.club/home" target="_blank" rel="noopener">Get your rating →</a>
           </div>
-          <div class="dubr-visual" aria-hidden="true">
-            <div class="dubr-card dubr-card-1">
-              <span class="dubr-card-label">Your rating</span>
-              <span class="dubr-rating">4.12</span>
-              <span class="dubr-delta">▲ 0.08 this month</span>
-            </div>
-            <div class="dubr-card dubr-card-2">
-              <span class="dubr-card-label">Open play tonight</span>
-              <span class="dubr-match">6 players · 3.9–4.3</span>
-              <span class="dubr-meta">Brunswick · 7:00 PM</span>
-            </div>
+          <div class="dubr-visual">
+            <img class="dubr-shot dubr-shot-rating" src="assets/dubr-rating.svg" width="532" height="399" loading="lazy"
+                 alt="A Dubr rating card: a singles rating of 5.302, up 0.061, charted over a rising trajectory." />
+            <img class="dubr-shot dubr-shot-open" src="assets/dubr-open-play.svg" width="536" height="232" loading="lazy"
+                 alt="A Dubr open play listing: Tuesday Night Open Play at Kotofit LIC, doubles, DUBR 4.5–5.0, $25 entry, 3 of 24 spots left." />
           </div>
         </div>
       </div>
